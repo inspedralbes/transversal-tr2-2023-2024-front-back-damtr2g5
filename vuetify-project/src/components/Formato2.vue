@@ -18,11 +18,13 @@
                 </v-col>
 
                 <v-col cols="6">
-                    <v-btn @click="unirRespuestas" :disabled="!respuestaSeleccionada" outlined rounded color="primary">
-                        Unir Respuestas
+                    <v-btn @click="reinicio"  outlined rounded color="primary">
+                        Reinicio
                     </v-btn>
                 </v-col>
             </v-row>
+            {{ seleccionDer }}
+            {{ seleccionIzq }}
         </div>
     </v-sheet>
 </template>
@@ -81,15 +83,16 @@ export default {
                 "idTema": "4",
                 "formato": "Unir valores"
             },
+            seleccionIzq:[],            
+            seleccionDer:[],
+            colors:['red', 'green', 'blue', 'yellow'],
+            colors2:[],
         };
     },
-
-    computed: {
-        respuestaSeleccionada() {
-            return this.respuestasSeleccionadas.primeraColumna !== null && this.respuestasSeleccionadas.segundaColumna !== null;
-        },
+    created() {
+        this.seleccionIzq = this.preguntas.muestra.map(respuestas => respuestas[0]);
+        this.seleccionDer = this.preguntas.muestra.map(respuestas => respuestas[1]);
     },
-
     methods: {
         toggleSeleccion(respuestas, respuesta) {
             if (this.respuestasSeleccionadas.primeraColumna === null) {
@@ -104,24 +107,17 @@ export default {
                 };
             }
         },
-        unirRespuestas() {
-            if (this.respuestaSeleccionada) {
-                console.log('Respuestas unidas:', [
-                    this.respuestasSeleccionadas.primeraColumna,
-                    this.respuestasSeleccionadas.segundaColumna
-                ]);
-                // Aquí puedes agregar la lógica para manejar la unión de respuestas como desees
-                // Por ejemplo, comparar si las respuestas coinciden, etc.
-
-                // Reiniciar la selección después de unir las respuestas
-                this.respuestasSeleccionadas = {
-                    primeraColumna: null,
-                    segundaColumna: null
-                };
-            }
+        reinicio() {
+            this.respuestasSeleccionadas = {
+                primeraColumna: null,
+                segundaColumna: null
+            };
         },
         getButtonColor(respuesta) {
-            const colors = ['red', 'green', 'blue', 'yellow']; // Añadir más colores si es necesario
+            this.colors2.push(this.colors[1])
+            this.colors.splice(1, this.colors.length-1);
+
+            
             return colors[this.preguntas.respuestas.findIndex(respuestas => respuestas.includes(respuesta)) % colors.length];
         },
     },
