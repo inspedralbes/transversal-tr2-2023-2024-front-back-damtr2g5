@@ -1,6 +1,17 @@
 <template>
     <v-container>
-        Hola desde ejercicio
+        <v-row>
+            <v-col cols="12" class="py-2">
+                <v-btn-toggle v-model="selectedButton" rounded="0" color="deep-purple-accent-3" group mandatory>
+                    <v-btn v-for="boton in Ejercicio[0].preguntas" :key="boton.id" :value="boton.id">
+                        {{ boton.id }}
+                    </v-btn>
+                </v-btn-toggle>
+            </v-col>
+        </v-row>
+    </v-container>
+    <v-container>
+        Aqui ira el div de los
     </v-container>
 </template>
   
@@ -12,6 +23,7 @@ export default {
     name: 'Ejercicio',
     data() {
         return {
+            selectedButton: null,
             Ejercicio: [{
                 id: 1,
                 nombre: "Ejercicio",
@@ -25,7 +37,21 @@ export default {
                     formato: "Seleccionar"
                 },
                 {
-                    id: 1,
+                    id: 2,
+                    pregunta: "¿Cuál es el resultado de 5 + 3 * 2?",
+                    respuestas: [{ id: 1, respuesta: "11", correcta: false }, { id: 2, respuesta: "16", correcta: true }, { id: 3, respuesta: "13", correcta: false }, { id: 4, respuesta: "10", correcta: false }],
+                    idTema: 1,
+                    formato: "Seleccionar"
+                }, 
+                {
+                    id: 3,
+                    pregunta: "¿Cuál es el resultado de 5 + 3 * 2?",
+                    respuestas: [{ id: 1, respuesta: "11", correcta: false }, { id: 2, respuesta: "16", correcta: true }, { id: 3, respuesta: "13", correcta: false }, { id: 4, respuesta: "10", correcta: false }],
+                    idTema: 1,
+                    formato: "Seleccionar"
+                }, 
+                {
+                    id: 4,
                     pregunta: "¿Cuál es el resultado de 5 + 3 * 2?",
                     respuestas: [{ id: 1, respuesta: "11", correcta: false }, { id: 2, respuesta: "16", correcta: true }, { id: 3, respuesta: "13", correcta: false }, { id: 4, respuesta: "10", correcta: false }],
                     idTema: 1,
@@ -50,14 +76,4 @@ export default {
 
 </script>
 
-<style>
-.red-btn {
-    background-color: #ff3547 !important;
-    color: white !important;
-}
-
-.blue-btn {
-    background-color: #007bff !important;
-    color: white !important;
-}
-</style>
+<style></style>
