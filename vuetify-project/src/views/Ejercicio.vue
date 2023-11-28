@@ -3,8 +3,8 @@
         <v-row>
             <v-col cols="12" class="py-2">
                 <v-btn-toggle v-model="selectedButton" rounded="0" color="deep-purple-accent-3" group mandatory>
-                    <v-btn v-for="boton in Ejercicio[0].preguntas" :key="boton.id" :value="boton.id">
-                        {{ boton.id }}
+                    <v-btn v-for="(boton,index) in Ejercicio[0].preguntas" :key="boton.id" :value="boton.id" @click="botoncliclado(boton.id)">
+                        {{index+1}}
                     </v-btn>
                 </v-btn-toggle>
             </v-col>
@@ -65,10 +65,17 @@ export default {
 
     methods: {
 
+        botoncliclado(id){
+            
+
+
+        }
+
     },
 
     created() {
 
+        //Llamar primero formato de la primera pregunta que va a venir
     },
 
 
