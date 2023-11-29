@@ -1,11 +1,13 @@
 <template>
-    <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto px-4" elevation="4" height="250" rounded max-width="800" width="100%">
+    <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto px-4" elevation="4" height="250"
+        rounded max-width="1000" width="100%">
         <div>
             <div class="text-h5 font-weight-medium mb-2">
                 {{ pregunta.pregunta }}
             </div>
             <v-btn-toggle v-model="selectedAnswer" mandatory color="rgb(162, 210, 255)">
-                <v-btn v-for="(respuesta, index) in pregunta.respuestas" :key="index" :value="respuesta.respuesta" outlined rounded>
+                <v-btn v-for="(respuesta, index) in pregunta.respuestas" :key="index" :value="respuesta.respuesta" outlined
+                    rounded>
                     {{ respuesta.respuesta }}
                 </v-btn>
             </v-btn-toggle>
@@ -19,15 +21,28 @@ export default {
     data() {
         return {
             pregunta: {
-                pregunta: '¿Cuál es el resultado de 5 + 3 * 2?',
-                respuestas: [
-                    { respuesta: '11', correcta: false },
-                    { respuesta: '16', correcta: true },
-                    { respuesta: '13', correcta: false },
-                    { respuesta: '10', correcta: false }
+                "_id": {
+                    "$oid": "6565d7516f122bd6cf8e9f89"
+                },
+                "id": 5,
+                "pregunta": "Calcula el área de un triángulo con base de 6 unidades y altura de 8 unidades",
+                "respuestas": [
+                    {
+                        "respuesta": "24 unidades cuadradas"
+                    },
+                    {
+                        "respuesta": "30 unidades cuadradas"
+                    },
+                    {
+                        "respuesta": "40 unidades cuadradas"
+                    },
+                    {
+                        "respuesta": "12 unidades cuadradas"
+                    }
                 ],
-                idTema: 1,
-                formato: 'Seleccionar'
+                "correcta": "24 unidades cuadradas",
+                "idTema": "5",
+                "formato": "Seleccionar"
             },
             selectedAnswer: null
         };
@@ -36,5 +51,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
