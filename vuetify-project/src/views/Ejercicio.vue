@@ -50,8 +50,8 @@ export default {
                 id_tema: 1,
                 preguntas: [{
                     id: 1,
-                    pregunta: "¿Cuál es el resultado de 5 + 3 * 2?",
-                    respuestas: [{ id: 1, respuesta: "11", correcta: false }, { id: 2, respuesta: "16", correcta: true }, { id: 3, respuesta: "13", correcta: false }, { id: 4, respuesta: "10", correcta: false }],
+                    pregunta: "¿Cuál es el resultado de 1 + 1 * 2?",
+                    respuestas: [{ id: 1, respuesta: "43", correcta: false }, { id: 2, respuesta: "4", correcta: true }, { id: 3, respuesta: "21", correcta: false }, { id: 4, respuesta: "6", correcta: false }],
                     idTema: 1,
                     formato: "Seleccionar"
                 },
