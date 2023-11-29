@@ -12,27 +12,37 @@
         </v-row>
     </v-container>
     <v-container>
-        <component :is="componentSelecionat" v-if="componentSelecionat"/>
+        <component :is="componentSelecionat" v-if="componentSelecionat" :preguntaSeleccionada="preguntaSeleccionada" />
     </v-container>
 </template>
   
     
 <script>
-import Hello from '../components/HelloWorld.vue';
-import Prueba from '../components/prueba.vue';
+import Formato1 from '../components/Formato1.vue';
+import Formato2 from '../components/Formato2.vue';
+import Formato3 from '../components/Formato3.vue';
+import Formato4 from '../components/Formato4.vue';
+import Formato5 from '../components/Formato5.vue';
+import Formato6 from '../components/Formato6.vue';
 
 
 //import { socket, state } from './socket';
 export default {
     name: 'Ejercicio',
-    components: {        
-        Hello,
-        Prueba
+    components: {
+        Formato1,
+        Formato2,
+        Formato3,
+        Formato4,
+        Formato5,
+        Formato6
+
     },
     data() {
         return {
             selectedButton: null,
             componentSelecionat: null,
+            preguntaSeleccionada: null,
             Ejercicio: [{
                 id: 1,
                 nombre: "Ejercicio",
@@ -50,21 +60,35 @@ export default {
                     pregunta: "¿Cuál es el resultado de 5 + 3 * 2?",
                     respuestas: [{ id: 1, respuesta: "11", correcta: false }, { id: 2, respuesta: "16", correcta: true }, { id: 3, respuesta: "13", correcta: false }, { id: 4, respuesta: "10", correcta: false }],
                     idTema: 1,
-                    formato: "Prueba"
+                    formato: "Unir valores"
                 },
                 {
                     id: 3,
                     pregunta: "¿Cuál es el resultado de 5 + 3 * 2?",
                     respuestas: [{ id: 1, respuesta: "11", correcta: false }, { id: 2, respuesta: "16", correcta: true }, { id: 3, respuesta: "13", correcta: false }, { id: 4, respuesta: "10", correcta: false }],
                     idTema: 1,
-                    formato: "Seleccionar"
+                    formato: "Respuesta"
                 },
                 {
                     id: 4,
                     pregunta: "¿Cuál es el resultado de 5 + 3 * 2?",
                     respuestas: [{ id: 1, respuesta: "11", correcta: false }, { id: 2, respuesta: "16", correcta: true }, { id: 3, respuesta: "13", correcta: false }, { id: 4, respuesta: "10", correcta: false }],
                     idTema: 1,
-                    formato: "Seleccionar"
+                    formato: "Imagen"
+                },
+                {
+                    id: 5,
+                    pregunta: "¿Cuál es el resultado de 5 + 3 * 2?",
+                    respuestas: [{ id: 1, respuesta: "11", correcta: false }, { id: 2, respuesta: "16", correcta: true }, { id: 3, respuesta: "13", correcta: false }, { id: 4, respuesta: "10", correcta: false }],
+                    idTema: 1,
+                    formato: "Ordenar valores"
+                },
+                {
+                    id: 6,
+                    pregunta: "¿Cuál es el resultado de 5 + 3 * 2?",
+                    respuestas: [{ id: 1, respuesta: "11", correcta: false }, { id: 2, respuesta: "16", correcta: true }, { id: 3, respuesta: "13", correcta: false }, { id: 4, respuesta: "10", correcta: false }],
+                    idTema: 1,
+                    formato: "Grafica"
                 }],
                 xp: 100
             }]
@@ -74,18 +98,28 @@ export default {
 
     methods: {
         botoncliclado(pregunta) {
-            if(pregunta.formato=="Seleccionar"){
-                this.componentSelecionat = Hello;
+            this.preguntaSeleccionada = pregunta; // Guardar la pregunta seleccionada
+            switch (pregunta.formato) {
+                case "Seleccionar":
+                    this.componentSelecionat = Formato1;
+                    break;
+                case "Unir valores":
+                    this.componentSelecionat = Formato2;
+                    break;
+                case "Respuesta":
+                    this.componentSelecionat = Formato3;
+                    break;
+                case "Imagen":
+                    this.componentSelecionat = Formato4;
+                    break;
+                case "Ordenar valores":
+                    this.componentSelecionat = Formato5;
+                    break;
+                case "Grafica":
+                    this.componentSelecionat = Formato6;
+                    break;               
             }
-            if(pregunta.formato=="Prueba"){
-                this.componentSelecionat = Prueba;
-            }
-
-
-
-
         }
-
     },
 
     created() {
