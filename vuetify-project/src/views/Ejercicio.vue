@@ -18,6 +18,7 @@
   
     
 <script>
+import { getEjercicios } from '../communicationsManager';
 import Formato1 from '../components/Formato1.vue';
 import Formato2 from '../components/Formato2.vue';
 import Formato3 from '../components/Formato3.vue';
@@ -117,13 +118,15 @@ export default {
                     break;
                 case "Grafica":
                     this.componentSelecionat = Formato6;
-                    break;               
+                    break;
             }
         }
     },
 
     created() {
-
+        getEjercicios().then(response => {
+            this.Ejercicio = response;
+        });
         //Llamar primero formato de la primera pregunta que va a venir
     },
 
