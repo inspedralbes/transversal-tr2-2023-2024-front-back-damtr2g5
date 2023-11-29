@@ -139,11 +139,6 @@ export default {
 
 .disable-input:disabled {
     background-color: v-bind(getDisabledColor()) !important;
-    flex-direction: column;
-}
-
-.disable-input:disabled {
-    background-color: v-bind(getDisabledColor()) !important;
 }
 
 
