@@ -7,17 +7,17 @@
                 <v-btn icon="mdi-cached" size="x-small" @click="reinicio"></v-btn>
             </div>
 
-            <v-btn-toggle>
+            <v-btn-toggle :key="chartKey">
                 <v-btn v-for="(respuesta, index) in preguntas.muestra" :key="index" class="respuesta-container" outlined
-                    rounded :color="getButtonColor(index)" @click="recoger(respuesta[0], 'cero') "
-                    :disabled="isDisabled(respuesta[0])">
+                    rounded @click="recoger(respuesta[0], 'cero')" :color="getButtonColor()"
+                    :disabled="isDisabled(respuesta[0])" :class="{ 'disable-input': disabled }">
                     {{ respuesta[0] }}
                 </v-btn>
             </v-btn-toggle>
-            <v-btn-toggle>
-                <v-btn v-for="(respuesta, index) in preguntas.muestra" :key="index" class="respuesta-container" outlined stacked
-                    rounded :color="getButtonColor(index)" @click="recoger(respuesta[1], 'uno')"
-                    :disabled="isDisabled(respuesta[1])">
+            <v-btn-toggle :key="chartKey1">
+                <v-btn v-for="(respuesta, index) in preguntas.muestra" :key="index" class="respuesta-container" outlined
+                    stacked rounded @click="recoger(respuesta[1], 'uno')" :color="getButtonColor()"
+                    :disabled="isDisabled(respuesta[1])" :class="{ 'disable-input': disabled }" >
                     {{ respuesta[1] }}
                 </v-btn>
             </v-btn-toggle>
@@ -26,8 +26,22 @@
 </template>
   
 <script>
+
+import { watch, ref } from 'vue'
 export default {
     data() {
+
+        const chartKey = ref(0)
+        const chartKey1 = ref(0)
+        const modelo = ref(0)
+        const updateChartData = () => {
+            chartKey.value += 1
+            chartKey1.value += 1
+        }
+
+        watch(() => modelo, () => {
+            updateChartData()
+        }, { deep: true })
         return {
             preguntas: {
                 "_id": {
@@ -76,10 +90,14 @@ export default {
                 "formato": "Unir valores"
             },
             seleccion: [],
-            colors: ['red', 'green', 'purple', 'yellow'],
+            colors: ['red', '#8ecae6', 'purple', 'yellow'],
             indice1: 0,
+            indiceColors:0,
             puesto1: false,
             puesto2: false,
+            disabled: true,
+            modelo,
+            chartKey, chartKey1,
         };
     },
     created() {
@@ -93,9 +111,14 @@ export default {
                     this.seleccion[i][j] = ''
                 }
             }
+            this.modelo++
         },
-        getButtonColor(respuesta) {
-            return this.colors[this.indice1]
+        getButtonColor() {
+            return 'blue'
+        },
+        getDisabledColor() {
+            this.indiceColors++
+            return this.colors[this.indiceColors]
         },
         recoger(respuesta, pos) {
             if (pos == 'cero') {
@@ -121,7 +144,8 @@ export default {
                 }
             }
         },
-    },
+    }
+    
 };
 </script>
   
@@ -133,5 +157,10 @@ export default {
     cursor: pointer;
     flex-direction: column;
 }
+
+.disable-input:disabled {
+    background-color: v-bind(getDisabledColor()) !important;
+}
+
 </style>
   
