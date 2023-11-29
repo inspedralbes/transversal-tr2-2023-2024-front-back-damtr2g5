@@ -15,23 +15,23 @@
 
 <script>
 export default {
-    name: 'Formato1',
+    name: 'Formato4',
+    props: {
+        preguntaSeleccionada: {
+            type: Object,
+            required: true
+        }
+    },
     data() {
         return {
-            pregunta: {
-                pregunta: '¿Cuál es el resultado de 5 + 3 * 2?',
-                respuestas: [
-                    { respuesta: '11', correcta: false },
-                    { respuesta: '16', correcta: true },
-                    { respuesta: '13', correcta: false },
-                    { respuesta: '10', correcta: false }
-                ],
-                idTema: 1,
-                formato: 'Seleccionar'
+            pregunta: {            
             },
             selectedAnswer: null
         };
     },
+    created() {       
+        this.pregunta = this.preguntaSeleccionada;
+    }
     // Your component's logic goes here
 };
 </script>

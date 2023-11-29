@@ -5,26 +5,29 @@
             <div class="text-h5 font-weight-medium mb-2">
                 {{ pregunta.pregunta }}
             </div>
-            <v-text-field v-model="selectedAnswer" placeholder="Escribe la respuesta aquí" variant="outlined" rounded></v-text-field>
+            <v-text-field v-model="selectedAnswer" placeholder="Escribe la respuesta aquí" variant="outlined"
+                rounded></v-text-field>
         </div>
     </v-sheet>
 </template>
 
 <script>
 export default {
-    name: 'Formato1',
+    name: 'Formato3',
+    props: {
+        preguntaSeleccionada: {
+            type: Object,
+            required: true
+        }
+    },
     data() {
         return {
-            pregunta: {
-                "pregunta": "Resuelve la ecuación: 2x + 5 = 17",
-                "respuestas": [
-                    { "respuesta": "x = 6" }
-                ],
-                "idTema": 2,
-                "formato": "Respuesta"
-            },
+            pregunta: {},
             selectedAnswer: null
         };
+    },
+    created() {       
+        this.pregunta = this.preguntaSeleccionada;
     },
     // Your component's logic goes here
 };

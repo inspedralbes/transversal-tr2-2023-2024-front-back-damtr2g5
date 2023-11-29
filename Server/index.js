@@ -1,9 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const port = 3000;
+const port = 3001;
+const cors = require("cors");
 const { getDocument, getPreguntas } = require("./mongoDB.js");
+
+app.use(cors());
 app.use(bodyParser.json());
+
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
