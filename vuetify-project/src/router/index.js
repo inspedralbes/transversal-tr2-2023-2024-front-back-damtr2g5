@@ -15,7 +15,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue'),
       },
       {path: '/pruebas',
-      component: () => import('@/components/Formato2.vue')},
+      component: () => import('@/components/scatterLineChart.vue')},
     ],
   },
 ]
