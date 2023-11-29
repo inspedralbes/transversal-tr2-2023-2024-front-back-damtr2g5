@@ -3,27 +3,36 @@
         <v-row>
             <v-col cols="12" class="py-2">
                 <v-btn-toggle v-model="selectedButton" rounded="0" color="deep-purple-accent-3" group mandatory>
-                    <v-btn v-for="(boton,index) in Ejercicio[0].preguntas" :key="boton.id" :value="boton.id" @click="botoncliclado(boton.id)">
-                        {{index+1}}
+                    <v-btn v-for="(boton, index) in Ejercicio[0].preguntas" :key="boton.id" :value="boton.id"
+                        @click="botoncliclado(boton)">
+                        {{ index + 1 }}
                     </v-btn>
                 </v-btn-toggle>
             </v-col>
         </v-row>
     </v-container>
     <v-container>
-        Aqui ira el div de los
+        <component :is="componentSelecionat" v-if="componentSelecionat"/>
     </v-container>
 </template>
   
     
 <script>
+import Hello from '../components/HelloWorld.vue';
+import Prueba from '../components/prueba.vue';
+
 
 //import { socket, state } from './socket';
 export default {
     name: 'Ejercicio',
+    components: {        
+        Hello,
+        Prueba
+    },
     data() {
         return {
             selectedButton: null,
+            componentSelecionat: null,
             Ejercicio: [{
                 id: 1,
                 nombre: "Ejercicio",
@@ -41,15 +50,15 @@ export default {
                     pregunta: "¿Cuál es el resultado de 5 + 3 * 2?",
                     respuestas: [{ id: 1, respuesta: "11", correcta: false }, { id: 2, respuesta: "16", correcta: true }, { id: 3, respuesta: "13", correcta: false }, { id: 4, respuesta: "10", correcta: false }],
                     idTema: 1,
-                    formato: "Seleccionar"
-                }, 
+                    formato: "Prueba"
+                },
                 {
                     id: 3,
                     pregunta: "¿Cuál es el resultado de 5 + 3 * 2?",
                     respuestas: [{ id: 1, respuesta: "11", correcta: false }, { id: 2, respuesta: "16", correcta: true }, { id: 3, respuesta: "13", correcta: false }, { id: 4, respuesta: "10", correcta: false }],
                     idTema: 1,
                     formato: "Seleccionar"
-                }, 
+                },
                 {
                     id: 4,
                     pregunta: "¿Cuál es el resultado de 5 + 3 * 2?",
@@ -64,9 +73,15 @@ export default {
     },
 
     methods: {
+        botoncliclado(pregunta) {
+            if(pregunta.formato=="Seleccionar"){
+                this.componentSelecionat = Hello;
+            }
+            if(pregunta.formato=="Prueba"){
+                this.componentSelecionat = Prueba;
+            }
 
-        botoncliclado(id){
-            
+
 
 
         }

@@ -24,7 +24,8 @@ const routes = [
         component: () => import(/* webpackChunkName: "home" */ '@/views/Ejercicio.vue'),
       },      
     ],   
-  }
+  },
+  
 ]
 
 const router = createRouter({
