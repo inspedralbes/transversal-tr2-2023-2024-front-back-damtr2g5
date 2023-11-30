@@ -4,6 +4,7 @@ const app = express();
 const port = 3001;
 const cors = require('cors');
 const { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection } = require("./mongoDB.js");
+const { comprobarRectaLineal } = require("./utils.js");
 app.use(bodyParser.json());
 app.use(cors());
 app.get('/', (req, res) => {
@@ -117,7 +118,11 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
                 res.json({ "correct": false });
             }
         } else if (pregunta.formato === "Grafica") {
+            respuesta = comprobarRectaLineal(respuesta[0], respuesta[1]);
+            console.log("Respuesta: ",respuesta);
+            console.log("Correcta: ",pregunta.correcta);
             if (respuesta.tipo === pregunta.correcta.tipo) {
+                console.log("Tipo correcto");
                 if (respuesta.tipo === "horizontal" && respuesta.y === pregunta.correcta.y) {
                     res.json({ "correct": true });
                 } else if (respuesta.tipo === "vertical" && respuesta.x === pregunta.correcta.x) {

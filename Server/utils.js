@@ -1,3 +1,4 @@
+module.exports = { comprobarRectaLineal };
 function comprobarRectaLineal(punto1, punto2) {
     if (punto1.x === punto2.x) {
         // Recta vertical
