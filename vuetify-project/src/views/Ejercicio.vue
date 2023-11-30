@@ -3,7 +3,7 @@
         <v-row>
             <v-col cols="12" class="py-2">
                 <v-btn-toggle v-model="selectedButton" rounded="0" color="deep-purple-accent-3" group mandatory>
-                    <v-btn :disabled="respondida" v-for="(boton, index) in Ejercicio.preguntas" :key="boton.id" :value="boton.id"
+                    <v-btn v-for="(boton, index) in Ejercicio.preguntas" :key="boton.id" :value="boton.id"
                         @click="botoncliclado(boton)">
                         {{ index + 1 }}
                     </v-btn>
@@ -14,14 +14,15 @@
     <v-container>
         <component :is="componentSelecionat" v-if="componentSelecionat" :preguntaSeleccionada="preguntaSeleccionada" />
     </v-container>
-    <v-btn :disabled="respuestanula" @click="comprobar(Ejercicio.preguntas[selectedButton-1].id)" elevation="6" border="lg opacity-12" rounded="lg" class="blue-btn"
+    <v-btn :disabled="disabled" @click="comprobar(Ejercicio.preguntas[selectedButton - 1].id)" :key="key" elevation="6"
+        border="lg opacity-12" rounded="lg" class="blue-btn"
         :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Enviar respuesta</v-btn>
 </template>
   
     
 <script>
 
-import { getEjercicios,comprobarRespuesta } from '../communicationsManager';
+import { getEjercicios, comprobarRespuesta } from '../communicationsManager';
 import { useAppStore } from '../store/app'
 const store = useAppStore();
 
@@ -45,11 +46,13 @@ export default {
         Formato6
     },
     data() {
+       
         return {
+            key: 0,
             selectedButton: null,
             componentSelecionat: null,
             preguntaSeleccionada: null,
-            respuestaSelecionada:null,            
+            respuestaSelecionada:"",
             Ejercicio: {
                 id: 1,
                 nombre: "Ejercicio",
@@ -178,6 +181,7 @@ export default {
     methods: {
         botoncliclado(pregunta) {
             this.preguntaSeleccionada = pregunta; // Guardar la pregunta seleccionada
+            store.setRespuesta("");
 
             switch (pregunta.formato) {
                 case "Seleccionar":
@@ -201,22 +205,33 @@ export default {
             }
         },
         comprobar(idPregunta) {
-            comprobarRespuesta({respuesa:this.respuestaSelecionada},idPregunta).then(response => {
-                console.log(response);                
+            comprobarRespuesta({ respuesa: this.respuestaSelecionada }, idPregunta).then(response => {
+                console.log(response);
             });
-            
+
         },
-        respuestanula(){
-            if(this.respuestaSelecionada==null){
+        respuestanula() {
+            if (this.respuestaSelecionada == null) {
                 return true;
+
             }
-            else{
+            else {
                 return false;
             }
-            
+
         },
-        respondida(){
-            
+        respondida() {
+
+        }
+    },
+    computed: {
+        disabled() {
+            if (this.respuestaSelecionada=="") {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
     },
 
@@ -227,11 +242,10 @@ export default {
 
         store.$subscribe((mutation, state) => {
             console.log(state);
-            //this.votos[0] = state.infoVotos.votos           
-            this.respuestaSelecionada=state.respuesta;
-            this.key++
+            this.respuestaSelecionada = state.respuesta;
+
         })
-        //Llamar primero formato de la primera pregunta que va a venir
+
     },
 
 
@@ -243,4 +257,5 @@ export default {
 .blue-btn {
     background-color: #007bff !important;
     color: white !important;
-}</style>
+}
+</style>

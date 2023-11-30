@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import { useAppStore } from '@/store/app'
 
 export default {
     name: 'Formato1',
