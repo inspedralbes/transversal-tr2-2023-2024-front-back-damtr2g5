@@ -7,7 +7,7 @@
             </div>
             <v-btn-toggle v-model="selectedAnswer" mandatory color="rgb(162, 210, 255)">
                 <v-btn v-for="(respuesta, index) in pregunta.respuestas" :key="index" :value="respuesta.respuesta" outlined
-                    rounded>
+                    rounded @click='guardado()'>
                     {{ respuesta.respuesta }}
                 </v-btn>
             </v-btn-toggle>
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { useAppStore } from '../store/app'
+import { useAppStore } from '@/store/app'
 export default {
     name: 'Formato1',
     props: {
@@ -25,13 +25,8 @@ export default {
             required: true
         }
     },
-    setup() {
-        const appStore = useAppStore()
-        return {
-            appStore
-        };
-    },
     data() {
+        const selectedAnswer =''
         return {
             pregunta: {
                 "id": 5,
@@ -53,7 +48,18 @@ export default {
                 "idTema": "5",
                 "formato": "Seleccionar"
             },
-            selectedAnswer: null
+            selectedAnswer
+        };
+    },
+    methods: {
+        guardado() {
+            this.appStore.setRespuesta(this.selectedAnswer)
+        }
+    },
+    setup() {
+        const appStore = useAppStore()
+        return {
+            appStore
         };
     },
     created() {
