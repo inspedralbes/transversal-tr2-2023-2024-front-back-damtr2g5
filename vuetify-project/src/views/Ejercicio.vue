@@ -14,14 +14,14 @@
     <v-container>
         <component :is="componentSelecionat" v-if="componentSelecionat" :preguntaSeleccionada="preguntaSeleccionada" />
     </v-container>
-    <v-btn :disabled="respuestanula" @click="comprobarRespuesta" elevation="6" border="lg opacity-12" rounded="lg" class="blue-btn"
+    <v-btn :disabled="respuestanula" @click="comprobar" elevation="6" border="lg opacity-12" rounded="lg" class="blue-btn"
         :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Enviar respuesta</v-btn>
 </template>
   
     
 <script>
 
-import { getEjercicios } from '../communicationsManager';
+import { getEjercicios,comprobarRespuesta } from '../communicationsManager';
 import { useAppStore } from '../store/app'
 const store = useAppStore();
 
@@ -200,7 +200,7 @@ export default {
                     break;
             }
         },
-        comprobarRespuesta(){
+        comprobar(){
             
         },
         respuestanula(){

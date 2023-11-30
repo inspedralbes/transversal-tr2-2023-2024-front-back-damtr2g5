@@ -89,7 +89,7 @@ app.post('/subirResultado', async (req,res) => {
 
 })
 //Comprobar si pregunta respondida es correcta o no
-app.post('/comprobarPregunta:id', async (req, res) => {
+app.post('/comprobarPregunta/:id', async (req, res) => {
     try {
         respuesta = req.body.respuesta;       
         preguntas = await getPregunta(req.params.id);
