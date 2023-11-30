@@ -116,11 +116,32 @@ export default {
                     "formato": "Respuesta"
                 },
                 {
-                    id: 4,
-                    pregunta: "¿Pregunta 4?",
-                    respuestas: [{ id: 1, respuesta: "11", correcta: false }, { id: 2, respuesta: "16", correcta: true }, { id: 3, respuesta: "13", correcta: false }, { id: 4, respuesta: "10", correcta: false }],
-                    idTema: 1,
-                    formato: "Imagen"
+                    "_id": {
+                        "$oid": "6565d7516f122bd6cf8e9fa6"
+                    },
+                    "id": 4,
+                    "pregunta": "¿Qué figura geométrica es un octógono?",
+                    "respuestas": [
+                        {
+                            "respuesta": "Pentagon",
+                            "imagen": "https://picsum.photos/500/300?image=232"
+                        },
+                        {
+                            "respuesta": "Hexagon",
+                            "imagen": "https://picsum.photos/500/300?image=232"
+                        },
+                        {
+                            "respuesta": "Octógono",
+                            "imagen": "https://picsum.photos/500/300?image=232"
+                        },
+                        {
+                            "respuesta": "Triangle",
+                            "imagen": "https://picsum.photos/500/300?image=232"
+                        }
+                    ],
+                    "correcta": "Octógono",
+                    "idTema": 5,
+                    "formato": "Imagen"
                 },
                 {
                     "id": 5,
@@ -137,11 +158,11 @@ export default {
                     "formato": "Ordenar valores"
                 },
                 {
-                    id: 6,
-                    pregunta: "¿Pregunta 6?",
-                    respuestas: [{ id: 1, respuesta: "11", correcta: false }, { id: 2, respuesta: "16", correcta: true }, { id: 3, respuesta: "13", correcta: false }, { id: 4, respuesta: "10", correcta: false }],
-                    idTema: 1,
-                    formato: "Grafica"
+                    "id": 6,
+                    "pregunta": "Representa la función y = 3x + 2 en un gráfico",
+                    "idTema": "3",
+                    "formato": "Grafica"
+
                 }],
                 xp: 100
             }

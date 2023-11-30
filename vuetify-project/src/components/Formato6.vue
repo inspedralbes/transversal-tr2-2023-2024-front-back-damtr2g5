@@ -1,12 +1,24 @@
 <template>
-    <v-container>
-        Hola desde formato 6
-    </v-container>
+    <v-sheet class="d-flex align-center justify-center text-center mx-auto px-4" elevation="4" rounded max-width="800"
+        width="100%">
+        <v-container>
+            <div class="text-h5 font-weight-medium mb-2">
+                {{ pregunta.pregunta }}
+            </div>
+            <ScatterLineChart />
+        </v-container>
+
+    </v-sheet>
 </template>
 
 <script>
+import ScatterLineChart from './scatterLineChart.vue';
+
 export default {
     name: 'Formato6',
+    components: {
+        ScatterLineChart
+    },
     props: {
         preguntaSeleccionada: {
             type: Object,
@@ -15,17 +27,23 @@ export default {
     },
     data() {
         return {
-            pregunta: {
-               
-            },            
+            pregunta:
+            {
+                "id": 3,
+                "pregunta": "Representa la función y = 3x + 2 en un gráfico",
+                "idTema": "3",
+                "formato": "Grafica"
+
+            },
+            selectedAnswer: null
         };
     },
-    methods: {
-        
+    created() {    
+  
+        this.pregunta = this.preguntaSeleccionada;      
     },
-    created() {              
-        this.pregunta = this.preguntaSeleccionada;  
-       
-    },
+   
 };
 </script>
+
+<style scoped></style>

@@ -29,33 +29,7 @@ export default {
     },
     data() {
         return {
-            pregunta: {
-                "_id": {
-                    "$oid": "6565d7516f122bd6cf8e9fa6"
-                },
-                "id": 34,
-                "pregunta": "¿Qué figura geométrica es un octógono?",
-                "respuestas": [
-                    {
-                        "respuesta": "Pentagon",
-                        "imagen": "https://picsum.photos/500/300?image=232"
-                    },
-                    {
-                        "respuesta": "Hexagon",
-                        "imagen": "https://picsum.photos/500/300?image=232"
-                    },
-                    {
-                        "respuesta": "Octógono",
-                        "imagen": "https://picsum.photos/500/300?image=232"
-                    },
-                    {
-                        "respuesta": "Triangle",
-                        "imagen": "https://picsum.photos/500/300?image=232"
-                    }
-                ],
-                "correcta": "Octógono",
-                "idTema": 5,
-                "formato": "Imagen"
+            pregunta: {               
             },
             selectedAnswer: null,
             estilo: {
