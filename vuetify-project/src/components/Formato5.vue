@@ -1,7 +1,5 @@
 <template>
-    <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto px-4" elevation="4" height="250"
-        rounded max-width="800" width="100%">
-        <div>
+        <div class="mt-15 ml-15 mr-15">
             <div class="text-h5 font-weight-medium mb-2">
                 {{ pregunta.pregunta }}
             </div>
@@ -21,7 +19,7 @@
                 </v-row>
             </v-container>
             <v-container>
-                <v-row>
+                <v-row class="justify-center">
                     <v-col v-for="(valor, i) in posibles" :key="i" cols="auto">
                         <v-card class="mx-auto" width="60" height="60" color="#219ebc"
                             @click="moverCarta(i, 'posibles', 'respuesta')">
@@ -33,7 +31,6 @@
                 </v-row>
             </v-container>
         </div>
-    </v-sheet>
 </template>
   
 <script>

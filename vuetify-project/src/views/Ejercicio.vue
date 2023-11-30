@@ -11,12 +11,25 @@
             </v-col>
         </v-row>
     </v-container>
-    <v-container>
-        <component :key="key" :is="componentSelecionat" v-if="componentSelecionat" :preguntaSeleccionada="preguntaSeleccionada" />
-    </v-container>
-    <v-btn :disabled="disabled" @click="comprobar(selectedButton)" elevation="6"
-        border="lg opacity-12" rounded="lg" class="blue-btn"
-        :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Enviar respuesta</v-btn>
+    <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto px-4" elevation="4" height="auto"
+        rounded max-width="800" width="100%">
+        <v-container>
+            <v-row>
+                <v-col>
+                    <component :key="key" :is="componentSelecionat" v-if="componentSelecionat"
+                        :preguntaSeleccionada="preguntaSeleccionada" />
+                </v-col>
+            </v-row>
+            <v-row>
+                <v-col><v-btn :disabled="disabled" @click="comprobar(selectedButton)" elevation="6" border="lg opacity-12"
+                        rounded="lg" class="blue-btn mb-10"
+                        :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Enviar
+                        respuesta</v-btn>
+                    <v-icon :color="coloricono" :icon="icono" size="x-large"></v-icon>
+                </v-col>
+            </v-row>
+        </v-container>
+    </v-sheet>
 </template>
   
     
@@ -46,13 +59,15 @@ export default {
         Formato6
     },
     data() {
-       
+
         return {
             key: 0,
             selectedButton: null,
             componentSelecionat: null,
             preguntaSeleccionada: null,
-            respuestaSelecionada:"",
+            respuestaSelecionada: "",
+            icono:'',
+            coloricono:'',
             Ejercicio: {
                 id: 1,
                 nombre: "Ejercicio",
@@ -206,7 +221,8 @@ export default {
         },
         comprobar(idPregunta) {
             comprobarRespuesta({ respuesta: this.respuestaSelecionada }, idPregunta).then(response => {
-                console.log(response);
+                this.icono = response.correct ? 'mdi-check-circle-outline' : 'mdi-close-circle-outline';
+                this.coloricono = response.correct ? 'success' : 'red';
             });
 
         },
@@ -226,7 +242,7 @@ export default {
     },
     computed: {
         disabled() {
-            if (this.respuestaSelecionada=="") {
+            if (this.respuestaSelecionada == "") {
                 return true;
             }
             else {
@@ -241,7 +257,7 @@ export default {
             this.botoncliclado(this.Ejercicio.preguntas[0]);
             this.selectedButton = this.Ejercicio.preguntas[0].id;
         });
-        
+
         store.$subscribe((mutation, state) => {
             console.log(state);
             this.respuestaSelecionada = state.respuesta;
