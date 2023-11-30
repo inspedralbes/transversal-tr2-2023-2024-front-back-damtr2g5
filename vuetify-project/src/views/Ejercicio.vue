@@ -14,6 +14,8 @@
     <v-container>
         <component :is="componentSelecionat" v-if="componentSelecionat" :preguntaSeleccionada="preguntaSeleccionada" />
     </v-container>
+    <v-btn @click="comprobarRespuesta" elevation="6" border="lg opacity-12" rounded="lg" class="blue-btn"
+        :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Enviar respuesta</v-btn>
 </template>
   
     
@@ -194,6 +196,9 @@ export default {
                     this.componentSelecionat = Formato6;
                     break;
             }
+        },
+        comprobarRespuesta(){
+            
         }
     },
 
@@ -209,4 +214,8 @@ export default {
 
 </script>
 
-<style></style>
+<style>
+.blue-btn {
+    background-color: #007bff !important;
+    color: white !important;
+}</style>
