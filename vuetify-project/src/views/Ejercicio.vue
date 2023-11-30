@@ -3,7 +3,8 @@
         <v-row>
             <v-col cols="12" class="py-2">
                 <v-btn-toggle v-model="selectedButton" rounded="0" color="deep-purple-accent-3" group mandatory>
-                    <v-btn :disabled="isButtonDisabled(index)" :class="indexColor(index)" v-for="(boton, index) in Ejercicio.preguntas" :key="boton.id" :value="index"
+                    <v-btn :disabled="isButtonDisabled(index)" :class="indexColor(index)"
+                        v-for="(boton, index) in Ejercicio.preguntas" :key="boton.id" :value="index"
                         @click="botoncliclado(boton)">
                         {{ index + 1 }}
                     </v-btn>
@@ -14,20 +15,28 @@
     <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto px-4" elevation="4" height="auto"
         rounded max-width="800" width="100%">
         <v-container>
-            <v-row>
+            
+            <v-row style="position: relative;" justify="center">
+                <v-overlay v-model="overlay" :scrim="false" contained class="align-center justify-center">
+                    <v-icon :color="coloricono" :icon="icono" style="width: 1em; height: 1em; font-size: 10em;"></v-icon>
+                </v-overlay>
                 <v-col>
-                    <component :isDisabled.sync="disableComponent" :key="key" :is="componentSelecionat" v-if="componentSelecionat"
-                        :preguntaSeleccionada="preguntaSeleccionada" />
+                    <component :isDisabled.sync="disableComponent" :key="key" :is="componentSelecionat"
+                        v-if="componentSelecionat" :preguntaSeleccionada="preguntaSeleccionada"/>
                 </v-col>
             </v-row>
             <v-row>
-                <v-col><v-btn :disabled="disabled" @click="comprobar(Ejercicio.preguntas[selectedButton].id)" elevation="6" border="lg opacity-12"
-                        rounded="lg" class="blue-btn mb-4"
+                <v-col>
+                    <v-btn :disabled="disabled" @click="comprobar(Ejercicio.preguntas[selectedButton].id)" elevation="6"
+                        border="lg opacity-12" rounded="lg" class="blue-btn mb-4"
                         :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Comprobar</v-btn>
-                        <v-btn v-if="indexArray.indexOf(0) === -1" @click="finalizarEjercicio" elevation="6" border="lg opacity-12" rounded="lg" class="mb-10" color="red"
-                        :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Finalizar Ejercicio</v-btn>
-                        
-                    <v-icon :color="coloricono" :icon="icono" size="x-large"></v-icon>
+                    <v-btn v-if="indexArray.indexOf(0) === -1" @click="finalizarEjercicio" elevation="6"
+                        border="lg opacity-12" rounded="lg" class="mb-10" color="red"
+                        :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Finalizar
+                        Ejercicio</v-btn>
+
+
+
                 </v-col>
             </v-row>
         </v-container>
@@ -63,14 +72,15 @@ export default {
     data() {
 
         return {
+            overlay: false,
             indexArray: [],
             key: 0,
             selectedButton: null,
             componentSelecionat: null,
             preguntaSeleccionada: null,
             respuestaSelecionada: "",
-            icono:'',
-            coloricono:'',
+            icono: '',
+            coloricono: '',
             disableComponent: false,
             Ejercicio: {
                 id: 1,
@@ -199,10 +209,10 @@ export default {
 
     methods: {
         finalizarEjercicio() {
-            this.$router.push({ name: 'Home'});
+            this.$router.push({ name: 'Home' });
         },
         isButtonDisabled(index) {
-            console.log("deshabilidado",this.indexArray[index] != 0);
+            console.log("deshabilidado", this.indexArray[index] != 0);
             return this.indexArray[index] != 0;
         },
         indexColor(index) {
@@ -243,6 +253,7 @@ export default {
         },
         comprobar(idPregunta) {
             comprobarRespuesta({ respuesta: this.respuestaSelecionada }, idPregunta).then(response => {
+                this.overlay = true;
                 this.icono = response.correct ? 'mdi-check-circle-outline' : 'mdi-close-circle-outline';
                 this.indexArray[this.selectedButton] = response.correct ? 1 : 2;
                 this.coloricono = response.correct ? 'success' : 'red';
