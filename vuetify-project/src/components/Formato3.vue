@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import { useAppStore } from '@/store/app'
+import { watch, ref } from 'vue'
 export default {
     name: 'Formato3',
     props: {
@@ -21,9 +23,19 @@ export default {
         }
     },
     data() {
+        const appStore = useAppStore()
+        const selectedAnswer = ref('')
+        watch(() => selectedAnswer, () => {
+            if (selectedAnswer.value != '') {
+                appStore.setRespuesta(selectedAnswer.value)
+            }else{
+                appStore.setRespuesta('')
+            }
+        }, { deep: true })
         return {
+            appStore,
             pregunta: {},
-            selectedAnswer: null
+            selectedAnswer
         };
     },
     created() {       

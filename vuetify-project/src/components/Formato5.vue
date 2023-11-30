@@ -37,6 +37,7 @@
 </template>
   
 <script>
+import { useAppStore } from '@/store/app'
 export default {
     name: 'Formato5',
     props: {
@@ -47,6 +48,7 @@ export default {
     },
     data() {
         return {
+            store: useAppStore(),
             pregunta: {                
             },
             
@@ -65,6 +67,11 @@ export default {
             } else {
                 // Agregar la carta al destino (posibles)
                 this.posibles.push(carta);
+            }
+            if (this.respuesta.length === 0) {
+                this.store.setRespuesta('')
+            }else{
+                this.store.setRespuesta(this.respuesta)
             }
         },
     },

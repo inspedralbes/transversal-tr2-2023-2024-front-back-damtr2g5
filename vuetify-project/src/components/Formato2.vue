@@ -17,16 +17,17 @@
             <v-btn-toggle :key="chartKey1">
                 <v-btn v-for="(respuesta, index) in pregunta.muestra" :key="index" class="respuesta-container" outlined
                     stacked rounded @click="recoger(respuesta[1], 'uno')" :color="getButtonColor()"
-                    :disabled="isDisabled(respuesta[1])" :class="{ 'disable-input': disabled }" >
+                    :disabled="isDisabled(respuesta[1])" :class="{ 'disable-input': disabled }">
                     {{ respuesta[1] }}
                 </v-btn>
-            </v-btn-toggle>         
+            </v-btn-toggle>
         </div>
+        {{ this.seleccion[3][0] }}
     </v-sheet>
 </template>
   
 <script>
-
+import { useAppStore } from '@/store/app'
 import { watch, ref } from 'vue'
 export default {
     name: 'Formato2',
@@ -36,25 +37,33 @@ export default {
             required: true
         }
     },
-    data() {        
-
+    data() {
         const chartKey = ref(0)
         const chartKey1 = ref(0)
         const modelo = ref(0)
+        const seleccion = ref([])
+        const appStore = useAppStore()
         const updateChartData = () => {
             chartKey.value += 1
             chartKey1.value += 1
         }
-
         watch(() => modelo, () => {
             updateChartData()
         }, { deep: true })
-        return {            
-            pregunta:{},
-            seleccion: [],
+        watch(() => seleccion, () => {
+            if (seleccion.value[3][0] != '' && seleccion.value[3][1] != '') {
+                appStore.setRespuesta(seleccion.value)
+            }else{
+                appStore.setRespuesta('')
+            }
+        }, { deep: true })
+        return {
+            appStore,
+            pregunta: {},
+            seleccion,
             colors: ['red', '#8ecae6', 'purple', 'yellow'],
             indice1: 0,
-            indiceColors:0,
+            indiceColors: 0,
             puesto1: false,
             puesto2: false,
             disabled: true,
@@ -62,11 +71,9 @@ export default {
             chartKey, chartKey1,
         };
     },
-    created() {        
+    created() {
         this.pregunta = this.preguntaSeleccionada;
         this.reinicio();
-        
-        
     },
     methods: {
         reinicio() {
@@ -110,7 +117,7 @@ export default {
             }
         },
     }
-    
+
 };
 </script>
   
@@ -126,7 +133,5 @@ export default {
 .disable-input:disabled {
     background-color: v-bind(getDisabledColor()) !important;
 }
-
-
 </style>
   

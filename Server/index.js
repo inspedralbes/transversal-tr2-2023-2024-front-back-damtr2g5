@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = 3001;
 const { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection } = require("./mongoDB.js");
+const { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection } = require("./mongoDB.js");
 app.use(bodyParser.json());
 app.get('/', (req, res) => {
   res.send('Hello World!');
