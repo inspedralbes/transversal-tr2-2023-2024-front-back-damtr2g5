@@ -8,3 +8,11 @@
 // @use 'vuetify/settings' with (
 //   $color-pack: false
 // );
+.correcta{
+    color: white !important;
+    background-color: rgb(var(--v-theme-success)) !important;
+}
+.fallada{
+    color: white !important;
+    background-color: #F44336 !important;
+}

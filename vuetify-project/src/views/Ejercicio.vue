@@ -3,7 +3,7 @@
         <v-row>
             <v-col cols="12" class="py-2">
                 <v-btn-toggle v-model="selectedButton" rounded="0" color="deep-purple-accent-3" group mandatory>
-                    <v-btn v-for="(boton, index) in Ejercicio.preguntas" :key="boton.id" :value="boton.id"
+                    <v-btn :disabled="isButtonDisabled(index)" :class="indexColor(index)" v-for="(boton, index) in Ejercicio.preguntas" :key="boton.id" :value="index"
                         @click="botoncliclado(boton)">
                         {{ index + 1 }}
                     </v-btn>
@@ -21,7 +21,7 @@
                 </v-col>
             </v-row>
             <v-row>
-                <v-col><v-btn :disabled="disabled" @click="comprobar(selectedButton)" elevation="6" border="lg opacity-12"
+                <v-col><v-btn :disabled="disabled" @click="comprobar(Ejercicio.preguntas[selectedButton].id)" elevation="6" border="lg opacity-12"
                         rounded="lg" class="blue-btn mb-10"
                         :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Comprobar</v-btn>
                     <v-icon :color="coloricono" :icon="icono" size="x-large"></v-icon>
@@ -60,6 +60,7 @@ export default {
     data() {
 
         return {
+            indexArray: [],
             key: 0,
             selectedButton: null,
             componentSelecionat: null,
@@ -194,6 +195,19 @@ export default {
     },
 
     methods: {
+        isButtonDisabled(index) {
+            console.log("deshabilidado",this.indexArray[index] != 0);
+            return this.indexArray[index] != 0;
+        },
+        indexColor(index) {
+            if (this.indexArray[index] == 1) {
+                return 'correcta';
+            } else if (this.indexArray[index] == 2) {
+                return 'fallada';
+            } else {
+                return 'deep-purple-accent-3';
+            }
+        },
         botoncliclado(pregunta) {
             this.preguntaSeleccionada = pregunta; // Guardar la pregunta seleccionada
             store.setRespuesta("");
@@ -224,6 +238,7 @@ export default {
         comprobar(idPregunta) {
             comprobarRespuesta({ respuesta: this.respuestaSelecionada }, idPregunta).then(response => {
                 this.icono = response.correct ? 'mdi-check-circle-outline' : 'mdi-close-circle-outline';
+                this.indexArray[this.selectedButton] = response.correct ? 1 : 2;
                 this.coloricono = response.correct ? 'success' : 'red';
                 this.respuestaSelecionada = "";
                 this.disableComponent = true;
@@ -259,7 +274,9 @@ export default {
         getEjercicios().then(response => {
             this.Ejercicio = response;
             this.botoncliclado(this.Ejercicio.preguntas[0]);
-            this.selectedButton = this.Ejercicio.preguntas[0].id;
+            this.selectedButton = 0;
+            this.indexArray = Array.from(Array(this.Ejercicio.preguntas.length));
+            this.indexArray = this.indexArray.map(() => 0);
         });
 
         store.$subscribe((mutation, state) => {
