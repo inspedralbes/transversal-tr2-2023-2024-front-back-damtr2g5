@@ -16,16 +16,20 @@
 </template>
 
 <script>
+import { useAppStore } from '../../store/app'
 export default {
     name: 'Formato1',
+    setup() {
+        const appStore = useAppStore()
+        return {
+            appStore
+        };
+    },
     data() {
         return {
             pregunta: {
-                "_id": {
-                    "$oid": "6565d7516f122bd6cf8e9f89"
-                },
                 "id": 5,
-                "pregunta": "Calcula el área de un triángulo con base de 6 unidades y altura de 8 unidades",
+                "pregunta": "Calcula el área de un triángulo con base de $$$ unidades y altura de &&& unidades",
                 "respuestas": [
                     {
                         "respuesta": "24 unidades cuadradas"
@@ -40,7 +44,6 @@ export default {
                         "respuesta": "12 unidades cuadradas"
                     }
                 ],
-                "correcta": "24 unidades cuadradas",
                 "idTema": "5",
                 "formato": "Seleccionar"
             },

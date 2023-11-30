@@ -16,8 +16,7 @@
   </v-item-group>
   <v-container>
     <v-row>
-      <v-col cols="10">
-        
+      <v-col cols="10">        
       </v-col>
       <v-col cols="2" class="d-flex flex-row-reverse mb-6">
         <v-btn v-if="codigo == ''" color="primary" @click="dialog = true">Unirte a una clase</v-btn>
@@ -51,7 +50,6 @@ export default {
     const opciones=[
       'Entrenamiento',
       'Batalla',
-      'Creacion'
     ]
     return {
       dialog: false,
