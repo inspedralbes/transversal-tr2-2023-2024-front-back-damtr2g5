@@ -15,9 +15,15 @@
 import ScatterLineChart from './scatterLineChart.vue';
 
 export default {
-    name: 'Formato1',
+    name: 'Formato6',
     components: {
         ScatterLineChart
+    },
+    props: {
+        preguntaSeleccionada: {
+            type: Object,
+            required: true
+        }
     },
     data() {
         return {
@@ -32,7 +38,11 @@ export default {
             selectedAnswer: null
         };
     },
-    // Your component's logic goes here
+    created() {    
+  
+        this.pregunta = this.preguntaSeleccionada;      
+    },
+   
 };
 </script>
 

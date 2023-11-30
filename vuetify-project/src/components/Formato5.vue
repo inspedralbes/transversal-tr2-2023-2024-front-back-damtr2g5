@@ -38,26 +38,18 @@
   
 <script>
 export default {
-    name: 'Formato1',
+    name: 'Formato5',
+    props: {
+        preguntaSeleccionada: {
+            type: Object,
+            required: true
+        }
+    },
     data() {
         return {
-            pregunta: {
-                "_id": {
-                    "$oid": "6565b1a56f122bd6cf8e9f15"
-                },
-                "id": 11,
-                "pregunta": "Ordena los siguientes valores para obtener un resultado de 18.",
-                "componentes": [
-                    "20",
-                    "-",
-                    "4",
-                    "/",
-                    "2"
-                ],
-                "correcta": "20-4/2",
-                "idTema": 2,
-                "formato": "Ordenar valores"
+            pregunta: {                
             },
+            
             respuesta: [],
             posibles: [],
         };
@@ -76,9 +68,12 @@ export default {
             }
         },
     },
-    created() {
+    created() {     
+        
+  
         // Llenar los conjuntos de cartas con valores predefinidos
         this.respuesta = [];
+        this.pregunta = this.preguntaSeleccionada;
         this.posibles = this.pregunta.componentes.slice(); // Copiar los valores para no modificar los originales
     },
 };
