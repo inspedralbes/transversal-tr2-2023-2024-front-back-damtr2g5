@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import { useAppStore } from '@/store/app'
 import { Line } from 'vue-chartjs';
 import {
   Chart as ChartJS,
@@ -31,6 +32,7 @@ export default {
   },
   data() {
     return {
+      store: useAppStore(),
       points: [],
       options: {
         aspectRatio: 1,
@@ -115,15 +117,18 @@ export default {
       const existingPointIndex = this.findPointIndex(this.points, xValue, yValue);
       if (existingPointIndex !== -1) {
         this.points.splice(existingPointIndex, 1);
+        this.store.setRespuesta('');
         //this.animateLine(chartInstance, this.lineData);
       } else {
         if (this.points.length < 2) {
-          console.log(this.points);
           this.points.push({ x: xValue, y: yValue });
-          console.log(this.points);
+          if (this.points.length === 2) {
+            this.store.setRespuesta(this.points);
+          }
           //this.animateLine(chartInstance, this.lineData);
         }
       }
+      console.log("store",this.store.$state.respuesta);
     },
     findPointIndex(points, x, y) {
       for (let i = 0; i < points.length; i++) {

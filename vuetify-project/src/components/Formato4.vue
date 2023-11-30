@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import { useAppStore } from '@/store/app'
+import {watch, ref} from 'vue'
 export default {
     name: 'Formato4',
     props: {
@@ -28,14 +30,24 @@ export default {
         }
     },
     data() {
+        const store = useAppStore();
+        const model = ref(null);
+        watch(model, (val) => {
+            if (val !== undefined) {
+                store.setRespuesta(this.preguntaSeleccionada.respuestas[val].respuesta);
+            }else{
+                store.setRespuesta('');
+            }
+        });
         return {
+            store,
             pregunta: {               
             },
             selectedAnswer: null,
             estilo: {
                 "border": '2px solid red',
             },
-            model: null,
+            model,
         };
     },
     methods: {
