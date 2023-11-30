@@ -22,8 +22,11 @@
             </v-row>
             <v-row>
                 <v-col><v-btn :disabled="disabled" @click="comprobar(Ejercicio.preguntas[selectedButton].id)" elevation="6" border="lg opacity-12"
-                        rounded="lg" class="blue-btn mb-10"
+                        rounded="lg" class="blue-btn mb-4"
                         :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Comprobar</v-btn>
+                        <v-btn v-if="indexArray.indexOf(0) === -1" @click="finalizarEjercicio" elevation="6" border="lg opacity-12" rounded="lg" class="mb-10" color="red"
+                        :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Finalizar Ejercicio</v-btn>
+                        
                     <v-icon :color="coloricono" :icon="icono" size="x-large"></v-icon>
                 </v-col>
             </v-row>
@@ -195,6 +198,9 @@ export default {
     },
 
     methods: {
+        finalizarEjercicio() {
+            this.$router.push({ name: 'Home'});
+        },
         isButtonDisabled(index) {
             console.log("deshabilidado",this.indexArray[index] != 0);
             return this.indexArray[index] != 0;
