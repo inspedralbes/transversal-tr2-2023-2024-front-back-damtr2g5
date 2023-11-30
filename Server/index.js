@@ -10,14 +10,13 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 app.get('/getEjercicio',(req,res) => {
-    getDocument(2).then((document) => {
+    getDocument(1).then((document) => {
         getPreguntas(document.preguntas).then((preguntas) => {
             var ejercicio = {
                 "nombre": document.nombre,
                 "preguntas": []
             }
             for(var i = 0; i < preguntas.length; i++){
-                console.log(preguntas[i]);
                 ejercicio.preguntas.push(preguntas[i]);
             }
             res.json(ejercicio);
@@ -93,8 +92,11 @@ app.post('/subirResultado', async (req,res) => {
 //Comprobar si pregunta respondida es correcta o no
 app.post('/comprobarPregunta/:id', async (req, res) => {
     try {
+        console.log(req.body.respuesta);
+        console.log(req.params.id);
         respuesta = req.body.respuesta;       
-        preguntas = await getPregunta(req.params.id);
+        preguntas = await getPregunta((parseInt(req.params.id)));
+        console.log("Preguntas: ",preguntas);
         preguntas.forEach((pregunta) => {
             
         

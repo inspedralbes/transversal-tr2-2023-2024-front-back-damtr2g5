@@ -14,7 +14,7 @@
     <v-container>
         <component :key="key" :is="componentSelecionat" v-if="componentSelecionat" :preguntaSeleccionada="preguntaSeleccionada" />
     </v-container>
-    <v-btn :disabled="disabled" @click="comprobar(Ejercicio.preguntas[selectedButton - 1].id)" elevation="6"
+    <v-btn :disabled="disabled" @click="comprobar(selectedButton)" elevation="6"
         border="lg opacity-12" rounded="lg" class="blue-btn"
         :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Enviar respuesta</v-btn>
 </template>
@@ -238,8 +238,10 @@ export default {
     created() {
         getEjercicios().then(response => {
             this.Ejercicio = response;
+            this.botoncliclado(this.Ejercicio.preguntas[0]);
+            this.selectedButton = this.Ejercicio.preguntas[0].id;
         });
-
+        
         store.$subscribe((mutation, state) => {
             console.log(state);
             this.respuestaSelecionada = state.respuesta;

@@ -7,16 +7,16 @@ export async function getEjercicios() {
 
 
 export async function comprobarRespuesta(respuesta,id) {
-  console.log("respuesta"+respuesta+"id"+id);
-  const response = await fetch(`http://localhost:3001//comprobarPregunta/${id}`,
+  const response = await fetch(`http://localhost:3001/comprobarPregunta/${id}`,
     {
       method: 'POST', headers: {
         'Content-Type': 'application/json',
       },
-      body: respuesta,
+      body: JSON.stringify(respuesta),
       mode: "cors"
     },);
-    const correcto = await response.json();    
+    const correcto = await response.json();
+    console.log("CORRECTA",correcto);    
     return correcto;
 
 }
