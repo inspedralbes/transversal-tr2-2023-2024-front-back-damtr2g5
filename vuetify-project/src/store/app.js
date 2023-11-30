@@ -1,6 +1,5 @@
 // Utilities
 import { defineStore } from 'pinia'
-
 export const useAppStore = defineStore('app', {
     state: () => ({
         loginInfo: {
@@ -15,7 +14,7 @@ export const useAppStore = defineStore('app', {
             experience: '',
             image: ''
         },
-        respuesta: ''
+        respuesta: {}
     }),
     actions: {
         setLoginInfo({ id, name,contrasena, surname, email, rank, lifetotal, experience, image }) {

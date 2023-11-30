@@ -1,6 +1,6 @@
 <template>
     <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto px-4" elevation="4" height="250"
-        rounded max-width="800" width="100%">
+        rounded max-width="1000" width="100%">
         <div>
             <div class="text-h5 font-weight-medium mb-2">
                 {{ pregunta.pregunta }}
@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import { useAppStore } from '../../store/app'
 export default {
     name: 'Formato1',
     props: {
@@ -24,18 +25,33 @@ export default {
             required: true
         }
     },
+    setup() {
+        const appStore = useAppStore()
+        return {
+            appStore
+        };
+    },
     data() {
         return {
             pregunta: {
-                pregunta: '¿Cuál es el resultado de 5 + 3 * 2?',
-                respuestas: [
-                    { respuesta: '11', correcta: false },
-                    { respuesta: '16', correcta: true },
-                    { respuesta: '13', correcta: false },
-                    { respuesta: '10', correcta: false }
+                "id": 5,
+                "pregunta": "Calcula el área de un triángulo con base de $$$ unidades y altura de &&& unidades",
+                "respuestas": [
+                    {
+                        "respuesta": "24 unidades cuadradas"
+                    },
+                    {
+                        "respuesta": "30 unidades cuadradas"
+                    },
+                    {
+                        "respuesta": "40 unidades cuadradas"
+                    },
+                    {
+                        "respuesta": "12 unidades cuadradas"
+                    }
                 ],
-                idTema: 1,
-                formato: 'Seleccionar'
+                "idTema": "5",
+                "formato": "Seleccionar"
             },
             selectedAnswer: null
         };
@@ -49,3 +65,4 @@ export default {
 </script>
 
 <style scoped></style>
+
