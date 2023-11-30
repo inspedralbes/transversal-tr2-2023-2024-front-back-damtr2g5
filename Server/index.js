@@ -2,14 +2,15 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const port = 3001;
-const { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection } = require("./mongoDB.js");
+const cors = require('cors');
 const { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection } = require("./mongoDB.js");
 app.use(bodyParser.json());
+app.use(cors());
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 app.get('/getEjercicio',(req,res) => {
-    getDocument(1).then((document) => {
+    getDocument(2).then((document) => {
         getPreguntas(document.preguntas).then((preguntas) => {
             var ejercicio = {
                 "nombre": document.nombre,

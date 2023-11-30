@@ -12,9 +12,9 @@
         </v-row>
     </v-container>
     <v-container>
-        <component :is="componentSelecionat" v-if="componentSelecionat" :preguntaSeleccionada="preguntaSeleccionada" />
+        <component :key="key" :is="componentSelecionat" v-if="componentSelecionat" :preguntaSeleccionada="preguntaSeleccionada" />
     </v-container>
-    <v-btn :disabled="disabled" @click="comprobar(Ejercicio.preguntas[selectedButton - 1].id)" :key="key" elevation="6"
+    <v-btn :disabled="disabled" @click="comprobar(Ejercicio.preguntas[selectedButton - 1].id)" elevation="6"
         border="lg opacity-12" rounded="lg" class="blue-btn"
         :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Enviar respuesta</v-btn>
 </template>
@@ -182,7 +182,7 @@ export default {
         botoncliclado(pregunta) {
             this.preguntaSeleccionada = pregunta; // Guardar la pregunta seleccionada
             store.setRespuesta("");
-
+            this.key += 1;
             switch (pregunta.formato) {
                 case "Seleccionar":
                     this.componentSelecionat = Formato1;
@@ -205,7 +205,7 @@ export default {
             }
         },
         comprobar(idPregunta) {
-            comprobarRespuesta({ respuesa: this.respuestaSelecionada }, idPregunta).then(response => {
+            comprobarRespuesta({ respuesta: this.respuestaSelecionada }, idPregunta).then(response => {
                 console.log(response);
             });
 
@@ -236,9 +236,9 @@ export default {
     },
 
     created() {
-        /*getEjercicios().then(response => {
+        getEjercicios().then(response => {
             this.Ejercicio = response;
-        });*/
+        });
 
         store.$subscribe((mutation, state) => {
             console.log(state);
