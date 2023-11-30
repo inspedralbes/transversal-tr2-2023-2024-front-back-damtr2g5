@@ -14,7 +14,7 @@
     <v-container>
         <component :is="componentSelecionat" v-if="componentSelecionat" :preguntaSeleccionada="preguntaSeleccionada" />
     </v-container>
-    <v-btn @click="comprobarRespuesta" elevation="6" border="lg opacity-12" rounded="lg" class="blue-btn"
+    <v-btn :disabled="respuestanula" @click="comprobarRespuesta" elevation="6" border="lg opacity-12" rounded="lg" class="blue-btn"
         :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Enviar respuesta</v-btn>
 </template>
   
@@ -22,6 +22,8 @@
 <script>
 
 import { getEjercicios } from '../communicationsManager';
+import { useAppStore } from '../store/app'
+const store = useAppStore();
 
 import Formato1 from '../components/Formato1.vue';
 import Formato2 from '../components/Formato2.vue';
@@ -47,6 +49,7 @@ export default {
             selectedButton: null,
             componentSelecionat: null,
             preguntaSeleccionada: null,
+            respuestaSelecionada:null,            
             Ejercicio: {
                 id: 1,
                 nombre: "Ejercicio",
@@ -199,6 +202,15 @@ export default {
         },
         comprobarRespuesta(){
             
+        },
+        respuestanula(){
+            if(this.respuestaSelecionada==null){
+                return true;
+            }
+            else{
+                return false;
+            }
+            
         }
     },
 
@@ -206,6 +218,13 @@ export default {
         /*getEjercicios().then(response => {
             this.Ejercicio = response;
         });*/
+
+        store.$subscribe((mutation, state) => {
+            console.log(state);
+            //this.votos[0] = state.infoVotos.votos           
+            this.respuestaSelecionada=state.respuesta;
+            this.key++
+        })
         //Llamar primero formato de la primera pregunta que va a venir
     },
 

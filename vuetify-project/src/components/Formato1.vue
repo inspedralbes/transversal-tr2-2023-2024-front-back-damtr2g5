@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { useAppStore } from '../../store/app'
+
 export default {
     name: 'Formato1',
     props: {
@@ -24,13 +24,7 @@ export default {
             type: Object,
             required: true
         }
-    },
-    setup() {
-        const appStore = useAppStore()
-        return {
-            appStore
-        };
-    },
+    },   
     data() {
         return {
             pregunta: {
