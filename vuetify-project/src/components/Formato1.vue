@@ -3,7 +3,7 @@
             <div class="text-h5 font-weight-medium mb-2 ">
                 {{ pregunta.pregunta }}
             </div>
-            <v-btn-toggle v-model="selectedAnswer" mandatory color="rgb(162, 210, 255)">
+            <v-btn-toggle :disabled="isDisabled" v-model="selectedAnswer" mandatory color="rgb(162, 210, 255)">
                 <v-btn v-for="(respuesta, index) in pregunta.respuestas" :key="index" :value="respuesta.respuesta" outlined
                     rounded @click='guardado()'>
                     {{ respuesta.respuesta }}
@@ -21,8 +21,12 @@ export default {
         preguntaSeleccionada: {
             type: Object,
             required: true
+        },
+        isDisabled: {
+            type: Boolean,
+            required: true
         }
-    },   
+    },
     data() {
         const selectedAnswer =''
         return {

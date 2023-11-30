@@ -3,7 +3,7 @@
             <div class="text-h5 font-weight-medium mb-2">
                 {{ pregunta.pregunta }}
             </div>
-            <ScatterLineChart />
+            <ScatterLineChart :isClickDisabled.sync="isDisabled" />
         </v-container>
 </template>
 
@@ -18,6 +18,10 @@ export default {
     props: {
         preguntaSeleccionada: {
             type: Object,
+            required: true
+        },
+        isDisabled: {
+            type: Boolean,
             required: true
         }
     },

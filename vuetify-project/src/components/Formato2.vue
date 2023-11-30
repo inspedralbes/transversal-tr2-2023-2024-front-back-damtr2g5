@@ -5,22 +5,21 @@
                 <v-btn icon="mdi-cached" size="x-small" @click="reinicio"></v-btn>
             </div>
 
-            <v-btn-toggle :key="chartKey">
+            <v-btn-toggle :disabled="isDisabled" :key="chartKey">
                 <v-btn v-for="(respuesta, index) in pregunta.muestra" :key="index" class="respuesta-container" outlined
                     rounded @click="recoger(respuesta[0], 'cero')" :color="getButtonColor()"
-                    :disabled="isDisabled(respuesta[0])" :class="{ 'disable-input': disabled }">
+                    :disabled="isDisabledButton(respuesta[0])" :class="{ 'disable-input': disabled }">
                     {{ respuesta[0] }}
                 </v-btn>
             </v-btn-toggle>
-            <v-btn-toggle :key="chartKey1">
+            <v-btn-toggle :disabled="isDisabled" :key="chartKey1">
                 <v-btn v-for="(respuesta, index) in pregunta.muestra" :key="index" class="respuesta-container" outlined
                     stacked rounded @click="recoger(respuesta[1], 'uno')" :color="getButtonColor()"
-                    :disabled="isDisabled(respuesta[1])" :class="{ 'disable-input': disabled }">
+                    :disabled="isDisabledButton(respuesta[1])" :class="{ 'disable-input': disabled }">
                     {{ respuesta[1] }}
                 </v-btn>
             </v-btn-toggle>
         </div>
-        {{ this.seleccion[3][0] }}
 </template>
   
 <script>
@@ -31,6 +30,10 @@ export default {
     props: {
         preguntaSeleccionada: {
             type: Object,
+            required: true
+        },
+        isDisabled: {
+            type: Boolean,
             required: true
         }
     },
@@ -106,7 +109,7 @@ export default {
                 }
             }
         },
-        isDisabled(index) {
+        isDisabledButton(index) {
             for (let i = 0; i < this.seleccion.length; i++) {
                 if (this.seleccion[i].includes(index)) {
                     return true

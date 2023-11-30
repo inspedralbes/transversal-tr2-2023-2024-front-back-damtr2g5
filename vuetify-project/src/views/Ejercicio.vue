@@ -16,15 +16,14 @@
         <v-container>
             <v-row>
                 <v-col>
-                    <component :key="key" :is="componentSelecionat" v-if="componentSelecionat"
+                    <component :isDisabled.sync="disableComponent" :key="key" :is="componentSelecionat" v-if="componentSelecionat"
                         :preguntaSeleccionada="preguntaSeleccionada" />
                 </v-col>
             </v-row>
             <v-row>
                 <v-col><v-btn :disabled="disabled" @click="comprobar(selectedButton)" elevation="6" border="lg opacity-12"
                         rounded="lg" class="blue-btn mb-10"
-                        :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Enviar
-                        respuesta</v-btn>
+                        :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Comprobar</v-btn>
                     <v-icon :color="coloricono" :icon="icono" size="x-large"></v-icon>
                 </v-col>
             </v-row>
@@ -68,6 +67,7 @@ export default {
             respuestaSelecionada: "",
             icono:'',
             coloricono:'',
+            disableComponent: false,
             Ejercicio: {
                 id: 1,
                 nombre: "Ejercicio",
@@ -197,6 +197,8 @@ export default {
         botoncliclado(pregunta) {
             this.preguntaSeleccionada = pregunta; // Guardar la pregunta seleccionada
             store.setRespuesta("");
+            this.icono = '';
+            this.disableComponent = false;
             this.key += 1;
             switch (pregunta.formato) {
                 case "Seleccionar":
@@ -223,6 +225,8 @@ export default {
             comprobarRespuesta({ respuesta: this.respuestaSelecionada }, idPregunta).then(response => {
                 this.icono = response.correct ? 'mdi-check-circle-outline' : 'mdi-close-circle-outline';
                 this.coloricono = response.correct ? 'success' : 'red';
+                this.respuestaSelecionada = "";
+                this.disableComponent = true;
             });
 
         },

@@ -6,7 +6,7 @@
             <v-container>
                 <v-row>
                     <v-col v-for="(valor, i) in respuesta" :key="i" cols="auto">
-                        <v-card v-if="valor" class="mx-auto carta" width="60" height="60" color="#ffc8dd"
+                        <v-card :disabled="isDisabled" v-if="valor" class="mx-auto carta" width="60" height="60" color="#ffc8dd"
                             @click="moverCarta(i, 'respuesta', 'posibles')">
                             <v-card-item>
                                 <v-card-title>{{ valor }}</v-card-title>
@@ -21,7 +21,7 @@
             <v-container>
                 <v-row class="justify-center">
                     <v-col v-for="(valor, i) in posibles" :key="i" cols="auto">
-                        <v-card class="mx-auto" width="60" height="60" color="#219ebc"
+                        <v-card :disabled="isDisabled" class="mx-auto" width="60" height="60" color="#219ebc"
                             @click="moverCarta(i, 'posibles', 'respuesta')">
                             <v-card-item>
                                 <v-card-title>{{ valor }}</v-card-title>
@@ -40,6 +40,10 @@ export default {
     props: {
         preguntaSeleccionada: {
             type: Object,
+            required: true
+        },
+        isDisabled: {
+            type: Boolean,
             required: true
         }
     },

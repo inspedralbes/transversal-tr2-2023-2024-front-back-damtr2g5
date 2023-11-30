@@ -30,6 +30,12 @@ export default {
   components: {
     Line
   },
+  props: {
+    isClickDisabled: {
+            type: Boolean,
+            required: true
+        }
+  },
   data() {
     return {
       store: useAppStore(),
@@ -110,7 +116,9 @@ export default {
   },
   methods: {
     handleChartClick(event) {
-
+      if (this.isClickDisabled) {
+        return;
+      }
       const chartInstance = this.$refs.line.chart;
       const xValue = Math.round(chartInstance.scales.x.getValueForPixel(event.offsetX));
       const yValue = Math.round(chartInstance.scales.y.getValueForPixel(event.offsetY));

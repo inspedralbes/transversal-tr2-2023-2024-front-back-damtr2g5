@@ -3,7 +3,7 @@
             <div class="text-h5 font-weight-medium mb-2">
                 {{ pregunta.pregunta }}
             </div>
-            <v-text-field v-model="selectedAnswer" placeholder="Escribe la respuesta aquí" variant="outlined"
+            <v-text-field :disabled="isDisabled" v-model="selectedAnswer" placeholder="Escribe la respuesta aquí" variant="outlined"
                 rounded></v-text-field>
         </div>
 </template>
@@ -16,6 +16,10 @@ export default {
     props: {
         preguntaSeleccionada: {
             type: Object,
+            required: true
+        },
+        isDisabled: {
+            type: Boolean,
             required: true
         }
     },
