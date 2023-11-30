@@ -3,7 +3,7 @@
         <v-row>
             <v-col cols="12" class="py-2">
                 <v-btn-toggle v-model="selectedButton" rounded="0" color="deep-purple-accent-3" group mandatory>
-                    <v-btn v-for="(boton, index) in Ejercicio.preguntas" :key="boton.id" :value="boton.id"
+                    <v-btn :disabled="respondida" v-for="(boton, index) in Ejercicio.preguntas" :key="boton.id" :value="boton.id"
                         @click="botoncliclado(boton)">
                         {{ index + 1 }}
                     </v-btn>
@@ -14,7 +14,7 @@
     <v-container>
         <component :is="componentSelecionat" v-if="componentSelecionat" :preguntaSeleccionada="preguntaSeleccionada" />
     </v-container>
-    <v-btn :disabled="respuestanula" @click="comprobar" elevation="6" border="lg opacity-12" rounded="lg" class="blue-btn"
+    <v-btn :disabled="respuestanula" @click="comprobar(Ejercicio.preguntas[selectedButton-1].id)" elevation="6" border="lg opacity-12" rounded="lg" class="blue-btn"
         :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Enviar respuesta</v-btn>
 </template>
   
@@ -200,7 +200,10 @@ export default {
                     break;
             }
         },
-        comprobar(){
+        comprobar(idPregunta) {
+            comprobarRespuesta({respuesa:this.respuestaSelecionada},idPregunta).then(response => {
+                console.log(response);                
+            });
             
         },
         respuestanula(){
@@ -210,6 +213,9 @@ export default {
             else{
                 return false;
             }
+            
+        },
+        respondida(){
             
         }
     },
