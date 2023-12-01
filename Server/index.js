@@ -188,7 +188,7 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
         } else {
             res.json({ "correct": false }); // Handle default case
         }
-    });
+    }});
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
