@@ -187,8 +187,9 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
                     break;
 
                 case "Respuesta":
+                    respuesta = respuesta.replace(/\s/g, "").toLowerCase();
                     if (pregunta.correcta.includes(respuesta)) {
-                        res.json({ "correct": true });
+                        res.json({ "correct": true });  
                     } else {
                         res.json({ "correct": false });
                     }
