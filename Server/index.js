@@ -18,10 +18,29 @@ app.get('/getEjercicio',(req,res) => {
                 "preguntas": []
             }
             for(var i = 0; i < preguntas.length; i++){
+                console.log(i,preguntas[i]);
+
+                if (preguntas[i].muestra) {
+                    shuffleArray(preguntas[i].muestra);
+                }
+                if (preguntas[i].componentes) {
+                    shuffleArray(preguntas[i].componentes);
+                }
+                if (preguntas[i].respuestas) {
+                    shuffleArray(preguntas[i].respuestas);
+                }
+
                 ejercicio.preguntas.push(preguntas[i]);
             }
             res.json(ejercicio);
         });
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
         
     });
     
@@ -99,55 +118,75 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
         preguntas = await getPregunta((parseInt(req.params.id)));
         console.log("Preguntas: ",preguntas);
         preguntas.forEach((pregunta) => {
-            
-        
-        console.log("Formato recibido: ",pregunta.formato);
+            console.log("Formato recibido: ", pregunta.formato);
 
-        if (pregunta.formato === "Seleccionar" || pregunta.formato === "Imagen" || pregunta.formato === "Ordenar valores") {
-            if (respuesta === pregunta.correcta) {
-                console.log("Selección correcta")
-                res.json({ "correct": true });
-            } else {
-                console.log("Selección incorrecta")
-                res.json({ "correct": false });
-            }
-        } else if (pregunta.formato === "Respuesta") {
-            if (pregunta.correcta.includes(respuesta)) {
-                res.json({ "correct": true });
-            } else {
-                res.json({ "correct": false });
-            }
-        } else if (pregunta.formato === "Grafica") {
-            respuesta = comprobarRectaLineal(respuesta[0], respuesta[1]);
-            console.log("Respuesta: ",respuesta);
-            console.log("Correcta: ",pregunta.correcta);
-            if (respuesta.tipo === pregunta.correcta.tipo) {
-                console.log("Tipo correcto");
-                if (respuesta.tipo === "horizontal" && respuesta.y === pregunta.correcta.y) {
-                    res.json({ "correct": true });
-                } else if (respuesta.tipo === "vertical" && respuesta.x === pregunta.correcta.x) {
-                    res.json({ "correct": true });
-                } else if (respuesta.tipo === "lineal" && respuesta.m === pregunta.correcta.m && respuesta.b === pregunta.correcta.b) {
-                    res.json({ "correct": true });
-                } else {
-                    res.json({ "correct": false });
-                }
-            } else {
-                res.json({ "correct": false });
-            }
-        } else if (pregunta.formato === "Unir valores") {
-            const respuestaString = respuesta.map(arr => arr.join(',')).sort().join(';');
-            const correctaString = pregunta.correcta.map(arr => arr.join(',')).sort().join(';');
+            switch (pregunta.formato) {
+                case "Seleccionar":
+                case "Imagen":
+                    if (respuesta === pregunta.correcta) {
+                        console.log("Selección correcta");
+                        res.json({ "correct": true });
+                    } else {
+                        console.log("Selección incorrecta");
+                        res.json({ "correct": false });
+                    }
+                    break;
+                case "Ordenar valores":
+                    console.log("Respuesta: ", respuesta);
+                    console.log("Correcta: ", pregunta.correcta);
+                    if (JSON.stringify(respuesta) === JSON.stringify(pregunta.correcta)) {
+                        console.log("Selección correcta");
+                        res.json({ "correct": true });
+                    } else {
+                        console.log("Selección incorrecta");
+                        res.json({ "correct": false });
+                    }
+                    break;
 
-            if (respuestaString === correctaString) {
-                 res.json({ "correct": true });
-            } else {
-                res.json({ "correct": false });
+                case "Respuesta":
+                    if (pregunta.correcta.includes(respuesta)) {
+                        res.json({ "correct": true });
+                    } else {
+                        res.json({ "correct": false });
+                    }
+                    break;
+
+                case "Grafica":
+                    respuesta = comprobarRectaLineal(respuesta[0], respuesta[1]);
+                    console.log("Respuesta: ", respuesta);
+                    console.log("Correcta: ", pregunta.correcta);
+                    if (respuesta.tipo === pregunta.correcta.tipo) {
+                        console.log("Tipo correcto");
+                        if (respuesta.tipo === "horizontal" && respuesta.y === pregunta.correcta.y) {
+                            res.json({ "correct": true });
+                        } else if (respuesta.tipo === "vertical" && respuesta.x === pregunta.correcta.x) {
+                            res.json({ "correct": true });
+                        } else if (respuesta.tipo === "lineal" && respuesta.m === pregunta.correcta.m && respuesta.b === pregunta.correcta.b) {
+                            res.json({ "correct": true });
+                        } else {
+                            res.json({ "correct": false });
+                        }
+                    } else {
+                        res.json({ "correct": false });
+                    }
+                    break;
+
+                case "Unir valores":
+                    const respuestaString = respuesta.map(arr => arr.join(',')).sort().join(';');
+                    const correctaString = pregunta.correcta.map(arr => arr.join(',')).sort().join(';');
+
+                    if (respuestaString === correctaString) {
+                        res.json({ "correct": true });
+                    } else {
+                        res.json({ "correct": false });
+                    }
+                    break;
+
+                default:
+                    res.json({ "correct": false }); // Handle default case
+                    break;
             }
-        } else {
-            res.json({ "correct": false }); // Handle default case
-        }
-    });
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
