@@ -24,7 +24,7 @@ const port = 3001;
 
 
 const { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection } = require("./mongoDB.js");
-const { comprobarRectaLineal } = require("./utils.js");
+const { comprobarRectaLineal, requireLogin, getRemainingExp } = require("./utils.js");
 const { cerrarConexion, conectar, getData, manageData } = require('./mySQL.js');
 const { connect } = require('http2');
 const { Console } = require('console');
@@ -509,24 +509,3 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
             }
 
         });
-
-
-        //.........FUNCIONES..................
-        function requireLogin(req, res, next) {
-            if (req.session.user) {
-                next();
-            } else {
-                res.status(401).send();
-            }
-        }
-
-        //INCOMPLETE
-        function getRemainingExp(id_activity, id_user) {
-            activity = getDocument(id_activity)
-            activityquestions = findRegisteredResult(id_activity, id_user)
-            var exp = 0;
-
-
-
-            return exp
-        }
