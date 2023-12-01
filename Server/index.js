@@ -26,6 +26,24 @@ const port = 3000;
 const { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection } = require("./mongoDB.js");
 const { cerrarConexion, conectar, getData, manageData } = require('./mySQL.js');
 const { connect } = require('http2');
+const { Console } = require('console');
+
+const sessionMiddleware = session({
+    secret: 'mySecretKey',
+    resave: true,
+    name: "mathGame",
+    saveUninitialized: true,
+    cookie: {
+        secure: false,
+        httpOnly: true,
+        domain: "localhost",
+        path: "/",
+        maxAge: 3600000,
+        sameSite: 'lax'
+    }
+});
+
+app.use(sessionMiddleware);
 app.use(bodyParser.json());
 app.use(cookieParser("mySecretKey"));
 app.use(express.json())
@@ -34,6 +52,8 @@ app.use(cors(corsOptions));
 app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
   });
+
+var sessiones = [];
 
 app.get('/getEjercicio',(req,res) => {
     getDocument(2).then((document) => {
@@ -55,17 +75,11 @@ app.get('/getEjercicio',(req,res) => {
     
 });
 
-//idPregunta: 1, respuesta: "1111"
 app.post('/pregunta', async (req,res) => {
     var pregunta  = await getPregunta(req.body.idPregunta);
     res.json(pregunta);
 })
-//Añadir datos de ejercicio respondido a MongoDB
-/*const actividad = {userId: 123 ,testId: 1234 , preguntasRespondidas:[
-    {idPregunta: 1, respuestaCorrecta: true },
-    {idPregunta: 2, respuestaCorrecta: false },
-    // ... más preguntas respondidas
-]};*/
+
 app.post('/subirResultado', async (req,res) => {
     var idPregunta = req.body.preguntasRespondidas;
     var idActividad = req.body.testId
@@ -170,6 +184,7 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
 
 //LOGIN SECTION
 app.get('/getLogin', (req, res) => {
+    
     if (req.session.user?.email) {
         res.json(req.session.user);
     } else {
@@ -177,64 +192,63 @@ app.get('/getLogin', (req, res) => {
         res.json(usuariIndividual);
     }
 });
-app.post('/login', (req, res) => {
-    console.log("Login:id-session", req.session);
+app.post('/login', async (req, res) => {
+    try {
+        console.log("Login:id-session", req.session);
 
-    req.session.user = {};
-    const login = req.body;
-    let usuariIndividual = {};
-    let comprovacio = false;
-    conectar()
-        .then(() => {
-            getData('SELECT * FROM users')
-        })
-    .then(usuaris => {
-        console.log("Query completed. Data retrieved:", usuaris);
-        usuaris.forEach(usuari => {
-            if (usuari.email == login.email) {
-                console.log("Mail trobat");
+        req.session.user = {};
+        const login = req.body;
+        let usuariIndividual = {};
+        let comprovacio = false;
 
-                if (usuari.contrasena != login.contrasena) {
-                    console.log("Usuari o contrasenya incorrectes");
+        conectar()
+            .then(() => {
+                return getData('SELECT * FROM users;');
+            })
+            .then(usuaris => {
+                console.log("Query completed. Data retrieved:", usuaris);
+                for (const usuari of usuaris) {
+                    if (usuari.email == login.email) {
+                        console.log("Mail trobat");
+                        if (usuari.contrasena != login.contrasena) {
+                            console.log("Usuari o contrasenya incorrectes");
+                            usuariIndividual = { email: "" };
+                        } else {
+                            console.log("pwd trobat");
+                            usuariIndividual = {
+                                id: req.session.id,
+                                userId: usuari.id,
+                                name: usuari.nom,
+                                surname: usuari.cognoms,
+                                email: usuari.email,
+                            };
+                            req.session.user = usuariIndividual;
+                            sessiones[req.session.id] = req.session;
+                            comprovacio = true;
+                            console.log(usuariIndividual);
+                            res.json(usuariIndividual);
+                            return; // Exit the loop if user found
+                        }
+                    }
+                }
+
+                if (!comprovacio) {
                     usuariIndividual = { email: "" };
-                } else {
-                    console.log("pwd trobat");
-
-                    usuariIndividual = {
-                        id: req.session.id,
-                        userId: usuari.id,
-                        name: usuari.nom,
-                        surname: usuari.cognoms,
-                        email: usuari.email,
-                    };
-                    req.session.user = usuariIndividual;
-                    sessiones[req.session.id] = req.session;
-                    comprovacio = true;
-                    console.log(usuariIndividual);
                     res.json(usuariIndividual);
                 }
-            } else if (!comprovacio) {
-                console.log("Usuari o contrasenya incorrectes");
-                usuariIndividual = { email: "" };
-            }
-        });
-
-        if (!comprovacio) {
-            res.json(usuariIndividual);
-        }
-    })
-    .then(successMessage => {
-        console.log("Operación completada:", successMessage);
-        cerrarConexion(); // Close the connection after all operations are completed
-        res.status(200).send("Registro exitoso");
-    })
-    .catch(error => {
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                res.status(500).send("Login fallido");
+            })
+            .finally(() => {
+                cerrarConexion(); // Ensure closing the connection
+            });
+    } catch (error) {
         console.error("Error:", error);
-        cerrarConexion(); // Close the connection after all operations are completed
-        res.status(500).send("Registro exitoso");
-    });
-            
-        
+        cerrarConexion(); // Ensure closing the connection in case of an uncaught error
+        res.status(500).send("Login fallido");
+    }
 });
 app.get('/logout', (req, res) => {
     const sessionId = req.session.id;
