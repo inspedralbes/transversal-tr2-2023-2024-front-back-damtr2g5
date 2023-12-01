@@ -6,30 +6,65 @@
                 LOGIN
             </div>
             <form>
-                <v-text-field v-model="username" label="First name"></v-text-field>
+                <v-text-field v-model="email" label="Email"></v-text-field>
 
-                <v-text-field v-model="password" label="Password"></v-text-field>
+                <v-text-field v-model="password" :append-icon="show0 ? 'mdi-eye' : 'mdi-eye-off'"
+                            :type="show0 ? 'text' : 'password'" label="Contrasenya"
+                            @click:append="show0 = !show0"></v-text-field>
 
                 <v-btn @click="guardar()" block class="mt-2">Login</v-btn>
             </form>
-            <p class="mt-3"> Aun no estas registrado? <a href="#" @click.stop.prevent="dialog = true"> Registrarse </a></p>
-            <v-dialog v-model="dialog" max-width="400" persistent>
-                <v-card>
-                    <v-card-title class="text-h5 bg-grey-lighten-3">
-                        Registrarse
+            <p class="mt-3"> Aun no estas registrat? <a href="#" @click.stop.prevent="dialog = true,step=1"> Regist'rat </a></p>
+            <v-dialog v-model="dialog" class="w-50">
+                <v-card class="mx-auto" max-width="800" width="500">
+                    <v-card-title class="text-h6 font-weight-regular justify-space-between">
+                        <span>{{ currentTitle }}</span>
+                        <v-avatar color="primary" size="24" v-text="step"></v-avatar>
                     </v-card-title>
-                    <v-text-field v-model="username" label="Nombre" class="ma-4 mb-0"></v-text-field>
-                    <v-text-field v-model="surname" label="Apellidos" class="ma-4 mt-0 mb-0"></v-text-field>
-                    <v-text-field v-model="password" label="Contraseña" class="ma-4 mt-0 mb-0"></v-text-field>
-                    <v-text-field v-model="email" label="Email" class="ma-4 mb-0 mt-0"></v-text-field>
+
+                    <v-window v-model="step">
+                        <v-window-item :value="1">
+                            <v-card-text>
+                                <v-text-field label="Email" placeholder="ejemplo@ejemplo.com" v-model="emailD"></v-text-field>
+                                <v-row>
+                                    <v-col cols="6">
+                                        <v-text-field label="Nombre" v-model="username"></v-text-field></v-col>
+                                    <v-col cols="6"><v-text-field label="Apellidos"
+                                            v-model="surname"></v-text-field></v-col>
+                                </v-row>
+                                <span class="text-caption text-grey-darken-1">
+                                    Este es el email que usaras para el login
+                                </span>
+
+                            </v-card-text>
+                        </v-window-item>
+
+                        <v-window-item :value="2">
+                            <v-container>
+                                <v-card-text>
+                                    <v-row>
+                                        <v-text-field :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                            :type="show1 ? 'text' : 'password'" label="Contrasenya"
+                            @click:append="show1 = !show1"
+                                            v-model="passwordD"></v-text-field></v-row>
+                                    <v-row>
+                                        <v-text-field :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
+                            :type="show2 ? 'text' : 'password'" label="Contrasenya"
+                            @click:append="show2 = !show2"
+                                            v-model="passwordComprobacion"></v-text-field></v-row>
+                                </v-card-text> </v-container>
+                        </v-window-item>
+                    </v-window>
+
                     <v-divider></v-divider>
+
                     <v-card-actions>
-                        <v-btn variant="text" @click="dialog = false">
-                            Cancelar
+                        <v-btn v-if="step > 1" variant="text" @click="step--">
+                            Back
                         </v-btn>
                         <v-spacer></v-spacer>
-                        <v-btn color="deep-purple" variant="tonal" @click="dialog = false,guardar()">
-                            Aceptar
+                        <v-btn v-if="step < 2" color="primary" variant="flat" @click="step++">
+                            Next
                         </v-btn>
                     </v-card-actions>
                 </v-card>
@@ -49,21 +84,37 @@ export default {
         };
     },
     data() {
+
         return {
             dialog: false,
             username: '',
             password: '',
+            passwordD: '',
+            passwordComprobacion: '',
             surname: '',
             email: '',
+            emailD: '',
+            step: 1,
+            show0:false,
+            show1: false,
+            show2: false,
         };
     },
     methods: {
         guardar() {
             console.log(this.username, this.password);
             this.appStore.setLoginInfo({ name: this.username, contrasena: this.password, surname: this.surname, email: this.email, rank: '', lifetotal: '', experience: '', image: '' })
-            
+
         }
-    }
+    }, computed: {
+        currentTitle() {
+            switch (this.step) {
+                case 1: return 'Sign-up'
+                case 2: return 'Create a password'
+                default: return 'Account created'
+            }
+        },
+    },
 };
 </script>
 
