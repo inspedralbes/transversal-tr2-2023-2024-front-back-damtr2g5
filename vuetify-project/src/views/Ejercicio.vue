@@ -18,7 +18,7 @@
             
             <v-row style="position: relative;" justify="center">
                 <v-overlay v-model="overlay" :scrim="false" contained class="align-center justify-center">
-                    <v-icon :color="coloricono" :icon="icono" style="width: 1em; height: 1em; font-size: 10em;"></v-icon>
+                    <v-icon class="stamp" :color="coloricono" :icon="icono" style="width: 1em; height: 1em; font-size: 10em;"></v-icon>
                 </v-overlay>
                 <v-col>
                     <component :isDisabled.sync="disableComponent" :key="key" :is="componentSelecionat"
@@ -254,7 +254,7 @@ export default {
         comprobar(idPregunta) {
             comprobarRespuesta({ respuesta: this.respuestaSelecionada }, idPregunta).then(response => {
                 this.overlay = true;
-                this.icono = response.correct ? 'mdi-check-circle-outline' : 'mdi-close-circle-outline';
+                this.icono = response.correct ? '$check' : '$close';
                 this.indexArray[this.selectedButton] = response.correct ? 1 : 2;
                 this.coloricono = response.correct ? 'success' : 'red';
                 this.respuestaSelecionada = "";

@@ -8,11 +8,49 @@
 // @use 'vuetify/settings' with (
 //   $color-pack: false
 // );
-.correcta{
+.correcta {
     color: white !important;
     background-color: rgb(var(--v-theme-success)) !important;
 }
-.fallada{
+
+.fallada {
     color: white !important;
     background-color: #F44336 !important;
 }
+
+/*#region AnimacionDeSello*/
+.stamp {
+    height: 100px;
+    width: 100px;
+    border-radius: 5px;
+    position: relative;
+    -webkit-animation-name: pulse;
+    animation-name: pulse;
+    animation-delay: 0.1s;
+    -webkit-animation-delay: 0.1s;
+    -webkit-animation-duration: 0.5s;
+    animation-duration: 0.5s;
+    opacity: 0;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+@-webkit-keyframes pulse {
+    0% {
+        opacity: 0;
+    }
+
+    10% {
+        opacity: .50;
+        transform-origin: 50% 50%;
+        transform: rotate(0deg) scale(3);
+        transition: all .3s cubic-bezier(0.6, 0.04, 0.98, 0.335);
+    }
+
+    100% {
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+    }
+}
+
+/*#endregion*/
