@@ -1,4 +1,4 @@
-export const SERVER_URL = "http://localhost:3501"
+export const SERVER_URL = "http://localhost:3001"
 export async function getEjercicios() {
   const response = await fetch(`${SERVER_URL}/getEjercicio`);
   const ejercicios = await response.json();
