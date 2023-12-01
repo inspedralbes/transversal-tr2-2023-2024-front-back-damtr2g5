@@ -64,7 +64,6 @@ app.get('/getEjercicio', (req, res) => {
                 "preguntas": []
             }
             for (var i = 0; i < preguntas.length; i++) {
-                console.log(i, preguntas[i]);
 
                 if (preguntas[i].muestra) {
                     shuffleArray(preguntas[i].muestra);
@@ -76,8 +75,13 @@ app.get('/getEjercicio', (req, res) => {
                     shuffleArray(preguntas[i].respuestas);
                 }
 
+                // Remove ejercicio.preguntas[i].correcta
+                delete preguntas[i].correcta;
+
                 ejercicio.preguntas.push(preguntas[i]);
             }
+            console.log(ejercicio.preguntas);
+            
             res.json(ejercicio);
         });
 
