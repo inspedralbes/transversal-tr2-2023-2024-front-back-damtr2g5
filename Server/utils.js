@@ -1,4 +1,4 @@
-module.exports = { comprobarRectaLineal };
+module.exports = { comprobarRectaLineal, requireLogin, getRemainingExp };
 function comprobarRectaLineal(punto1, punto2) {
     if (punto1.x === punto2.x) {
         // Recta vertical
@@ -11,4 +11,22 @@ function comprobarRectaLineal(punto1, punto2) {
         var b = punto1.y - m * punto1.x;
         return {"tipo": "lineal", "m": m, "b": b};
     }
+}
+function requireLogin(req, res, next) {
+    if (req.session.user) {
+        next();
+    } else {
+        res.status(401).send();
+    }
+}
+
+//INCOMPLETE
+function getRemainingExp(id_activity, id_user) {
+    activity = getDocument(id_activity)
+    activityquestions = findRegisteredResult(id_activity, id_user)
+    var exp = 0;
+
+
+
+    return exp
 }

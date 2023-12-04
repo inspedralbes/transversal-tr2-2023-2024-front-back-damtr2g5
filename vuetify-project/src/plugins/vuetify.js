@@ -10,6 +10,8 @@ import 'vuetify/styles'
 
 // Composables
 import { createVuetify } from 'vuetify'
+import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
+import { mdiCheckCircleOutline, mdiCloseCircleOutline, mdiCached } from '@mdi/js'
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
@@ -21,6 +23,18 @@ export default createVuetify({
           secondary: '#5CBBF6',
         },
       },
+    },
+  },
+  icons: {
+    defaultSet: 'mdi',
+    aliases: {
+      ...aliases,
+      check: mdiCheckCircleOutline,
+      close: mdiCloseCircleOutline,
+      refresh: mdiCached,
+    },
+    sets: {
+      mdi,
     },
   },
 })

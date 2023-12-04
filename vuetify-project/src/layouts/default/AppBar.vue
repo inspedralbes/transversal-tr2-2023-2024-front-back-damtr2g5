@@ -12,8 +12,7 @@
         <v-card>
           <v-card-text>
             <div class="mx-auto text-center">
-
-              <v-badge :icon="`mdiSvg:${mdiPencil}`" location="bottom end">
+              <v-badge :icon="`${mdiPencil}`" location="bottom end">
                 <v-avatar color="brown">
                   <span class="text-h5">g</span>
                 </v-avatar>

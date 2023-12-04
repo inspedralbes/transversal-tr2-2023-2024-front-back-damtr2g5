@@ -44,6 +44,25 @@ async function findRegisteredResult(id_user, id_activity, id_pregunta) {
         console.log(err.stack);
     }
 }
+async function findRegisteredResult(id_user, id_activity) {
+    try {
+        await client.connect();
+        const db = client.db(dbName);
+        const col = db.collection("result");
+        const resultadoEncontrado = await col.find({},{idUser: id_user, idActivity: id_activity}).toArray(function(err,result) {
+            if (err) throw err;
+            console.log("Resultados encontrados")
+        })
+        if (resultadoEncontrado.length == 0) {
+            return null
+        }
+        else {
+            return resultadoEncontrado
+        }
+    } catch(err) {
+        console.log(err.stack);
+    }
+}
 async function insertInCollection(data, collection){
     try {
         await client.connect();
@@ -92,6 +111,7 @@ async function getPregunta(id) {
         const db = client.db(dbName);
         const col = db.collection("question");
         //Find question from collection
+        
         const question = await col.find({"id":id}).toArray();
         console.log(question)
         return question;
@@ -99,4 +119,3 @@ async function getPregunta(id) {
         console.log(err.stack)
     }
 }
-

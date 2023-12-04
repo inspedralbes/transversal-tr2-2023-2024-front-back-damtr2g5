@@ -30,7 +30,7 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'Ejercicio',        
+        name: 'Login',        
         component: () => import(/* webpackChunkName: "home" */ '@/views/PantallaLogin.vue'),
       },      
     ],   
