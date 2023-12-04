@@ -24,6 +24,16 @@ const routes = [
         component: () => import(/* webpackChunkName: "home" */ '@/views/Ejercicio.vue'),
       },      
     ],   
+  },{
+    path: '/login',  
+    component: () => import('@/layouts/default/Default.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Login',        
+        component: () => import(/* webpackChunkName: "home" */ '@/views/PantallaLogin.vue'),
+      },      
+    ],   
   },
   
 ]

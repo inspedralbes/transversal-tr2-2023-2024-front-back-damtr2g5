@@ -1,8 +1,9 @@
 <template>
   <v-item-group selected-class="bg-primary">
     <v-container>
+      
       <v-row>
-        <v-col v-for="n in opciones" :key="n" cols="12">
+        <v-col v-for="n in opciones" :key="n" cols="4">
           <v-item v-slot="{ isSelected, selectedClass, toggle }">
             <v-card :class="['d-flex align-center super-cool-button', selectedClass]" dark height="200" @click="toggle">
               <div class="text-h3 flex-grow-1 text-center">
@@ -16,7 +17,7 @@
   </v-item-group>
   <v-container>
     <v-row>
-      <v-col cols="10">        
+      <v-col cols="10">
       </v-col>
       <v-col cols="2" class="d-flex flex-row-reverse mb-6">
         <v-btn v-if="codigo == ''" color="primary" @click="dialog = true">Unirte a una clase</v-btn>
@@ -24,7 +25,7 @@
       </v-col>
     </v-row>
   </v-container>
-  <v-dialog v-model="dialog" max-width="400" persistent>
+  <v-dialog v-model="dialog" max-width="400">
     <v-card>
       <v-card-title class="text-h5 bg-grey-lighten-3">
         Codigo de Clase
@@ -47,7 +48,7 @@
 export default {
   name: 'Botones',
   data() {
-    const opciones=[
+    const opciones = [
       'Entrenamiento',
       'Batalla',
     ]

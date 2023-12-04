@@ -2,7 +2,7 @@
         <div class="mt-15 ml-15 mr-15">
             <div class="text-h5 font-weight-medium mb-2">
                 {{ pregunta.pregunta }}
-                <v-btn icon="mdi-cached" size="x-small" @click="reinicio"></v-btn>
+                <v-btn icon="$refresh" size="x-small" @click="reinicio"></v-btn>
             </div>
 
             <v-btn-toggle :disabled="isDisabled" :key="chartKey">
