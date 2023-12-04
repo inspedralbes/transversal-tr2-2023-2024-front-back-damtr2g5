@@ -15,7 +15,7 @@ export const useAppStore = defineStore('app', {
             rank: '',
             lifetotal: '',
             experience: '',
-            image: ''
+            image: 'http://localhost:3001/imagen/avatar1.jpg'
         },
         respuesta: '',
     }),

@@ -49,20 +49,28 @@ async function findRegisteredResult(id_user, id_activity) {
         await client.connect();
         const db = client.db(dbName);
         const col = db.collection("result");
-        const resultadoEncontrado = await col.find({}, { idUser: id_user, idActivity: id_activity }).toArray(function (err, result) {
-            if (err) throw err;
-            console.log("Resultados encontrados")
-        })
-        if (resultadoEncontrado.length == 0) {
-            return null
-        }
-        else {
-            return resultadoEncontrado
-        }
+
+        const resultadoEncontrado = await col.find({ idUsuario: id_user, idEjercicio: id_activity }).toArray(function(err, resultado) {
+            if (err) {
+              console.error('Error al realizar la consulta:', err);
+              return;
+            }
+            console.log('Resultado:', resultado)
+        });
+        console.log(resultadoEncontrado);
+        return resultadoEncontrado;
+        //if (resultadoEncontrado.length === 0) {
+        //    return null;
+        //} else {
+        //}
+        client.close();
     } catch (err) {
         console.log(err.stack);
+        return null;
     }
 }
+findRegisteredResult(1, 1)
+
 async function insertInCollection(data, collection) {
     try {
         await client.connect();

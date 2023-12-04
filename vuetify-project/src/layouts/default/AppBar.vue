@@ -5,7 +5,7 @@
         <template v-slot:activator="{ props }">
           <v-btn icon v-bind="props">
             <v-avatar color="brown" size="large">
-              <span class="text-h5">g</span>
+              <v-img :src="user.image" alt="John"></v-img>
             </v-avatar>
           </v-btn>
         </template>
@@ -14,7 +14,7 @@
             <div class="mx-auto text-center">
               <v-badge :icon="`${mdiPencil}`" location="bottom end">
                 <v-avatar color="brown">
-                  <span class="text-h5">g</span>
+                  <v-img :src="user.image" alt="John"></v-img>
                 </v-avatar>
               </v-badge>
               <h3>{{ user.name }}</h3>
@@ -39,7 +39,7 @@
 
 <script >
 import { useAppStore } from '@/store/app';
-import {mdiPencil} from '@mdi/js'
+import { mdiPencil } from '@mdi/js'
 export default {
   data() {
     const appStore = useAppStore()

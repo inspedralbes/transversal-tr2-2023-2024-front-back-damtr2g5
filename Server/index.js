@@ -103,7 +103,11 @@ app.post('/pregunta', async (req, res) => {
     var pregunta = await getPregunta(req.body.idPregunta);
     res.json(pregunta);
 })
-
+app.get("/imagen/:nombreArchivo", (req, res) => {
+    const nombreArchivo = req.params.nombreArchivo;
+    const rutaImagen = path.join(__dirname, "avatars", nombreArchivo);
+    res.sendFile(rutaImagen);
+  });
 app.post('/subirResultado', async (req, res) => {    
     let idUsuario = req.body.userId
     let idPregunta = req.body.preguntaid;
@@ -113,6 +117,14 @@ app.post('/subirResultado', async (req, res) => {
 
     insertInCollection({ idUsuario, idPregunta, idEjercicio,respuesta, correcta  }, 'result')
     res.json({ idUsuario, idPregunta, idEjercicio,respuesta, correcta  })
+})
+app.post('/getResueltas', (req, res) => {
+    let idUsuario = req.body.userId
+    let idEjercicio = req.body.ejercicioid
+    console.log(idUsuario, idEjercicio);
+    findRegisteredResult(idUsuario, idEjercicio).then((result) => {
+        res.json(result)
+    })
 })
 //Comprobar si pregunta respondida es correcta o no
 app.post('/comprobarPregunta/:id', async (req, res) => {
@@ -397,7 +409,7 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
             // ... más preguntas respondidas
         ]};*/
         //INCOMPLETE
-        app.post('/subirResultado', async (req, res) => {
+        /*app.post('/subirResultado', async (req, res) => {
             var idPregunta = req.body.preguntasRespondidas;
             var idActividad = req.body.testId
             var idUsuario = req.body.userId
@@ -423,7 +435,7 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
                 })
             })
 
-        })
+        })*/
         //Comprobar si pregunta respondida es correcta o no
         app.post('/comprobarPregunta', async (req, res) => {
             try {
