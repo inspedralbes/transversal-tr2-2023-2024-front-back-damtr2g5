@@ -35,6 +35,24 @@ const routes = [
       },      
     ],   
   },
+  {
+    path: '/practicas',  
+    component: () => import('@/layouts/default/Default.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Practicas',        
+        component: () => import(/* webpackChunkName: "home" */ '@/views/ListaCategorias.vue'),
+      },      
+    ], 
+
+  },
+  {
+    path: '/practicas/:categoria',
+    name: 'Categoria',
+    component: () => import(/* webpackChunkName: "categoria" */ '../views/Categoria.vue'),
+    props: true,
+  }
   
 ]
 

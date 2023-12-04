@@ -23,7 +23,7 @@ const io = socketIo(server, { cors: corsOptions })
 const port = 3001;
 
 
-const { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection } = require("./mongoDB.js");
+const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection, getActivities } = require("./mongoDB.js");
 const { comprobarRectaLineal, requireLogin, getRemainingExp } = require("./utils.js");
 const { cerrarConexion, conectar, getData, manageData } = require('./mySQL.js');
 const { connect } = require('http2');
@@ -97,6 +97,18 @@ app.get('/getEjercicio', (req, res) => {
 
 
 });
+
+app.get('/getCategorias',async (req,res) => {
+    categorias = await getCategorias();
+    res.json(categorias)
+})
+
+app.post('/getActivities/:tema', async (req,res) => {
+    idTema = req.params.tema;
+    ejercicios = await getActivities(idTema)
+    console.log(ejercicios)
+    res.json(ejercicios);
+})
 
 app.post('/pregunta', async (req, res) => {
     var pregunta = await getPregunta(req.body.idPregunta);
