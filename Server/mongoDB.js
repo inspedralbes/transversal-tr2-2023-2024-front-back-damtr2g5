@@ -2,7 +2,7 @@ const user = "a22osczapmar";
 const password = "Nitrome7.";
 module.exports = { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection };
 const { MongoClient } = require("mongodb");
- 
+
 // Replace the following with your Atlas connection string                                                                                                                                        
 const url = `mongodb+srv://${user}:${password}@cluster0.uiii7nf.mongodb.net/`;
 
@@ -16,16 +16,16 @@ client.connect();
 
 async function getDocument(id) {
     try {
-        
-         const db = client.db(dbName);
-         const col = db.collection("activity");
-         // Find and return the document
-         const filter = { "id": id };
-         const document = await col.findOne(filter);
-         return document;
-        } catch (err) {
-         console.log(err.stack);
-     }
+
+        const db = client.db(dbName);
+        const col = db.collection("activity");
+        // Find and return the document
+        const filter = { "id": id };
+        const document = await col.findOne(filter);
+        return document;
+    } catch (err) {
+        console.log(err.stack);
+    }
 }
 
 async function findRegisteredResult(id_user, id_activity, id_pregunta) {
@@ -33,14 +33,14 @@ async function findRegisteredResult(id_user, id_activity, id_pregunta) {
         await client.connect();
         const db = client.db(dbName);
         const col = db.collection("result");
-        const resultadoEncontrado = await col.findOne({},{idUser: id_user, idActivity: id_activity, idQuestion: id_pregunta})
+        const resultadoEncontrado = await col.findOne({}, { idUser: id_user, idActivity: id_activity, idQuestion: id_pregunta })
         if (resultadoEncontrado == null) {
             return null
         }
         else {
             return resultadoEncontrado
         }
-    } catch(err) {
+    } catch (err) {
         console.log(err.stack);
     }
 }
@@ -49,7 +49,7 @@ async function findRegisteredResult(id_user, id_activity) {
         await client.connect();
         const db = client.db(dbName);
         const col = db.collection("result");
-        const resultadoEncontrado = await col.find({},{idUser: id_user, idActivity: id_activity}).toArray(function(err,result) {
+        const resultadoEncontrado = await col.find({}, { idUser: id_user, idActivity: id_activity }).toArray(function (err, result) {
             if (err) throw err;
             console.log("Resultados encontrados")
         })
@@ -59,20 +59,20 @@ async function findRegisteredResult(id_user, id_activity) {
         else {
             return resultadoEncontrado
         }
-    } catch(err) {
+    } catch (err) {
         console.log(err.stack);
     }
 }
-async function insertInCollection(data, collection){
+async function insertInCollection(data, collection) {
     try {
         await client.connect();
         const db = client.db(dbName);
         const col = db.collection(collection);
-        col.insertOne(data, function(err, res) {
+        col.insertOne(data, function (err, res) {
             if (err) throw err;
             console.log("1 result inserted")
         })
-    } catch(err) {
+    } catch (err) {
         console.log(err.stack);
     }
 }
@@ -81,11 +81,11 @@ async function updateCollection(data, conditionals, collection) {
         await client.connect();
         const db = client.db(dbName);
         const col = db.collection(collection);
-        col.updateOne(conditionals, data, function(err, res) {
+        col.updateOne(conditionals, data, function (err, res) {
             if (err) throw err;
             console.log("1 result updated")
         })
-    } catch(err) {
+    } catch (err) {
         console.log(err.stack);
     }
 }
@@ -93,16 +93,16 @@ async function updateCollection(data, conditionals, collection) {
 async function getPreguntas(preguntas) {
     try {
         // Connect to the Atlas cluster
-         await client.connect();
-         const db = client.db(dbName);
-         const col = db.collection("question");
-         // Find and return the document
-         const filter = { "id": { $in: preguntas } };
-         const document = await col.find(filter).toArray();
-         return document;
-        } catch (err) {
-         console.log(err.stack);
-     }
+        await client.connect();
+        const db = client.db(dbName);
+        const col = db.collection("question");
+        // Find and return the document
+        const filter = { "id": { $in: preguntas } };
+        const document = await col.find(filter).toArray();
+        return document;
+    } catch (err) {
+        console.log(err.stack);
+    }
 }
 
 async function getPregunta(id) {
@@ -111,8 +111,8 @@ async function getPregunta(id) {
         const db = client.db(dbName);
         const col = db.collection("question");
         //Find question from collection
-        
-        const question = await col.find({"id":id}).toArray();
+
+        const question = await col.find({ "id": id }).toArray();
         console.log(question)
         return question;
     } catch (err) {

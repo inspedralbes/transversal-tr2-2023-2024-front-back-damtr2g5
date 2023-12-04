@@ -1,4 +1,5 @@
 export const SERVER_URL = "http://localhost:3001"
+
 export async function getEjercicios() {
   const response = await fetch(`${SERVER_URL}/getEjercicio`);
   const ejercicios = await response.json();
@@ -20,6 +21,17 @@ export async function comprobarRespuesta(respuesta,id) {
     console.log("CORRECTA",correcto);    
     return correcto;
 
+}
+export async function GuardarRespuesta(respuesta) {
+  console.log("respuesta"+respuesta);
+  const response = await fetch(`${SERVER_URL}/subirResultado`,
+    {
+      method: 'POST', headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(respuesta),
+      mode: "cors"
+    },);
 }
 
 export async function login(usuario){

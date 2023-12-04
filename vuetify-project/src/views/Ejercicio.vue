@@ -15,14 +15,15 @@
     <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto px-4" elevation="4" height="auto"
         rounded max-width="800" width="100%">
         <v-container>
-            
+
             <v-row style="position: relative;" justify="center">
                 <v-overlay v-model="overlay" :scrim="false" contained class="align-center justify-center">
-                    <v-icon class="stamp" :color="coloricono" :icon="icono" style="width: 1em; height: 1em; font-size: 10em;"></v-icon>
+                    <v-icon class="stamp" :color="coloricono" :icon="icono"
+                        style="width: 1em; height: 1em; font-size: 10em;"></v-icon>
                 </v-overlay>
                 <v-col>
                     <component :isDisabled.sync="disableComponent" :key="key" :is="componentSelecionat"
-                        v-if="componentSelecionat" :preguntaSeleccionada="preguntaSeleccionada"/>
+                        v-if="componentSelecionat" :preguntaSeleccionada="preguntaSeleccionada" />
                 </v-col>
             </v-row>
             <v-row>
@@ -46,7 +47,7 @@
     
 <script>
 
-import { getEjercicios, comprobarRespuesta } from '../communicationsManager';
+import { getEjercicios, comprobarRespuesta, GuardarRespuesta } from '../communicationsManager';
 import { useAppStore } from '../store/app'
 const store = useAppStore();
 
@@ -252,14 +253,26 @@ export default {
             }
         },
         comprobar(idPregunta) {
+            let correcta = '';
             comprobarRespuesta({ respuesta: this.respuestaSelecionada }, idPregunta).then(response => {
                 this.overlay = true;
                 this.icono = response.correct ? '$check' : '$close';
                 this.indexArray[this.selectedButton] = response.correct ? 1 : 2;
                 this.coloricono = response.correct ? 'success' : 'red';
-                this.respuestaSelecionada = "";
                 this.disableComponent = true;
+                correcta = response.correct;
+                let userid = store.getLoginInfo();
+                let dato = {
+                    "userId": parseInt(userid.id),
+                    "preguntaid": idPregunta,
+                    "ejercicioid": this.Ejercicio.id,
+                    "respuesta": this.respuestaSelecionada,
+                    "correcta": correcta
+                }
+                GuardarRespuesta(dato)                
+                this.respuestaSelecionada = "";
             });
+
 
         },
         respuestanula() {
@@ -294,6 +307,7 @@ export default {
             this.selectedButton = 0;
             this.indexArray = Array.from(Array(this.Ejercicio.preguntas.length));
             this.indexArray = this.indexArray.map(() => 0);
+            console.log(response);
         });
 
         store.$subscribe((mutation, state) => {

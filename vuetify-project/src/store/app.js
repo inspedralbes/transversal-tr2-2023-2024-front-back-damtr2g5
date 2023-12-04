@@ -7,7 +7,7 @@ export const useAppStore = defineStore('app', {
         auth: false,
         loginInfo: {
             loggedIn: false,
-            id: '',
+            id: '1',
             name: '',
             contrasena: '',
             surname: '',

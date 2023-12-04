@@ -60,6 +60,7 @@ app.get('/getEjercicio', (req, res) => {
     getDocument(1).then((document) => {
         getPreguntas(document.preguntas).then((preguntas) => {
             var ejercicio = {
+                "id": document.id,
                 "nombre": document.nombre,
                 "preguntas": []
             }
@@ -103,55 +104,15 @@ app.post('/pregunta', async (req, res) => {
     res.json(pregunta);
 })
 
-app.post('/subirResultado', async (req, res) => {
-    var idPregunta = req.body.preguntasRespondidas;
-    var idActividad = req.body.testId
-    var idUsuario = req.body.userId
+app.post('/subirResultado', async (req, res) => {    
+    let idUsuario = req.body.userId
+    let idPregunta = req.body.preguntaid;
+    let idEjercicio = req.body.ejercicioid
+    let correcta = req.body.correcta
+    let respuesta = req.body.respuesta
 
-    var experienciaGanada = 0
-    getDocument(re.body.testId).then((activity) => {
-        const expPerActivity = activity.exp / activity.preguntas.length
-        preguntasRespondidas.forEach((pregunta) => {
-            var response = {}
-            var questLocate = findRegisteredResult(idUsuario, idActividad, pregunta.idPregunta)
-            if (questLocate != null) {
-                if (!questLocate.respuestaCorrecta && pregunta.respuestaCorrecta) { //Si la pregunta ya respondida anteriormente se resuelve, cambia el estado
-                    response = { $set: { respuestaCorrecta: true } }
-                    experienciaGanada += expPerActivity;
-                    updateCollection(response, { idUsuario })
-                }
-            } else {
-                response = { idUser, idActivity, idQuestion, respuestaCorrecta }
-                insertInCollection()
-
-
-            }
-        })
-    })
-
-    actividad.forEach(element => {
-        if (findRegisteredResult(idUsuario,)) { }
-    });
-    preguntas = req.body.preguntas //Preguntas respondidas
-
-    numPreguntas = preguntas.length;
-    expPerEx = actividadModel.exp / numPreguntas;
-
-    resultado =
-    {
-        "idUser": idUsuario,
-        "idActivity": idActividad,
-        "preguntas": [],
-        "expRestante": 1
-    }
-    if (!findRegisteredResult(idActividad, idUsuario)) {
-        insertInCollection(resultado, 'result')
-    } else {
-
-        query = { idActivity: idActividad, idUser: idUsuario };
-        updateCollection(query, resultado, 'result')
-    }
-
+    insertInCollection({ idUsuario, idPregunta, idEjercicio,respuesta, correcta  }, 'result')
+    res.json({ idUsuario, idPregunta, idEjercicio,respuesta, correcta  })
 })
 //Comprobar si pregunta respondida es correcta o no
 app.post('/comprobarPregunta/:id', async (req, res) => {
