@@ -120,10 +120,13 @@ app.post('/getExpEjer', async (req, res) => {
     try {
         let idUsuario = req.body.userId;
         let idEjercicio = req.body.ejercicioid;
-        console.log(idUsuario, idEjercicio);
         let xp = 0;
-
-        const result = await findRegisteredResults(idUsuario, idEjercicio);
+        let result;
+        if (idEjercicio == null) {
+            result = await findRegisteredResults(idUsuario);
+        } else {
+            result = await findRegisteredResults(idUsuario, idEjercicio);
+        }
         const ejercicios = result.filter(element => element.correcta === true);
 
         const promises = ejercicios.map(async visual => {
@@ -131,8 +134,8 @@ app.post('/getExpEjer', async (req, res) => {
             xp += document.experiencia;
         });
 
-        await Promise.all(promises);
 
+        await Promise.all(promises);
         const exp = {
             xp: xp
         };
@@ -149,7 +152,7 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
     try {
         console.log(req.body);
         console.log(req.session);
-        let idUser= req.session.user.userId;
+        let idUser = req.session.user.userId;
         respuesta = req.body.respuesta;
         let correcto = false;
         let preguntaid = 0;

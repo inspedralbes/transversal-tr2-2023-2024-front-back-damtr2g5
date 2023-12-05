@@ -1,6 +1,6 @@
 const user = "a22osczapmar";
 const password = "Nitrome7.";
-module.exports = { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult,findRegisteredResults, updateCollection };
+module.exports = { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, updateCollection };
 const { MongoClient } = require("mongodb");
 
 // Replace the following with your Atlas connection string                                                                                                                                        
@@ -57,14 +57,25 @@ async function findRegisteredResults(id_user, id_ejercicio) {
         await client.connect();
         const db = client.db(dbName);
         const col = db.collection("result");
+        let resultadoEncontrado = null
+        if (id_ejercicio == null) {
+            resultadoEncontrado = await col.find({ idUsuario: id_user }).toArray(function (err, resultado) {
+                if (err) {
+                    console.error('Error al realizar la consulta:', err);
+                    return;
+                }
+                console.log('Resultado:', resultado)
+            });
+        } else {
+            resultadoEncontrado = await col.find({ idUsuario: id_user, idEjercicio: id_ejercicio }).toArray(function (err, resultado) {
+                if (err) {
+                    console.error('Error al realizar la consulta:', err);
+                    return;
+                }
+                console.log('Resultado:', resultado)
+            });
+        }
 
-        const resultadoEncontrado = await col.find({ idUsuario: id_user, idEjercicio: id_ejercicio }).toArray(function(err, resultado) {
-            if (err) {
-              console.error('Error al realizar la consulta:', err);
-              return;
-            }
-            console.log('Resultado:', resultado)
-        });
         return resultadoEncontrado;
     } catch (err) {
         console.log(err.stack);
