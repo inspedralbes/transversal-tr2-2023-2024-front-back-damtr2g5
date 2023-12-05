@@ -47,7 +47,7 @@
     
 <script>
 
-import { getEjercicios, comprobarRespuesta, GuardarRespuesta } from '../communicationsManager';
+import { getEjercicios, comprobarRespuesta } from '../communicationsManager';
 import { useAppStore } from '../store/app'
 const store = useAppStore();
 
