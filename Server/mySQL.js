@@ -1,13 +1,16 @@
 const mysql = require('mysql');
-module.exports = {conectar,cerrarConexion,getData,manageData}
+module.exports = {conectar,cerrarConexion,getData,manageData, connection}
 
-const connection = mysql.createConnection({
+const connection = mysql.createPool({
     host: 'dam.inspedralbes.cat', 
     user: 'a22osczapmar_Usuario1', 
     password: 'Usuario1', 
-    database: 'a22osczapmar_mathGame' 
+    database: 'a22osczapmar_mathGame',
+    connectionLimit: 20,
+    queueLimit: 5,
+    waitForConnections: true,
 });
-function conectar() {
+/*function conectar() {
     return new Promise((resolve, reject) => {
         connection.connect((err) => {
             if (err) {
@@ -18,7 +21,7 @@ function conectar() {
             resolve();
         });
     });
-}
+}*/
 function cerrarConexion() {
     return new Promise((resolve, reject) => {
         connection.end((err) => {

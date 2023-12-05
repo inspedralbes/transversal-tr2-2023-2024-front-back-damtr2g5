@@ -103,7 +103,7 @@ export default {
     methods: {
         guardar() {
             console.log(this.username, this.password);
-            this.appStore.setLoginInfo({ name: this.username, contrasena: this.password, surname: this.surname, email: this.email, rank: '', lifetotal: '', experience: '', image: '' })
+            this.appStore.setLoginInfo({ name: this.username, contrasena: this.password, surname: this.surname, email: this.email})
 
         }
     }, computed: {

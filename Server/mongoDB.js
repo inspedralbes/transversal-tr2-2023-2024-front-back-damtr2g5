@@ -1,6 +1,6 @@
 const user = "a22osczapmar";
 const password = "Nitrome7.";
-module.exports = { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection };
+module.exports = { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult,findRegisteredResults, updateCollection };
 const { MongoClient } = require("mongodb");
 
 // Replace the following with your Atlas connection string                                                                                                                                        
@@ -28,48 +28,49 @@ async function getDocument(id) {
     }
 }
 
-async function findRegisteredResult(id_user, id_activity, id_pregunta) {
+async function findRegisteredResult(id_user, id_ejercicio, id_pregunta) {
     try {
         await client.connect();
         const db = client.db(dbName);
         const col = db.collection("result");
-        const resultadoEncontrado = await col.findOne({}, { idUser: id_user, idActivity: id_activity, idQuestion: id_pregunta })
-        if (resultadoEncontrado == null) {
-            return null
+        const resultadoEncontrado = await col.findOne({
+            idUsuario: id_user,
+            idEjercicio: id_ejercicio,
+            idPregunta: id_pregunta
+        });
+
+        if (!resultadoEncontrado) {
+            console.log("Documento no encontrado");
+            return null;
         }
-        else {
-            return resultadoEncontrado
-        }
+
+        console.log("Resultado encontrado:", resultadoEncontrado);
+        return resultadoEncontrado;
     } catch (err) {
         console.log(err.stack);
+        return null;
     }
 }
-async function findRegisteredResult(id_user, id_activity) {
+
+async function findRegisteredResults(id_user, id_ejercicio) {
     try {
         await client.connect();
         const db = client.db(dbName);
         const col = db.collection("result");
 
-        const resultadoEncontrado = await col.find({ idUsuario: id_user, idEjercicio: id_activity }).toArray(function(err, resultado) {
+        const resultadoEncontrado = await col.find({ idUsuario: id_user, idEjercicio: id_ejercicio }).toArray(function(err, resultado) {
             if (err) {
               console.error('Error al realizar la consulta:', err);
               return;
             }
             console.log('Resultado:', resultado)
         });
-        console.log(resultadoEncontrado);
         return resultadoEncontrado;
-        //if (resultadoEncontrado.length === 0) {
-        //    return null;
-        //} else {
-        //}
-        client.close();
     } catch (err) {
         console.log(err.stack);
         return null;
     }
 }
-findRegisteredResult(1, 1)
 
 async function insertInCollection(data, collection) {
     try {
@@ -84,7 +85,7 @@ async function insertInCollection(data, collection) {
         console.log(err.stack);
     }
 }
-async function updateCollection(data, conditionals, collection) {
+async function updateCollection(conditionals, data, collection) {
     try {
         await client.connect();
         const db = client.db(dbName);
@@ -118,10 +119,9 @@ async function getPregunta(id) {
         await client.connect();
         const db = client.db(dbName);
         const col = db.collection("question");
-        //Find question from collection
 
-        const question = await col.find({ "id": id }).toArray();
-        console.log(question)
+        const question = await col.findOne({ "id": id });
+        //console.log(question)
         return question;
     } catch (err) {
         console.log(err.stack)

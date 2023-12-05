@@ -37,16 +37,11 @@ export const useAppStore = defineStore('app', {
         }
     },
     actions: {
-        setLoginInfo({ id, name,contrasena, surname, email, rank, lifetotal, experience, image }) {
-            this.loginInfo.id = id;
+        setLoginInfo({name,contrasena, surname, email}) {
             this.loginInfo.name = name;
             this.loginInfo.contrasena = contrasena;
             this.loginInfo.surname = surname;
             this.loginInfo.email = email;
-            this.loginInfo.rank = rank;
-            this.loginInfo.lifetotal = lifetotal;
-            this.loginInfo.experience = experience;
-            this.loginInfo.image = image;
         },
         setRespuesta(answer) {
             this.respuesta = answer;
@@ -102,12 +97,18 @@ export const useAppStore = defineStore('app', {
             });
           },
           logout({ commit }) {
-            this.state.user = {
-              email: "",
-              password: "",
-              nom: "",
-              cognom: ""
-            };
+            this.$state.loginInfo= {
+              loggedIn: false,
+              id: '',
+              name: '',
+              contrasena: '',
+              surname: '',
+              email: '',
+              rank: '',
+              lifetotal: '',
+              experience: '',
+              image: ''
+          };
             endSession();
             commit('setAuth', false);
           }
