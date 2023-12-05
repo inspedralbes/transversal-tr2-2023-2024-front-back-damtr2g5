@@ -19,21 +19,16 @@ export const useAppStore = defineStore('app', {
         },
         respuesta: '',
     }),
-    mutations: {
-        setAuth(state, isAuthenticated) {
-            this.state.auth = isAuthenticated;
+    getters: {
+      
+        getRespuesta() {
+          return this.respuesta;
         },
-        setEmail(state, loginEmail) {
-            this.state.user.email = loginEmail;
+        isLoggedIn() {
+            return this.loginInfo.loggedIn;
         },
-        setPassword(state, loginPassword) {
-            this.state.user.password = loginPassword;
-        },
-        setUser(state, user) {
-            state.user = user;
-        },
-        setComandes(state, comandes){
-            this.state.comandes = comandes;
+        getLoginInfo() {
+            return this.loginInfo;
         }
     },
     actions: {
@@ -51,37 +46,36 @@ export const useAppStore = defineStore('app', {
         setRespuesta(answer) {
             this.respuesta = answer;
         },
-        getRespuesta() {
-            return this.respuesta;
+        setEmail(emailLogin) {
+          this.loginInfo.email = emailLogin
         },
-        isLoggedIn() {
-            return this.loginInfo.loggedIn;
+        setPassword(pwdLogin) {
+          this.loginInfo.contrasena = pwdLogin
         },
-        getLoginInfo() {
-            return this.loginInfo;
-        },
-        login({ commit }) {
-
+        
+        login() {
             return new Promise((resolve, reject) => {
-              login(this.state.loginInfo).then((response) => response.json())
+              console.log(this.loginInfo())
+              login(this.loginInfo).then((response) => response.json())
                 .then((data) => {
-                  commit('setUser', data);
+                  this.state.loginInfo = data
+                  console.log("Login info: ",this.state.loginInfo)
                   this.loading = false;
                   if (data.email != '') {
-                    commit('setAuth', true);
+                    this.state.auth = true;
                     resolve(true);
                   } else {
-                    commit('setAuth', false);
+                    this.state.auth = false;
                     resolve(false);
                   }
                 }).catch((error) => {
                   console.error('Error al iniciar sesión:', error);
-                  commit('setAuth', false);
+                  this.state.auth = false;
                   reject(error);
                 });
             });
           },
-          hasCookieId({ commit }) {
+          hasCookieId() {
             return new Promise((resolve, reject) => {
               getLogin().then((response) => response.json())
                 .then((data) => {
@@ -111,8 +105,5 @@ export const useAppStore = defineStore('app', {
             endSession();
             commit('setAuth', false);
           }
-    },
-    getters: {
-        isAuthenticated: (state) => state.auth,
-      },
+    }
 })

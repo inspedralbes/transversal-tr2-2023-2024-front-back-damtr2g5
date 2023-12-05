@@ -15,44 +15,37 @@ const routes = [
     ],
   },
   {
-    path: '/ejercicio/:id',  
+    path: '/entrenamiento',  
     component: () => import('@/layouts/default/Default.vue'),
     children: [
       {
         path: '',
-        name: 'Ejercicio',        
-        component: () => import(/* webpackChunkName: "home" */ '@/views/Ejercicio.vue'),
-      },      
-    ],   
-  },{
-    path: '/login',  
-    component: () => import('@/layouts/default/Default.vue'),
-    children: [
-      {
-        path: '',
-        name: 'Login',        
-        component: () => import(/* webpackChunkName: "home" */ '@/views/PantallaLogin.vue'),
-      },      
-    ],   
-  },
-  {
-    path: '/practicas',  
-    component: () => import('@/layouts/default/Default.vue'),
-    children: [
-      {
-        path: '',
-        name: 'Practicas',        
-        component: () => import(/* webpackChunkName: "home" */ '@/views/ListaCategorias.vue'),
+        name: 'Entrenamiento',        
+        component: () => import(/* webpackChunkName: "home" */ '@/views/Temas.vue'),
       },      
     ], 
 
   },
   {
-    path: '/practicas/:categoria',
+    path: '/entrenamiento/:categoria',
     name: 'Categoria',
     component: () => import(/* webpackChunkName: "categoria" */ '../views/Categoria.vue'),
     props: true,
-  }
+  },
+  
+  {
+    path: '/entrenamiento/:categoria/ejercicio/:id',  
+    component: () => import('@/layouts/default/Default.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Ejercicio',        
+        component: () => import(/* webpackChunkName: "home" */ '@/views/InfoEjercicio.vue'),
+        props: true,
+      },      
+    ],   
+  },
+  
   
 ]
 

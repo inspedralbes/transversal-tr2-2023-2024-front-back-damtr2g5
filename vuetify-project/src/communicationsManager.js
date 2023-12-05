@@ -33,6 +33,24 @@ export async function login(usuario){
   body: JSON.stringify(usuario)});
 }
 
+export async function registrarUsuari(infoUsuario) {
+  const response = await fetch(`${SERVER_URL}/registrarUsuari`, 
+  {method: 'POST',
+  credentials: 'include', mode: 'cors',
+   headers: {
+    'Content-Type':  'application/json' ,
+  },
+  body: JSON.stringify(infoUsuario)});
+  if (response.status === 200) {
+    console.log('Registration successful!');
+    const messages = await response.text()
+    return { success: true, message: messages};
+  } else {
+    const messages = await response.text()
+    return { success: false, message: messages };
+  }
+}
+
 export async function getLogin(){
   return fetch(`${SERVER_URL}/getLogin`, {method:'GET',credentials: 'include', mode: 'cors'});
 }

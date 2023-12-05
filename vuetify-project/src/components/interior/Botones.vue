@@ -4,10 +4,10 @@
       
       <v-row>
         <v-col v-for="n in opciones" :key="n" cols="4">
-          <v-item v-slot="{ isSelected, selectedClass, toggle }">
-            <v-card  :class="['d-flex align-center super-cool-button', selectedClass]" dark height="200" @click="toggle(n)">
-              <div class="text-h3 flex-grow-1 text-center">
-                {{ isSelected ? 'Selected' : n }}
+          <v-item v-slot="{ isSelected, selectedClass }">
+            <v-card  :class="['d-flex align-center super-cool-button', selectedClass]" dark height="200" @click="onToggle(n)">
+              <div class="text-h3 flex-grow-1 text-center"  >
+                {{ isSelected ? 'Log In' : n }}
               </div>
             </v-card>
           </v-item>
@@ -45,8 +45,15 @@
   </v-dialog>
 </template>
 <script>
+import { useAppStore } from '../../store/app'
 export default {
   name: 'Botones',
+  setup() {
+        const appStore = useAppStore()
+        return {
+            appStore
+        };
+    },
   data() {
     const opciones = [
       'Entrenamiento',
@@ -60,11 +67,22 @@ export default {
     };
   },
   methods:{
-    toggle(n) {
-      switch(n) {
+    
+    onToggle(route) {
+      const isAuth = this.appStore.isLoggedIn();
+      console.log(isAuth);
+      if (!isAuth) {
+        alert('Has de logearte para acceder');
+        return;
+      }
+      console.log('Value of n:', route);
+      switch(route) {
         case 'Entrenamiento':
+          
           this.$router.push({ name: 'Entrenamiento' })
           break;
+          
+          
         case 'Batalla':
           this.$router.push({ name: 'Batalla' })
           break;

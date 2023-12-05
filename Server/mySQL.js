@@ -1,13 +1,15 @@
 const mysql = require('mysql');
 module.exports = {conectar,cerrarConexion,getData,manageData}
 
-const connection = mysql.createConnection({
-    host: 'dam.inspedralbes.cat', 
-    user: 'a22osczapmar_Usuario1', 
-    password: 'Usuario1', 
-    database: 'a22osczapmar_mathGame' 
-});
+var connection = null
+
 function conectar() {
+    connection = mysql.createConnection({
+        host: 'dam.inspedralbes.cat', 
+        user: 'a22osczapmar_Usuario1', 
+        password: 'Usuario1', 
+        database: 'a22osczapmar_mathGame' 
+    });
     return new Promise((resolve, reject) => {
         connection.connect((err) => {
             if (err) {

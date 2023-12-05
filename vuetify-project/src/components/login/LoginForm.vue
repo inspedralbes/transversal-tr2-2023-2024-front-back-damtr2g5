@@ -54,17 +54,34 @@
                                             v-model="passwordComprobacion"></v-text-field></v-row>
                                 </v-card-text> </v-container>
                         </v-window-item>
+                        <v-window-item :value="3">
+                            <v-container>
+                            </v-container>
+                        </v-window-item>
+                        <v-window-item :value="4">
+                            <v-container>
+                                <v-card-text>
+                                    {{ this.errorMessage }}
+                                </v-card-text>
+                            </v-container>
+                        </v-window-item>
                     </v-window>
 
                     <v-divider></v-divider>
 
                     <v-card-actions>
-                        <v-btn v-if="step > 1" variant="text" @click="step--">
+                        <v-btn v-if="step == 2" variant="text" @click="step--">
                             Back
                         </v-btn>
                         <v-spacer></v-spacer>
                         <v-btn v-if="step < 2" color="primary" variant="flat" @click="step++">
                             Next
+                        </v-btn>
+                        <v-btn v-if="step == 2 && this.passwordD == this.passwordComprobacion && this.passwordD != '' " color="primary" variant="flat" @click="register()">
+                            Register
+                        </v-btn>
+                        <v-btn  v-if="step > 2" color="primary" variant="flat" @click="dialog=false">
+                            Exit
                         </v-btn>
                     </v-card-actions>
                 </v-card>
@@ -76,6 +93,8 @@
 
 <script>
 import { useAppStore } from '../../store/app'
+import { registrarUsuari } from '../../communicationsManager' 
+import md5 from 'md5';
 export default {
     setup() {
         const appStore = useAppStore()
@@ -86,7 +105,10 @@ export default {
     data() {
 
         return {
+            loading: false,
+            allowed: false,
             dialog: false,
+            errorMessage: '',
             username: '',
             password: '',
             passwordD: '',
@@ -101,16 +123,48 @@ export default {
         };
     },
     methods: {
+        
         guardar() {
-            console.log(this.username, this.password);
-            this.appStore.setLoginInfo({ name: this.username, contrasena: this.password, surname: this.surname, email: this.email, rank: '', lifetotal: '', experience: '', image: '' })
+            this.loading = true;
+            console.log(this.username, this.email, this.password);
+            this.appStore.setEmail(this.email);
+            this.appStore.setPassword(this.password);
+            this.appStore.login()
+            
 
+        },
+        handleHashing(data) {
+            this.password = md5(data).toUpperCase()
+            },
+        async register(){
+            this.passwordD = md5(this.passwordD).toUpperCase();
+            console.log(this.passwordD)
+            var usuario = {name: this.username, surname: this.surname, email: this.emailD, contrasena: this.encryptedPwd}
+            const response =  await registrarUsuari(usuario)
+            console.log(response);
+            if(response.success) {
+                console.log("Success!!")
+                this.step=3
+                
+            } else {
+                console.log("Failed!!")
+                this.step=4
+                this.errorMessage = response.message
+                
+            }
+            this.emailD = ''
+            this.username = ''
+            this.surname = ''
+            this.passwordD = '';
+            this.passwordComprobacion = '';
         }
     }, computed: {
         currentTitle() {
             switch (this.step) {
                 case 1: return 'Sign-up'
                 case 2: return 'Create a password'
+                case 3: return 'Account created'
+                case 4: return 'Register error'
                 default: return 'Account created'
             }
         },

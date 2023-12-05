@@ -285,11 +285,15 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
                                 } else {
                                     console.log("pwd trobat");
                                     usuariIndividual = {
-                                        id: req.session.id,
-                                        userId: usuari.id,
-                                        name: usuari.nom,
-                                        surname: usuari.cognoms,
-                                        email: usuari.email,
+                                        sessionId: req.session.id,
+                                        id: usuari.id,
+                                        name : usuari.name,
+                                        contrasena : usuari.contrasena,
+                                        surname : usuari.surname,
+                                        email : usuari.email,
+                                        rank : usuari.rank,
+                                        lvl : usuari.lvl,
+                                        image : usuari.image
                                     };
                                     req.session.user = usuariIndividual;
                                     sessiones[req.session.id] = req.session;
@@ -336,41 +340,31 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
         });
 
         //REGISTER USER
-        app.post('/registrarUsuari', (req, res) => {
-            usuariDades = req.body; // Assuming req.body contains user data
-            let comprovacio = true;
-
-            conectar()
-                .then(() => {
-                    return getData('SELECT email FROM users');
-                })
-                .then(emails => {
-                    console.log("Query completed. Data retrieved:", emails);
-                    emails.forEach(email => {
-                        if (email.email === usuariDades.email) {
-                            console.log("Aquest mail ja està en ús");
-                            comprovacio = false;
-                        }
-                    });
-
-                    if (comprovacio) {
-                        return manageData(`INSERT INTO users (name, surname, email, contrasena) VALUES ("${usuariDades.name}","${usuariDades.surname}","${usuariDades.email}","${usuariDades.contrasena}")`);
-                    } else {
-                        // Mail en uso
-                        res.status(403).send();
-                        throw new Error("Mail en uso");
-                    }
-                })
-                .then(successMessage => {
-                    console.log("Operación completada:", successMessage);
-                    cerrarConexion(); // Close the connection after all operations are completed
+        app.post('/registrarUsuari', async (req, res) => {
+            await conectar()
+            try {
+                usuariDades = req.body; // Assuming req.body contains user data
+        
+                const emails = await getData('SELECT email FROM users');
+                console.log("Query completed. Data retrieved:", emails);
+        
+                const isEmailDuplicate = emails.some(email => email.email === usuariDades.email);
+        
+                if (isEmailDuplicate) {
+                    res.status(403).send("Mail en uso");
+                    
+                } else {
+                    await manageData(`INSERT INTO users (name, surname, email, contrasena) VALUES ("${usuariDades.name}","${usuariDades.surname}","${usuariDades.email}","${usuariDades.contrasena}")`);
+                    console.log("Operación completada: Registro exitoso");
                     res.status(200).send("Registro exitoso");
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    cerrarConexion(); // Close the connection in case of error
-                    res.status(500).send("Error en el registro");
-                });
+                    
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                res.status(500).send("Error en el registro: " + error.message);
+            } finally {
+                cerrarConexion(); // Always close the connection after handling the request
+            }
         });
 
         //UPDATE USER
