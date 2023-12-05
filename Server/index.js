@@ -7,7 +7,7 @@ const fs = require('fs');
 const client = require('https');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-
+const mysqlConnection = require('./mySQL.js');
 const corsOptions = {
     origin: ["http://localhost:3000"],
     credentials: true,
@@ -25,7 +25,6 @@ const port = 3001;
 
 const { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, updateCollection } = require("./mongoDB.js");
 const { comprobarRectaLineal, requireLogin, getRemainingExp } = require("./utils.js");
-const { cerrarConexion, conectar, getData, manageData,connection } = require('./mySQL.js');
 const { connect } = require('http2');
 const { Console } = require('console');
 
@@ -43,11 +42,6 @@ const sessionMiddleware = session({
         sameSite: 'lax'
     }
 });
-connection.getConnection((err, conexion) => {
-    if (err) {
-        console.error(err);
-      }
-})
 app.use(sessionMiddleware);
 app.use(bodyParser.json());
 app.use(cookieParser("mySecretKey"));
@@ -113,31 +107,6 @@ app.get("/imagen/:nombreArchivo", (req, res) => {
     res.sendFile(rutaImagen);
 });
 
-//Subir respuesta ejercicios
-app.post('/subirResultado', async (req, res) => {
-    let idUsuario = req.body.userId
-    let idPregunta = req.body.preguntaid;
-    let idEjercicio = req.body.ejercicioid
-    let correcta = req.body.correcta
-    let respuesta = req.body.respuesta
-    findRegisteredResult(idUsuario, idEjercicio, idPregunta).then((result) => {
-        if (result != null) {
-            if (!result.correcta && correcta) {
-                updateCollection(
-                    { "idUsuario": idUsuario, "idPregunta": idPregunta, "idEjercicio": idEjercicio }, // Filtro para encontrar el usuario por su ID
-                    {
-                        "$set": {
-                            "correcta": correcta,
-                            "respuesta": respuesta
-                        }
-                    }, 'result')
-            }
-        } else {
-            insertInCollection({ idUsuario, idPregunta, idEjercicio, respuesta, correcta }, 'result')
-        }
-    })
-    res.json({ idUsuario, idPregunta, idEjercicio, respuesta, correcta })
-})
 //Coger ejercicios respondidos
 app.post('/getResueltas', (req, res) => {
     let idUsuario = req.body.userId
@@ -167,7 +136,7 @@ app.post('/getExpEjer', async (req, res) => {
         const exp = {
             xp: xp
         };
-        
+
         res.json(exp);
     } catch (error) {
         console.error(error);
@@ -178,80 +147,99 @@ app.post('/getExpEjer', async (req, res) => {
 //Comprobar si pregunta respondida es correcta o no
 app.post('/comprobarPregunta/:id', async (req, res) => {
     try {
-        console.log(req.body.respuesta);
-        console.log(req.params.id);
+        console.log(req.body);
+        console.log(req.session);
+        let idUser= req.session.user.userId;
         respuesta = req.body.respuesta;
-        preguntas = await getPregunta(parseInt(req.params.id));
-        preguntas.forEach((pregunta) => {
-            console.log("Formato recibido: ", pregunta.formato);
+        let correcto = false;
+        let preguntaid = 0;
+        let pregunta = await getPregunta(parseInt(req.params.id));
 
-            switch (pregunta.formato) {
-                case "Seleccionar":
-                case "Imagen":
-                    if (respuesta === pregunta.correcta) {
-                        console.log("Selección correcta");
-                        res.json({ "correct": true });
+        console.log("Formato recibido: ", pregunta.formato);
+        preguntaid = pregunta.id;
+        switch (pregunta.formato) {
+            case "Seleccionar":
+            case "Imagen":
+                if (respuesta === pregunta.correcta) {
+                    console.log("Selección correcta");
+                    correcto = true
+                } else {
+                    console.log("Selección incorrecta");
+                    correcto = false
+                }
+                break;
+            case "Ordenar valores":
+                console.log("Respuesta: ", respuesta);
+                console.log("Correcta: ", pregunta.correcta);
+                if (JSON.stringify(respuesta) === JSON.stringify(pregunta.correcta)) {
+                    console.log("Selección correcta");
+                    correcto = true
+                } else {
+                    console.log("Selección incorrecta");
+                    correcto = false
+                }
+                break;
+
+            case "Respuesta":
+                if (pregunta.correcta.includes(respuesta)) {
+                    correcto = true
+                } else {
+                    correcto = false
+                }
+                break;
+
+            case "Grafica":
+                respuesta = comprobarRectaLineal(respuesta[0], respuesta[1]);
+                console.log("Respuesta: ", respuesta);
+                console.log("Correcta: ", pregunta.correcta);
+                if (respuesta.tipo === pregunta.correcta.tipo) {
+                    console.log("Tipo correcto");
+                    if (respuesta.tipo === "horizontal" && respuesta.y === pregunta.correcta.y) {
+                        correcto = true
+                    } else if (respuesta.tipo === "vertical" && respuesta.x === pregunta.correcta.x) {
+                        correcto = true
+                    } else if (respuesta.tipo === "lineal" && respuesta.m === pregunta.correcta.m && respuesta.b === pregunta.correcta.b) {
+                        correcto = true
                     } else {
-                        console.log("Selección incorrecta");
-                        res.json({ "correct": false });
+                        correcto = false
                     }
-                    break;
-                case "Ordenar valores":
-                    console.log("Respuesta: ", respuesta);
-                    console.log("Correcta: ", pregunta.correcta);
-                    if (JSON.stringify(respuesta) === JSON.stringify(pregunta.correcta)) {
-                        console.log("Selección correcta");
-                        res.json({ "correct": true });
-                    } else {
-                        console.log("Selección incorrecta");
-                        res.json({ "correct": false });
-                    }
-                    break;
+                } else {
+                    correcto = false
+                }
+                break;
 
-                case "Respuesta":
-                    if (pregunta.correcta.includes(respuesta)) {
-                        res.json({ "correct": true });
-                    } else {
-                        res.json({ "correct": false });
-                    }
-                    break;
+            case "Unir valores":
+                const respuestaString = respuesta.map(arr => arr.join(',')).sort().join(';');
+                const correctaString = pregunta.correcta.map(arr => arr.join(',')).sort().join(';');
 
-                case "Grafica":
-                    respuesta = comprobarRectaLineal(respuesta[0], respuesta[1]);
-                    console.log("Respuesta: ", respuesta);
-                    console.log("Correcta: ", pregunta.correcta);
-                    if (respuesta.tipo === pregunta.correcta.tipo) {
-                        console.log("Tipo correcto");
-                        if (respuesta.tipo === "horizontal" && respuesta.y === pregunta.correcta.y) {
-                            res.json({ "correct": true });
-                        } else if (respuesta.tipo === "vertical" && respuesta.x === pregunta.correcta.x) {
-                            res.json({ "correct": true });
-                        } else if (respuesta.tipo === "lineal" && respuesta.m === pregunta.correcta.m && respuesta.b === pregunta.correcta.b) {
-                            res.json({ "correct": true });
-                        } else {
-                            res.json({ "correct": false });
-                        }
-                    } else {
-                        res.json({ "correct": false });
-                    }
-                    break;
+                if (respuestaString === correctaString) {
+                    correcto = true
+                } else {
+                    correcto = false
+                }
+                break;
 
-                case "Unir valores":
-                    const respuestaString = respuesta.map(arr => arr.join(',')).sort().join(';');
-                    const correctaString = pregunta.correcta.map(arr => arr.join(',')).sort().join(';');
-
-                    if (respuestaString === correctaString) {
-                        res.json({ "correct": true });
-                    } else {
-                        res.json({ "correct": false });
-                    }
-                    break;
-
-                default:
-                    res.json({ "correct": false }); // Handle default case
-                    break;
+            default:
+                correcto = false // Handle default case
+                break;
+        }
+        findRegisteredResult(idUser, req.body.ejercicioid, preguntaid).then((result) => {
+            if (result != null) {
+                if (!result.correcta && correcta) {
+                    updateCollection(
+                        { "idUsuario": idUser, "idPregunta": preguntaid, "idEjercicio": req.body.ejercicioid }, // Filtro para encontrar el usuario por su ID
+                        {
+                            "$set": {
+                                "correcta": correcto,
+                                "respuesta": req.body.respuesta
+                            }
+                        }, 'result')
+                }
+            } else {
+                insertInCollection({ "idUsuario": idUser, "idPregunta": preguntaid, "idEjercicio": req.body.ejercicioid, "respuesta": req.body.respuesta, "correcta": correcto }, 'result')
             }
-        });
+        })
+        res.json({ "correct": correcto });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -279,52 +267,40 @@ app.post('/login', async (req, res) => {
         let usuariIndividual = {};
         let comprovacio = false;
 
-        conectar()
-            .then(() => {
-                return getData('SELECT * FROM users;');
-            })
-            .then(usuaris => {
-                console.log("Query completed. Data retrieved:", usuaris);
-                for (const usuari of usuaris) {
-                    if (usuari.email == login.email) {
-                        console.log("Mail trobat");
-                        if (usuari.contrasena != login.contrasena) {
-                            console.log("Usuari o contrasenya incorrectes");
-                            usuariIndividual = { email: "" };
-                        } else {
-                            console.log("pwd trobat");
-                            usuariIndividual = {
-                                id: req.session.id,
-                                userId: usuari.id,
-                                name: usuari.nom,
-                                surname: usuari.cognoms,
-                                email: usuari.email,
-                            };
-                            req.session.user = usuariIndividual;
-                            sessiones[req.session.id] = req.session;
-                            comprovacio = true;
-                            console.log(usuariIndividual);
-                            res.json(usuariIndividual);
-                            return; // Exit the loop if user found
-                        }
+        mysqlConnection.SelectUsers((usuaris) => {
+            console.log("Query completed. Data retrieved:", usuaris);
+            for (const usuari of usuaris) {
+                if (usuari.email == login.email) {
+                    console.log("Mail trobat");
+                    if (usuari.contrasena != login.contrasena) {
+                        console.log("Usuari o contrasenya incorrectes");
+                        usuariIndividual = { email: "" };
+                    } else {
+                        console.log("pwd trobat");
+                        usuariIndividual = {
+                            id: req.session.id,
+                            userId: usuari.id,
+                            name: usuari.nom,
+                            surname: usuari.cognoms,
+                            email: usuari.email,
+                        };
+                        req.session.user = usuariIndividual;
+                        sessiones[req.session.id] = req.session;
+                        comprovacio = true;
+                        console.log(usuariIndividual);
+                        res.json(usuariIndividual);
+                        return; // Exit the loop if user found
                     }
                 }
+            }
 
-                if (!comprovacio) {
-                    usuariIndividual = { email: "" };
-                    res.json(usuariIndividual);
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                res.status(500).send("Login fallido");
-            })
-            .finally(() => {
-                cerrarConexion(); // Ensure closing the connection
-            });
+            if (!comprovacio) {
+                usuariIndividual = { email: "" };
+                res.json(usuariIndividual);
+            }
+        })
     } catch (error) {
         console.error("Error:", error);
-        cerrarConexion(); // Ensure closing the connection in case of an uncaught error
         res.status(500).send("Login fallido");
     }
 });
@@ -349,35 +325,29 @@ app.post('/registrarUsuari', (req, res) => {
     usuariDades = req.body; // Assuming req.body contains user data
     let comprovacio = true;
 
-    conectar()
-        .then(() => {
-            return getData('SELECT email FROM users');
-        })
-        .then(emails => {
-            console.log("Query completed. Data retrieved:", emails);
-            emails.forEach(email => {
-                if (email.email === usuariDades.email) {
-                    console.log("Aquest mail ja està en ús");
-                    comprovacio = false;
-                }
-            });
-
-            if (comprovacio) {
-                return manageData(`INSERT INTO users (name, surname, email, contrasena) VALUES ("${usuariDades.name}","${usuariDades.surname}","${usuariDades.email}","${usuariDades.contrasena}")`);
-            } else {
-                // Mail en uso
-                res.status(403).send();
-                throw new Error("Mail en uso");
+    mysqlConnection.SelectEmails((emails) => {
+        console.log("Query completed. Data retrieved:", emails);
+        emails.forEach(email => {
+            if (email.email === usuariDades.email) {
+                console.log("Aquest mail ja està en ús");
+                comprovacio = false;
             }
-        })
+        });
+
+        if (comprovacio) {
+            mysqlConnection.InsertUser([usuariDades.name, usuariDades.surname, usuariDades.email, usuariDades.contrasena], ((result) => { return result }));
+        } else {
+            // Mail en uso
+            res.status(403).send();
+            throw new Error("Mail en uso");
+        }
+    })
         .then(successMessage => {
             console.log("Operación completada:", successMessage);
-            cerrarConexion(); // Close the connection after all operations are completed
             res.status(200).send("Registro exitoso");
         })
         .catch(error => {
             console.error("Error:", error);
-            cerrarConexion(); // Close the connection in case of error
             res.status(500).send("Error en el registro");
         });
 });
@@ -386,22 +356,16 @@ app.post('/registrarUsuari', (req, res) => {
 app.post('/actualitzarUsuari', requireLogin, (req, res) => {
     dades = (req.body)
     comprovacio = true
-    conectar()
-        .then(() => {
-            return manageData(`UPDATE usuario SET name = "${dades.name}", surname = "${dades.surname}", email = "${dades.email}" WHERE id= ${dades.userId}`)
-        })
-        .then(successMessage => {
-            console.log("Operación completada:", successMessage);
-            req.session.user.name = dades.name;
-            req.session.user.surname = dades.surname;
-            req.session.user.email = dades.email;
-            console.log("Usuario actualizado correctamente: ", result)
-            cerrarConexion();
-            res.status(200).send("Registro exitoso");
-        })
+    mysqlConnection.UpdateUser([dades.name, dades.surname, dades.email, dades.userId], (successMessage) => {
+        console.log("Operación completada:", successMessage);
+        req.session.user.name = dades.name;
+        req.session.user.surname = dades.surname;
+        req.session.user.email = dades.email;
+        console.log("Usuario actualizado correctamente: ", result)
+        res.status(200).send("Registro exitoso");
+    })
         .catch(error => {
             console.error("Error:", error);
-            cerrarConexion();
             res.status(500).send("Error en el registro");
         });
 
@@ -409,16 +373,15 @@ app.post('/actualitzarUsuari', requireLogin, (req, res) => {
 })
 //GET USUARIOS
 app.get('/consultarUsuaris', (req, res) => {
-    getData("SELECT * FROM usuario")
-        .then(usuaris => {
-            usuarisEnviar = []
-            usuaris.forEach(usuari => {
-                usuariIndividual = { id: usuari.id, contrasena: usuari.contrasena, name: usuari.name, surname: usuari.cognoms, email: usuari.email }
-                usuarisEnviar.push(usuariIndividual)
-            })
-
-            res.json(usuarisEnviar)
+    mysqlConnection.SelectUsers((usuaris) => {
+        usuarisEnviar = []
+        usuaris.forEach(usuari => {
+            usuariIndividual = { id: usuari.id, contrasena: usuari.contrasena, name: usuari.name, surname: usuari.cognoms, email: usuari.email }
+            usuarisEnviar.push(usuariIndividual)
         })
+
+        res.json(usuarisEnviar)
+    })
         .catch(error => {
             console.error("Error:", error);
             // Manejar el error de alguna manera

@@ -18,20 +18,8 @@ export async function comprobarRespuesta(respuesta, id) {
       mode: "cors"
     },);
   const correcto = await response.json();
-  console.log("CORRECTA", correcto);
   return correcto;
 
-}
-export async function GuardarRespuesta(respuesta) {
-  console.log("respuesta" + respuesta);
-  const response = await fetch(`${SERVER_URL}/subirResultado`,
-    {
-      method: 'POST', headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(respuesta),
-      mode: "cors"
-    },);
 }
 export async function GetResueltas(datos) {
   console.log("DATOS: "+datos);

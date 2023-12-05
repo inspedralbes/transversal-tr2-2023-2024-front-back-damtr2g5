@@ -254,22 +254,13 @@ export default {
         },
         comprobar(idPregunta) {
             let correcta = '';
-            comprobarRespuesta({ respuesta: this.respuestaSelecionada }, idPregunta).then(response => {
+            comprobarRespuesta({ respuesta: this.respuestaSelecionada, ejercicioid: this.Ejercicio.id }, idPregunta).then(response => {
                 this.overlay = true;
                 this.icono = response.correct ? '$check' : '$close';
                 this.indexArray[this.selectedButton] = response.correct ? 1 : 2;
                 this.coloricono = response.correct ? 'success' : 'red';
                 this.disableComponent = true;
-                correcta = response.correct;
-                let userid = store.getLoginInfo();
-                let dato = {
-                    "userId": parseInt(userid.id),
-                    "preguntaid": idPregunta,
-                    "ejercicioid": this.Ejercicio.id,
-                    "respuesta": this.respuestaSelecionada,
-                    "correcta": correcta
-                }
-                GuardarRespuesta(dato)                
+                correcta = response.correct;              
                 this.respuestaSelecionada = "";
             });
 
