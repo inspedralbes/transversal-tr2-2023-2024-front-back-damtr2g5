@@ -5,7 +5,7 @@
       <v-row>
         <v-col v-for="n in opciones" :key="n" cols="4">
           <v-item v-slot="{ isSelected, selectedClass, toggle }">
-            <v-card :class="['d-flex align-center super-cool-button', selectedClass]" dark height="200" @click="toggle">
+            <v-card  :class="['d-flex align-center super-cool-button', selectedClass]" dark height="200" @click="toggle(n)">
               <div class="text-h3 flex-grow-1 text-center">
                 {{ isSelected ? 'Selected' : n }}
               </div>
@@ -58,6 +58,18 @@ export default {
       codigo: '',
       opciones
     };
+  },
+  methods:{
+    toggle(n) {
+      switch(n) {
+        case 'Entrenamiento':
+          this.$router.push({ name: 'Entrenamiento' })
+          break;
+        case 'Batalla':
+          this.$router.push({ name: 'Batalla' })
+          break;
+      }
+    }
   }
 }
 </script>
