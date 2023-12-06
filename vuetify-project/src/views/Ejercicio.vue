@@ -13,7 +13,7 @@
         </v-row>
     </v-container>
     <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto px-4" elevation="4" height="auto"
-        rounded max-width="800" width="100%">
+        rounded max-width="800" width="100%"  >
         <v-container>
 
             <v-row style="position: relative;" justify="center">
