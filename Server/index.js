@@ -1,5 +1,4 @@
 const express = require('express');
-const session = require('express-session');
 const http = require('http')
 const bodyParser = require('body-parser');
 const cors = require("cors");
@@ -16,10 +15,8 @@ const corsOptions = {
     preflightContinue: true,
     optionsSuccessStatus: 200,
 };
-const socketIo = require('socket.io');
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server, { cors: corsOptions })
 const port = 3001;
 
 
@@ -27,33 +24,37 @@ const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollectio
 const { comprobarRectaLineal, requireLogin, getRemainingExp } = require("./utils.js");
 const { connect } = require('http2');
 const { Console } = require('console');
+const { initializeSocket, filterRooms } = require("./socket.js");
+initializeSocket(server, { cors: corsOptions });
+const sessionMiddleware = require('./sessionMiddleware.js');
 
-const sessionMiddleware = session({
-    secret: 'mySecretKey',
-    resave: true,
-    name: "mathGame",
-    saveUninitialized: true,
-    cookie: {
-        secure: false,
-        httpOnly: true,
-        domain: "localhost",
-        path: "/",
-        maxAge: 3600000,
-        sameSite: 'lax'
-    }
-});
 app.use(sessionMiddleware);
 app.use(bodyParser.json());
 app.use(cookieParser("mySecretKey"));
 app.use(express.json())
 app.use(cors(corsOptions));
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
 });
 
-var sessiones = [];
 
+app.get('/getRooms', (req, res) => {
+    var page = req.query.page || 1;
+    var itemsPerPage = req.query.itemsPerPage || 10;
+    var sortBy = req.query.sortBy.replace(/\s/g, "") || "";
+    var order = req.query.order.replace(/\s/g, "") || "";
+    var search = req.query.search.replace(/\s/g, "") || "";
+    
+    roomsFilter = filterRooms(search, sortBy, order);
+
+    var roomsToSend = roomsFilter.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+    var response = {
+        rooms: roomsToSend,
+        totalRooms: roomsFilter.length
+    }
+    res.json(response);
+});
 app.get('/getEjercicio', (req, res) => {
     getDocument(1).then((document) => {
         getPreguntas(document.preguntas).then((preguntas) => {

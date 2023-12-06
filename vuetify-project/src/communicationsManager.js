@@ -6,8 +6,17 @@ export async function getEjercicios() {
   return ejercicios;
 }
 
-
-export async function comprobarRespuesta(respuesta, id) {
+export async function getRooms(page, itemsPerPage, sortBy, search) {
+  const response = await fetch(`${SERVER_URL}/getRooms?page=${page}
+  &itemsPerPage=${itemsPerPage}
+  &sortBy=${sortBy[0]?.key}
+  &order=${sortBy[0]?.order}
+  &search=${search}`,
+    { method: 'GET', credentials: 'include', mode: 'cors' });
+  const rooms = await response.json();
+  return rooms;
+}
+export async function comprobarRespuesta(respuesta,id) {
   console.log("respuesta" + respuesta + "id" + id);
   const response = await fetch(`${SERVER_URL}/comprobarPregunta/${id}`,
     {
@@ -15,7 +24,7 @@ export async function comprobarRespuesta(respuesta, id) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(respuesta),
-      mode: "cors"
+      credentials: 'include', mode: "cors"
     },);
   const correcto = await response.json();
   return correcto;

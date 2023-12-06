@@ -9,7 +9,7 @@
             <form>
                 <v-text-field v-model="email" label="Email"></v-text-field>
 
-                <v-text-field v-model="password" :append-icon="show0 ? 'mdi-eye' : 'mdi-eye-off'"
+                <v-text-field v-model="password" :append-icon="show0 ? '$eye' : '$eyeOff'"
                             :type="show0 ? 'text' : 'password'" label="Contrasenya"
                             @click:append="show0 = !show0"></v-text-field>
 
@@ -44,12 +44,12 @@
                             <v-container>
                                 <v-card-text>
                                     <v-row>
-                                        <v-text-field :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                                        <v-text-field :append-icon="show1 ? '$eye' : '$eyeOff'"
                             :type="show1 ? 'text' : 'password'" label="Contrasenya"
                             @click:append="show1 = !show1"
                                             v-model="passwordD"></v-text-field></v-row>
                                     <v-row>
-                                        <v-text-field :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
+                                        <v-text-field :append-icon="show2 ? '$eye' : '$eyeOff'"
                             :type="show2 ? 'text' : 'password'" label="Contrasenya"
                             @click:append="show2 = !show2"
                                             v-model="passwordComprobacion"></v-text-field></v-row>
