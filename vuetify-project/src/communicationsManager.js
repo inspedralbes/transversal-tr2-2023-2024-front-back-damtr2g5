@@ -39,7 +39,7 @@ export async function login(usuario) {
    headers: {
     'Content-Type':  'application/json' ,
   },
-  body: JSON.stringify(infoUsuario)});
+  body: JSON.stringify(usuario)});
   
 }
 

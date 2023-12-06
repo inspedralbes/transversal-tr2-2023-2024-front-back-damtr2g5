@@ -126,11 +126,8 @@ export default {
     methods: {
         
         guardar() {
-<<<<<<< HEAD
-            console.log(this.username, this.password);
-            this.appStore.setLoginInfo({ name: this.username, contrasena: this.password, surname: this.surname, email: this.email})
+            
 
-=======
             var encryptedPwd = this.handleHashing(this.password)
             this.loading = true;
             this.appStore.setEmail(this.email);
@@ -142,6 +139,7 @@ export default {
                     this.$router.push({ name: 'Home' })
                 } else {
                     console.log("Login failed")
+                    
                 }
             })
             .catch((error) => {
@@ -175,7 +173,6 @@ export default {
             this.surname = ''
             this.passwordD = '';
             this.passwordComprobacion = '';
->>>>>>> ActivitiesViews
         }
     }, computed: {
         currentTitle() {
