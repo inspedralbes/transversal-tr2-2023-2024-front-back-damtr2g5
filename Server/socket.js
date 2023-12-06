@@ -1,8 +1,9 @@
 const socketIo = require('socket.io');
 const rooms = require('./rooms.js');
 const sessionMiddleware = require('./sessionMiddleware.js');
+let io;
 function initializeSocket(server, cors) {
-    const io = socketIo(server, cors);
+    io = socketIo(server, cors);
 
     io.engine.use(sessionMiddleware)
 
@@ -87,5 +88,11 @@ function filterRooms(search, sortBy, order) {
     roomsFilter = roomsFilter.map(({ password, users, ...rest }) => rest);
     return roomsFilter;
 }
+function getIo() {
+    if (!io) {
+        throw new Error('Must call initializeSocket before getting io');
+    }
+    return io;
+}
 
-module.exports = { initializeSocket, filterRooms };
+module.exports = { initializeSocket, filterRooms, getIo };
