@@ -6,7 +6,6 @@ export const useAppStore = defineStore('app', {
     state: () => ({
         auth: false,
         loginInfo: {
-            loggedIn: false,
             id: '',
             name: '',
             contrasena: '',
@@ -24,8 +23,8 @@ export const useAppStore = defineStore('app', {
         getRespuesta() {
           return this.respuesta;
         },
-        isLoggedIn() {
-            return this.loginInfo.loggedIn;
+        isAuthenticated() {
+            return this.auth;
         },
         getLoginInfo() {
             return this.loginInfo;
@@ -52,19 +51,23 @@ export const useAppStore = defineStore('app', {
         setPassword(pwdLogin) {
           this.loginInfo.contrasena = pwdLogin
         },
+        setAuth(state, isAuthenticated) {
+          this.state.auth = isAuthenticated;
+        },
         
         login() {
             return new Promise((resolve, reject) => {
               login(this.loginInfo).then((response) => response.json())
                 .then((data) => {
-                  this.$state.loginInfo = data
-                  console.log("Login info: ",this.$state.loginInfo)
+                  this.$state.loginInfo = DataTransferItem
                   this.loading = false;
                   if (data.email != '') {
                     this.$state.auth = true;
+                    console.log("New auth state: ", this.$state.auth)
                     resolve(true);
                   } else {
                     this.$state.auth = false;
+                    console.log(data)
                     resolve(false);
                   }
                 }).catch((error) => {
@@ -78,31 +81,45 @@ export const useAppStore = defineStore('app', {
             return new Promise((resolve, reject) => {
               getLogin().then((response) => response.json())
                 .then((data) => {
-                  commit('setUser', data);
+                  console.log(data)
+                  this.$state.loginInfo = data
                   this.loading = false;
                   if (data.email != '') {
-                    commit('setAuth', true);
-                    resolve(true);
+                    this.$state.auth = true;
+                    
+                    console.log("New auth state getLogin: ", this.$state.auth)
+                    resolve(true)
                   } else {
-                    commit('setAuth', false);
+                    this.$state.auth = false;
                     resolve(false);
                   }
                 }).catch((error) => {
                   console.error('Error al iniciar sesión:', error);
-                  commit('setAuth', false);
+                  this.$state.auth = false;
                   reject(error);
                 });
             });
           },
-          logout({ commit }) {
-            this.state.user = {
-              email: "",
-              password: "",
-              nom: "",
-              cognom: ""
-            };
-            endSession();
-            commit('setAuth', false);
-          }
+          logout() {
+            return new Promise((resolve, reject) => {
+              endSession().then(() => {
+                this.$state.loginInfo = {
+                  email: "",
+                  password: "",
+                  nom: "",
+                  cognom: ""
+                };
+                this.$state.auth = false;
+                console.log("Auth after logout: ",this.$state.auth)
+                resolve(true)
+              }
+              ).catch((error) => {
+                this.$state.auth = false;
+                reject(error);
+              })
+            })
+            
+            
+          },
     }
 })

@@ -1,4 +1,5 @@
 <template>
+        
     <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto h-auto pa-4" elevation="4" rounded
         max-width="300" width="100%">
         <div>
@@ -12,7 +13,7 @@
                             :type="show0 ? 'text' : 'password'" label="Contrasenya"
                             @click:append="show0 = !show0"></v-text-field>
 
-                <v-btn @click="guardar()" block class="mt-2">Login</v-btn>
+                <v-btn @click="guardar()"  block class="mt-2">Login</v-btn>
             </form>
             <p class="mt-3"> Aun no estas registrat? <a href="#" @click.stop.prevent="dialog = true,step=1"> Regist'rat </a></p>
             <v-dialog v-model="dialog" class="w-50">
@@ -125,29 +126,41 @@ export default {
     methods: {
         
         guardar() {
+            var encryptedPwd = this.handleHashing(this.password)
             this.loading = true;
-            console.log(this.username, this.email, this.password);
             this.appStore.setEmail(this.email);
-            this.appStore.setPassword(this.password);
+            this.appStore.setPassword(encryptedPwd);
             this.appStore.login()
-            
-
+            .then((result)=> {
+                if (result) {
+                    console.log("Go Home")
+                    this.$router.push({ name: 'Home' })
+                } else {
+                    console.log("Login failed")
+                }
+            })
+            .catch((error) => {
+            console.error("Error during login:", error);
+            })
+            .finally(() => {
+                this.loading = false;
+                
+            });
         },
         handleHashing(data) {
-            this.password = md5(data).toUpperCase()
+            var passwordInput = md5(data).toUpperCase()
+            return passwordInput
             },
         async register(){
-            var encryptPwd = md5(this.passwordD).toUpperCase();
-            console.log("Contraseña encriptada: ",this.passwordD)
+            var encryptPwd = handleHashing(passwordD)
+            
             var usuario = {name: this.username, surname: this.surname, email: this.emailD, contrasena: encryptPwd}
             const response =  await registrarUsuari(usuario)
             console.log(response);
             if(response.success) {
-                console.log("Success!!")
                 this.step=3
                 
             } else {
-                console.log("Failed!!")
                 this.step=4
                 this.errorMessage = response.message
                 

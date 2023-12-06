@@ -52,6 +52,7 @@ export async function registrarUsuari(infoUsuario) {
 }
 
 export async function getLogin(){
+  
   return fetch(`${SERVER_URL}/getLogin`, {method:'GET',credentials: 'include', mode: 'cors'});
 }
 
