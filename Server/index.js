@@ -301,7 +301,6 @@ app.post('/login', async (req, res) => {
                             email: usuari.email,
                         };
                         req.session.user = usuariIndividual;
-                        sessiones[req.session.id] = req.session;
                         comprovacio = true;
                         console.log(usuariIndividual);
                         res.json(usuariIndividual);
@@ -610,7 +609,6 @@ app.post('/login', async (req, res) => {
                                         image : usuari.image
                         };
                         req.session.user = usuariIndividual;
-                        sessiones[req.session.id] = req.session;
                         comprovacio = true;
                         console.log(usuariIndividual);
                         res.json(usuariIndividual);
