@@ -137,9 +137,9 @@ export default {
             this.password = md5(data).toUpperCase()
             },
         async register(){
-            this.passwordD = md5(this.passwordD).toUpperCase();
-            console.log(this.passwordD)
-            var usuario = {name: this.username, surname: this.surname, email: this.emailD, contrasena: this.encryptedPwd}
+            var encryptPwd = md5(this.passwordD).toUpperCase();
+            console.log("Contraseña encriptada: ",this.passwordD)
+            var usuario = {name: this.username, surname: this.surname, email: this.emailD, contrasena: encryptPwd}
             const response =  await registrarUsuari(usuario)
             console.log(response);
             if(response.success) {
