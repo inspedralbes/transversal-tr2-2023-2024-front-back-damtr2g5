@@ -100,6 +100,18 @@ const routes = [
       },      
     ],   
   },
+  {
+    path: '/home/batalla',
+    component: () => import('@/layouts/default/Default.vue'),
+    beforeEnter: requireAuth,
+    children: [
+      {
+        path: '',
+        name: 'Batalla',        
+        component: () => import(/* webpackChunkName: "home" */ '@/views/BuscadorBatalla.vue'),
+      },      
+    ],
+  }
   
   
 ]
