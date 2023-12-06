@@ -1,4 +1,5 @@
 <template>
+        
     <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto h-auto pa-4" elevation="4" rounded
         max-width="300" width="100%">
         <div>
@@ -12,7 +13,7 @@
                             :type="show0 ? 'text' : 'password'" label="Contrasenya"
                             @click:append="show0 = !show0"></v-text-field>
 
-                <v-btn @click="guardar()" block class="mt-2">Login</v-btn>
+                <v-btn @click="guardar()"  block class="mt-2">Login</v-btn>
             </form>
             <p class="mt-3"> Aun no estas registrat? <a href="#" @click.stop.prevent="dialog = true,step=1"> Regist'rat </a></p>
             <v-dialog v-model="dialog" class="w-50">
@@ -54,17 +55,34 @@
                                             v-model="passwordComprobacion"></v-text-field></v-row>
                                 </v-card-text> </v-container>
                         </v-window-item>
+                        <v-window-item :value="3">
+                            <v-container>
+                            </v-container>
+                        </v-window-item>
+                        <v-window-item :value="4">
+                            <v-container>
+                                <v-card-text>
+                                    {{ this.errorMessage }}
+                                </v-card-text>
+                            </v-container>
+                        </v-window-item>
                     </v-window>
 
                     <v-divider></v-divider>
 
                     <v-card-actions>
-                        <v-btn v-if="step > 1" variant="text" @click="step--">
+                        <v-btn v-if="step == 2" variant="text" @click="step--">
                             Back
                         </v-btn>
                         <v-spacer></v-spacer>
                         <v-btn v-if="step < 2" color="primary" variant="flat" @click="step++">
                             Next
+                        </v-btn>
+                        <v-btn v-if="step == 2 && this.passwordD == this.passwordComprobacion && this.passwordD != '' " color="primary" variant="flat" @click="register()">
+                            Register
+                        </v-btn>
+                        <v-btn  v-if="step > 2" color="primary" variant="flat" @click="dialog=false">
+                            Exit
                         </v-btn>
                     </v-card-actions>
                 </v-card>
@@ -76,6 +94,8 @@
 
 <script>
 import { useAppStore } from '../../store/app'
+import { registrarUsuari } from '../../communicationsManager' 
+import md5 from 'md5';
 export default {
     setup() {
         const appStore = useAppStore()
@@ -86,7 +106,10 @@ export default {
     data() {
 
         return {
+            loading: false,
+            allowed: false,
             dialog: false,
+            errorMessage: '',
             username: '',
             password: '',
             passwordD: '',
@@ -101,16 +124,66 @@ export default {
         };
     },
     methods: {
+        
         guardar() {
+<<<<<<< HEAD
             console.log(this.username, this.password);
             this.appStore.setLoginInfo({ name: this.username, contrasena: this.password, surname: this.surname, email: this.email})
 
+=======
+            var encryptedPwd = this.handleHashing(this.password)
+            this.loading = true;
+            this.appStore.setEmail(this.email);
+            this.appStore.setPassword(encryptedPwd);
+            this.appStore.login()
+            .then((result)=> {
+                if (result) {
+                    console.log("Go Home")
+                    this.$router.push({ name: 'Home' })
+                } else {
+                    console.log("Login failed")
+                }
+            })
+            .catch((error) => {
+            console.error("Error during login:", error);
+            })
+            .finally(() => {
+                this.loading = false;
+                
+            });
+        },
+        handleHashing(data) {
+            var passwordInput = md5(data).toUpperCase()
+            return passwordInput
+            },
+        async register(){
+            var encryptPwd = handleHashing(passwordD)
+            
+            var usuario = {name: this.username, surname: this.surname, email: this.emailD, contrasena: encryptPwd}
+            const response =  await registrarUsuari(usuario)
+            console.log(response);
+            if(response.success) {
+                this.step=3
+                
+            } else {
+                this.step=4
+                this.errorMessage = response.message
+                
+            }
+            this.emailD = ''
+            this.username = ''
+            this.surname = ''
+            this.passwordD = '';
+            this.passwordComprobacion = '';
+>>>>>>> ActivitiesViews
         }
     }, computed: {
         currentTitle() {
             switch (this.step) {
                 case 1: return 'Sign-up'
                 case 2: return 'Create a password'
+                case 3: return 'Account created'
+                case 4: return 'Register error'
                 default: return 'Account created'
             }
         },

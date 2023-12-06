@@ -26,7 +26,7 @@
                 Editar conte
               </v-btn>
               <v-divider class="my-3"></v-divider>
-              <v-btn rounded variant="text">
+              <v-btn @click="logout()" rounded variant="text">
                 Tancar sessiò
               </v-btn>
             </div>
@@ -41,14 +41,27 @@
 import { useAppStore } from '@/store/app';
 import { mdiPencil } from '@mdi/js'
 export default {
+  
   data() {
     const appStore = useAppStore()
-    const user = appStore.getLoginInfo()
+    const user = appStore.getLoginInfo;
     return {
       user,
-      mdiPencil
+      mdiPencil,
+      appStore
     };
   },
+  methods: {
+    logout() {
+      this.appStore.logout().then((result)=> {
+        if (result) {
+          console.log("Login Session: ",this.appStore.getLoginInfo)
+          this.$router.push({name:"Login"});
+        }
+      })
+      
+    }
+  }
 }
 </script>
 

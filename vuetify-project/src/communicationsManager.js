@@ -33,15 +33,32 @@ export async function GetResueltas(datos) {
 
 export async function login(usuario) {
 
-  return fetch(`${SERVER_URL}/login`,
-    {
-      method: 'POST',
-      credentials: 'include', mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(usuario)
-    });
+  return fetch(`${SERVER_URL}/login`, 
+  {method: 'POST',
+  credentials: 'include', mode: 'cors',
+   headers: {
+    'Content-Type':  'application/json' ,
+  },
+  body: JSON.stringify(infoUsuario)});
+  
+}
+
+export async function registrarUsuari(infoUsuario) {
+  const response = await fetch(`${SERVER_URL}/registrarUsuari`, 
+  {method: 'POST',
+  credentials: 'include', mode: 'cors',
+   headers: {
+    'Content-Type':  'application/json' ,
+  },
+  body: JSON.stringify(infoUsuario)});
+  if (response.status === 200) {
+    console.log('Registration successful!');
+    const messages = await response.text()
+    return { success: true, message: messages};
+  } else {
+    const messages = await response.text()
+    return { success: false, message: messages };
+  }
 }
 
 export async function getLogin() {
@@ -50,4 +67,16 @@ export async function getLogin() {
 
 export async function endSession() {
   return fetch(`${SERVER_URL}/logout`, { method: 'GET', credentials: 'include', mode: 'cors' });
+}
+
+export async function getCategorias(){
+  const response = await fetch(`${SERVER_URL}/getCategorias`);
+  const categorias = await response.json();
+  return categorias;
+}
+
+export async function getEjerciciosByCat(idCategoria){
+  const response = await fetch(`${SERVER_URL}/getCategorias/${idCategoria}`);
+  const categorias = await response.json();
+  return categorias;
 }

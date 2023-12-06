@@ -1,6 +1,6 @@
 const user = "a22osczapmar";
 const password = "Nitrome7.";
-module.exports = { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, updateCollection };
+module.exports = { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection, findRegisteredResults, getCategorias, getActivities };
 const { MongoClient } = require("mongodb");
 
 // Replace the following with your Atlas connection string                                                                                                                                        
@@ -28,7 +28,39 @@ async function getDocument(id) {
     }
 }
 
-async function findRegisteredResult(id_user, id_ejercicio, id_pregunta) {
+async function getActivities(theme) {
+    try {
+        await client.connect();
+        const db = client.db(dbName);
+        const col = db.collection("activity");
+        const filter = { "id_tema": parseInt(theme)};
+        const resultadoEncontrado = await col.find(filter).toArray();
+        
+        console.log(resultadoEncontrado); 
+
+        return resultadoEncontrado; 
+    } catch (err) {
+        console.log(err.stack);
+        return null; 
+    }
+}
+async function getCategorias() {
+    try {
+        await client.connect();
+        const db = client.db(dbName);
+        const col = db.collection("theme");
+        const resultadoEncontrado = await col.find({}).toArray();
+        
+        console.log(resultadoEncontrado); 
+
+        return resultadoEncontrado; 
+    } catch (err) {
+        console.log(err.stack);
+        return null; 
+    }
+}
+
+async function findRegisteredResult(id_user, id_activity, id_pregunta) {
     try {
         await client.connect();
         const db = client.db(dbName);

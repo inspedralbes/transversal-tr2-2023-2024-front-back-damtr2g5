@@ -1,18 +1,13 @@
 <template>
   <v-item-group selected-class="bg-primary">
     <v-container>
-      
-      <v-row>
-        <v-col v-for="n in opciones" :key="n" cols="4">
-          <v-item v-slot="{ isSelected, selectedClass, toggle }">
-            <v-card :class="['d-flex align-center super-cool-button', selectedClass]" dark height="200" @click="toggle">
-              <div class="text-h3 flex-grow-1 text-center">
-                {{ isSelected ? 'Selected' : n }}
-              </div>
-            </v-card>
-          </v-item>
-        </v-col>
-      </v-row>
+      <v-item v-for="n in opciones" :key="n">
+        <v-card class="d-flex align-center super-cool-button" dark height="200" @click="onToggle(n)">
+          <div class="text-h3 text-center">
+            {{ isSelected ? 'Log In' : n }}
+          </div>
+        </v-card>
+      </v-item>
     </v-container>
   </v-item-group>
   <v-container>
@@ -45,8 +40,15 @@
   </v-dialog>
 </template>
 <script>
+import { useAppStore } from '../../store/app'
 export default {
   name: 'Botones',
+  setup() {
+        const appStore = useAppStore()
+        return {
+            appStore
+        };
+    },
   data() {
     const opciones = [
       'Entrenamiento',
@@ -58,6 +60,24 @@ export default {
       codigo: '',
       opciones
     };
+  },
+  methods:{
+    
+    onToggle(route) {
+      var isAuth = this.appStore.isAuthenticated
+      if (!isAuth) {
+        alert('Has de logearte para acceder');
+        return;
+      }
+      switch(route) {
+        case 'Entrenamiento':
+          this.$router.push({ name: 'Entrenamiento' })
+          break;
+        case 'Batalla':
+          this.$router.push({ name: 'Batalla' })
+          break;
+      }
+    }
   }
 }
 </script>
@@ -66,10 +86,16 @@ export default {
   background-color: #ff4081;
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 20px;
   font-size: 16px;
   border-radius: 5px;
   cursor: pointer;
+  margin-bottom: 20px; 
+  display: inline-flex; 
+  min-width: 150px; 
+  box-sizing: border-box; 
+  justify-content: center; 
+  align-items: center; 
 }
 
 .super-cool-button:hover {

@@ -6,8 +6,7 @@ export const useAppStore = defineStore('app', {
     state: () => ({
         auth: false,
         loginInfo: {
-            loggedIn: false,
-            id: '1',
+            id: '',
             name: '',
             contrasena: '',
             surname: '',
@@ -15,25 +14,20 @@ export const useAppStore = defineStore('app', {
             rank: '',
             lifetotal: '',
             experience: '',
-            image: 'http://localhost:3001/imagen/avatar1.jpg'
+            image: ''
         },
         respuesta: '',
     }),
-    mutations: {
-        setAuth(state, isAuthenticated) {
-            this.state.auth = isAuthenticated;
+    getters: {
+      
+        getRespuesta() {
+          return this.respuesta;
         },
-        setEmail(state, loginEmail) {
-            this.state.user.email = loginEmail;
+        isAuthenticated() {
+            return this.auth;
         },
-        setPassword(state, loginPassword) {
-            this.state.user.password = loginPassword;
-        },
-        setUser(state, user) {
-            state.user = user;
-        },
-        setComandes(state, comandes){
-            this.state.comandes = comandes;
+        getLoginInfo() {
+            return this.loginInfo;
         }
     },
     actions: {
@@ -46,74 +40,86 @@ export const useAppStore = defineStore('app', {
         setRespuesta(answer) {
             this.respuesta = answer;
         },
-        getRespuesta() {
-            return this.respuesta;
+        setEmail(emailLogin) {
+          this.loginInfo.email = emailLogin
         },
-        isLoggedIn() {
-            return this.loginInfo.loggedIn;
+        setPassword(pwdLogin) {
+          this.loginInfo.contrasena = pwdLogin
         },
-        getLoginInfo() {
-            return this.loginInfo;
+        setAuth(state, isAuthenticated) {
+          this.state.auth = isAuthenticated;
         },
-        login({ commit }) {
-
+        
+        login() {
             return new Promise((resolve, reject) => {
-              login(this.state.loginInfo).then((response) => response.json())
+              login(this.loginInfo).then((response) => response.json())
                 .then((data) => {
-                  commit('setUser', data);
+                  this.$state.loginInfo = DataTransferItem
                   this.loading = false;
                   if (data.email != '') {
-                    commit('setAuth', true);
+                    this.$state.auth = true;
+                    console.log("New auth state: ", this.$state.auth)
                     resolve(true);
                   } else {
-                    commit('setAuth', false);
+                    this.$state.auth = false;
+                    console.log(data)
                     resolve(false);
                   }
                 }).catch((error) => {
                   console.error('Error al iniciar sesión:', error);
-                  commit('setAuth', false);
+                  this.$state.auth = false;
                   reject(error);
                 });
             });
           },
-          hasCookieId({ commit }) {
+          hasCookieId() {
             return new Promise((resolve, reject) => {
               getLogin().then((response) => response.json())
                 .then((data) => {
-                  commit('setUser', data);
+                  console.log(data)
+                  this.$state.loginInfo = data
                   this.loading = false;
                   if (data.email != '') {
-                    commit('setAuth', true);
-                    resolve(true);
+                    this.$state.auth = true;
+                    
+                    console.log("New auth state getLogin: ", this.$state.auth)
+                    resolve(true)
                   } else {
-                    commit('setAuth', false);
+                    this.$state.auth = false;
                     resolve(false);
                   }
                 }).catch((error) => {
                   console.error('Error al iniciar sesión:', error);
-                  commit('setAuth', false);
+                  this.$state.auth = false;
                   reject(error);
                 });
             });
           },
-          logout({ commit }) {
-            this.$state.loginInfo= {
-              loggedIn: false,
-              id: '',
-              name: '',
-              contrasena: '',
-              surname: '',
-              email: '',
-              rank: '',
-              lifetotal: '',
-              experience: '',
-              image: ''
-          };
-            endSession();
-            commit('setAuth', false);
-          }
-    },
-    getters: {
-        isAuthenticated: (state) => state.auth,
-      },
+          logout() {
+            return new Promise((resolve, reject) => {
+              endSession().then(() => {
+                this.$state.loginInfo = {
+                  id: '',
+                  name: '',
+                  contrasena: '',
+                  surname: '',
+                  email: '',
+                  rank: '',
+                  lifetotal: '',
+                  experience: '',
+                  image: ''
+                };
+                this.$state.auth = false;
+                console.log("Auth after logout: ",this.$state.auth)
+                resolve(true)
+              }
+              ).catch((error) => {
+                this.$state.auth = false;
+                reject(error);
+              })
+            })
+            
+            
+          },
+    }
 })
