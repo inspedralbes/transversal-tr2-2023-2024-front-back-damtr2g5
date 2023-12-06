@@ -43,7 +43,7 @@ import {mdiPencil} from '@mdi/js'
 export default {
   data() {
     const appStore = useAppStore()
-    const user = appStore.getLoginInfo()
+    const user = appStore.getLoginInfo;
     return {
       user,
       mdiPencil

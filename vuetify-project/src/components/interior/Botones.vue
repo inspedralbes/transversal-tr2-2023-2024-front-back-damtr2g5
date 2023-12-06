@@ -69,7 +69,7 @@ export default {
   methods:{
     
     onToggle(route) {
-      const isAuth = this.appStore.isLoggedIn();
+      const isAuth = this.appStore.isLoggedIn;
       console.log(isAuth);
       if (!isAuth) {
         alert('Has de logearte para acceder');

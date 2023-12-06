@@ -55,22 +55,21 @@ export const useAppStore = defineStore('app', {
         
         login() {
             return new Promise((resolve, reject) => {
-              console.log(this.loginInfo())
               login(this.loginInfo).then((response) => response.json())
                 .then((data) => {
-                  this.state.loginInfo = data
-                  console.log("Login info: ",this.state.loginInfo)
+                  this.$state.loginInfo = data
+                  console.log("Login info: ",this.$state.loginInfo)
                   this.loading = false;
                   if (data.email != '') {
-                    this.state.auth = true;
+                    this.$state.auth = true;
                     resolve(true);
                   } else {
-                    this.state.auth = false;
+                    this.$state.auth = false;
                     resolve(false);
                   }
                 }).catch((error) => {
                   console.error('Error al iniciar sesión:', error);
-                  this.state.auth = false;
+                  this.$state.auth = false;
                   reject(error);
                 });
             });
