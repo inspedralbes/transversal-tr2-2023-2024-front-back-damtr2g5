@@ -8,7 +8,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const mysqlConnection = require('./mySQL.js');
 const corsOptions = {
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000", "http://mathproject.dam.inspedralbes.cat"],
     credentials: true,
     methods: ['GET', 'POST', 'DELETE'],
     exposedHeaders: ['set-cookie', 'ajax-redirect'],
@@ -19,8 +19,7 @@ const app = express();
 const server = http.createServer(app);
 const port = 3001;
 
-
-const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults,updateCollection, getActivities } = require("./mongoDB.js");
+const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, updateCollection, getActivities } = require("./mongoDB.js");
 const { comprobarRectaLineal, requireLogin, getRemainingExp } = require("./utils.js");
 const { connect } = require('http2');
 const { Console } = require('console');
@@ -28,11 +27,11 @@ const { initializeSocket, filterRooms, getIo } = require("./socket.js");
 initializeSocket(server, { cors: corsOptions });
 const sessionMiddleware = require('./sessionMiddleware.js');
 
-app.use(sessionMiddleware);
 app.use(bodyParser.json());
 app.use(cookieParser("mySecretKey"));
 app.use(express.json())
 app.use(cors(corsOptions));
+app.use(sessionMiddleware);
 
 server.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
@@ -45,7 +44,7 @@ app.get('/getRooms', (req, res) => {
     var sortBy = req.query.sortBy.replace(/\s/g, "") || "";
     var order = req.query.order.replace(/\s/g, "") || "";
     var search = req.query.search.replace(/\s/g, "") || "";
-    
+
     roomsFilter = filterRooms(search, sortBy, order);
 
     var roomsToSend = roomsFilter.slice((page - 1) * itemsPerPage, page * itemsPerPage);
@@ -98,12 +97,12 @@ app.get('/getEjercicio', (req, res) => {
 
 });
 
-app.get('/getCategorias',async (req,res) => {
+app.get('/getCategorias', async (req, res) => {
     categorias = await getCategorias();
     res.json(categorias)
 })
 
-app.post('/getActivities/:tema', async (req,res) => {
+app.post('/getActivities/:tema', async (req, res) => {
     idTema = req.params.tema;
     ejercicios = await getActivities(idTema)
     console.log(ejercicios)
@@ -316,7 +315,7 @@ app.post('/login', async (req, res) => {
         let comprovacio = false;
 
         mysqlConnection.SelectUsers((usuaris) => {
-            for (const usuari of usuaris) {
+            usuaris.forEach(usuari => {
                 if (usuari.email == login.email) {
                     if (usuari.contrasena != login.contrasena) {
                         console.log("Usuari o contrasenya incorrectes");
@@ -325,22 +324,22 @@ app.post('/login', async (req, res) => {
                         usuariIndividual = {
                             sessionId: req.session.id,
                             id: usuari.id,
-                            name : usuari.name,
-                            contrasena : usuari.contrasena,
-                                        surname : usuari.surname,
-                            email : usuari.email,
-                                        rank : usuari.rank,
-                                        lvl : usuari.lvl,
-                                        image : usuari.image
+                            name: usuari.name,
+                            contrasena: usuari.contrasena,
+                            surname: usuari.surname,
+                            email: usuari.email,
+                            rank: usuari.rank,
+                            lvl: usuari.lvl,
+                            image: usuari.image
                         };
                         req.session.user = usuariIndividual;
                         comprovacio = true;
-                        console.log("login",usuariIndividual);
+                        console.log("login", usuariIndividual);
                         res.json(usuariIndividual);
                         return; // Exit the loop if user found
                     }
                 }
-            }
+            });
 
             if (!comprovacio) {
                 usuariIndividual = { email: "" };

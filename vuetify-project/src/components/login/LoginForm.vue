@@ -9,7 +9,7 @@
             <form>
                 <v-text-field v-model="email" label="Email"></v-text-field>
 
-                <v-text-field v-model="password" :append-icon="show0 ? '$eye' : '$eyeOff'"
+                <v-text-field @input="handleHashing($event.target.value)" :append-icon="show0 ? '$eye' : '$eyeOff'"
                             :type="show0 ? 'text' : 'password'" label="Contrasenya"
                             @click:append="show0 = !show0"></v-text-field>
 
@@ -127,11 +127,9 @@ export default {
         
         guardar() {
             
-
-            var encryptedPwd = this.handleHashing(this.password)
             this.loading = true;
             this.appStore.setEmail(this.email);
-            this.appStore.setPassword(encryptedPwd);
+            this.appStore.setPassword(this.password);
             this.appStore.login()
             .then((result)=> {
                 if (result) {
@@ -151,8 +149,7 @@ export default {
             });
         },
         handleHashing(data) {
-            var passwordInput = md5(data).toUpperCase()
-            return passwordInput
+            this.password = md5(data).toUpperCase();
             },
         async register(){
             var encryptPwd = handleHashing(passwordD)

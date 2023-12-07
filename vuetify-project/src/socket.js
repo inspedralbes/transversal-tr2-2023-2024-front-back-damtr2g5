@@ -1,5 +1,6 @@
 import { reactive } from "vue";
 import { io } from "socket.io-client";
+import { SERVER_URL } from "./communicationsManager";
 
 export const state = reactive({
   connected: false,
@@ -7,7 +8,7 @@ export const state = reactive({
   barEvents: []
 });
 
-export const socket = io("http://localhost:3001", {
+export const socket = io(`${SERVER_URL}`, {
   withCredentials: true,
 
 });

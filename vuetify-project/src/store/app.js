@@ -58,9 +58,10 @@ export const useAppStore = defineStore('app', {
         
         login() {
             return new Promise((resolve, reject) => {
-              login(this.loginInfo).then((response) => response.json())
+              console.log("Login info: ", this.$state.loginInfo);
+              login(this.$state.loginInfo).then((response) => response.json())
                 .then((data) => {
-                  this.$state.loginInfo = DataTransferItem
+                  this.$state.loginInfo = data;
                   this.loading = false;
                   if (data.email != '') {
                     this.$state.auth = true;
@@ -82,7 +83,7 @@ export const useAppStore = defineStore('app', {
             return new Promise((resolve, reject) => {
               getLogin().then((response) => response.json())
                 .then((data) => {
-                  console.log(data)
+                  console.log("getLogin data",data)
                   this.$state.loginInfo = data
                   this.loading = false;
                   if (data.email != '') {
