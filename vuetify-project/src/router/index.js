@@ -85,6 +85,9 @@ const routes = [
     component: () => import(/* webpackChunkName: "categoria" */ '../views/Categoria.vue'),
     props: true,
     beforeEnter: requireAuth,
+    children: [
+      
+    ]
   },
   
   {
@@ -94,7 +97,7 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'Ejercicio',        
+        name: 'InfoEjercicio',        
         component: () => import(/* webpackChunkName: "home" */ '@/views/InfoEjercicio.vue'),
         props: true,
       },      

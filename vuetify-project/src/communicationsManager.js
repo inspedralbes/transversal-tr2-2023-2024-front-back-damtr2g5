@@ -85,7 +85,9 @@ export async function getCategorias(){
 }
 
 export async function getEjerciciosByCat(idCategoria){
-  const response = await fetch(`${SERVER_URL}/getCategorias/${idCategoria}`);
-  const categorias = await response.json();
-  return categorias;
+  const response = await fetch(`${SERVER_URL}/getActivities/${idCategoria}`,
+  {method: 'GET',
+  credentials: 'include', mode: 'cors'})
+  const actividades = await response.json();
+  return actividades;
 }

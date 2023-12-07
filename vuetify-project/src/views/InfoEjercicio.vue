@@ -64,7 +64,7 @@ export default {
     created() {
         // Para guardar el parámetro 'id' de la ruta en 'ejercicioId'
         this.ejercicioId = this.$route.params.id;
-        let userid = this.store.getLoginInfo();
+        let userid = this.store.getLoginInfo
         let dato = {
             "userId": parseInt(userid.id),
             "ejercicioid": this.Ejercicio[0].id,

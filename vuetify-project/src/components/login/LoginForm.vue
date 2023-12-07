@@ -155,7 +155,8 @@ export default {
             return passwordInput
             },
         async register(){
-            var encryptPwd = handleHashing(passwordD)
+            var encryptPwd = this.handleHashing(this.passwordD)
+            console.log(encryptPwd)
             
             var usuario = {name: this.username, surname: this.surname, email: this.emailD, contrasena: encryptPwd}
             const response =  await registrarUsuari(usuario)

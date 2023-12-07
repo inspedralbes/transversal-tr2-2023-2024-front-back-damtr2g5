@@ -28,11 +28,12 @@ const { initializeSocket, filterRooms, getIo } = require("./socket.js");
 initializeSocket(server, { cors: corsOptions });
 const sessionMiddleware = require('./sessionMiddleware.js');
 
+app.use(cors(corsOptions));
 app.use(sessionMiddleware);
 app.use(bodyParser.json());
 app.use(cookieParser("mySecretKey"));
 app.use(express.json())
-app.use(cors(corsOptions));
+
 
 server.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
@@ -103,7 +104,7 @@ app.get('/getCategorias',async (req,res) => {
     res.json(categorias)
 })
 
-app.post('/getActivities/:tema', async (req,res) => {
+app.get('/getActivities/:tema', async (req,res) => {
     idTema = req.params.tema;
     ejercicios = await getActivities(idTema)
     console.log(ejercicios)
