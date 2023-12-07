@@ -306,10 +306,7 @@ app.get('/getAulas', (req, res) => {
 
         res.json(aulasEnviar)
     })
-        .catch(error => {
-            console.error("Error en getAulas:", error);
-            // Manejar el error de alguna manera
-        });
+        
 });
 
 
