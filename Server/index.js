@@ -103,6 +103,7 @@ app.get('/getCategorias',async (req,res) => {
     res.json(categorias)
 })
 
+
 app.post('/getActivities/:tema', async (req,res) => {
     idTema = req.params.tema;
     ejercicios = await getActivities(idTema)
@@ -294,6 +295,24 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
 });
 
 
+//GET AULAS
+app.get('/getAulas', (req, res) => {
+    mysqlConnection.SelectClassrooms((aulas) => {
+        aulasEnviar = []
+        aulas.forEach(aula => {
+            aulaIndividual = { id: aula.id, name: aula.name, acces_code: aula.acces_code}
+            aulasEnviar.push(aulaIndividual)
+        })
+
+        res.json(aulasEnviar)
+    })
+        .catch(error => {
+            console.error("Error en getAulas:", error);
+            // Manejar el error de alguna manera
+        });
+});
+
+
 
 
 //LOGIN SECTION
@@ -302,8 +321,8 @@ app.get('/getLogin', (req, res) => {
     if (req.session.user?.email) {
         res.json(req.session.user);
     } else {
-        usuariIndividual = { email: "" };
-        res.json(usuariIndividual);
+        aulaIndividual = { email: "" };
+        res.json(aulaIndividual);
     }
 });
 app.post('/login', async (req, res) => {
@@ -312,39 +331,39 @@ app.post('/login', async (req, res) => {
 
         req.session.user = {};
         const login = req.body;
-        let usuariIndividual = {};
+        let aulaIndividual = {};
         let comprovacio = false;
 
-        mysqlConnection.SelectUsers((usuaris) => {
-            for (const usuari of usuaris) {
-                if (usuari.email == login.email) {
-                    if (usuari.contrasena != login.contrasena) {
+        mysqlConnection.SelectUsers((aulas) => {
+            for (const aula of aulas) {
+                if (aula.email == login.email) {
+                    if (aula.contrasena != login.contrasena) {
                         console.log("Usuari o contrasenya incorrectes");
-                        usuariIndividual = { email: "" };
+                        aulaIndividual = { email: "" };
                     } else {
-                        usuariIndividual = {
+                        aulaIndividual = {
                             sessionId: req.session.id,
-                            id: usuari.id,
-                            name : usuari.name,
-                            contrasena : usuari.contrasena,
-                                        surname : usuari.surname,
-                            email : usuari.email,
-                                        rank : usuari.rank,
-                                        lvl : usuari.lvl,
-                                        image : usuari.image
+                            id: aula.id,
+                            name : aula.name,
+                            contrasena : aula.contrasena,
+                                        surname : aula.surname,
+                            email : aula.email,
+                                        rank : aula.rank,
+                                        lvl : aula.lvl,
+                                        image : aula.image
                         };
-                        req.session.user = usuariIndividual;
+                        req.session.user = aulaIndividual;
                         comprovacio = true;
-                        console.log("login",usuariIndividual);
-                        res.json(usuariIndividual);
+                        console.log("login",aulaIndividual);
+                        res.json(aulaIndividual);
                         return; // Exit the loop if user found
                     }
                 }
             }
 
             if (!comprovacio) {
-                usuariIndividual = { email: "" };
-                res.json(usuariIndividual);
+                aulaIndividual = { email: "" };
+                res.json(aulaIndividual);
             }
         })
     } catch (error) {
@@ -421,14 +440,14 @@ app.post('/actualitzarUsuari', requireLogin, (req, res) => {
 })
 //GET USUARIOS
 app.get('/consultarUsuaris', (req, res) => {
-    mysqlConnection.SelectUsers((usuaris) => {
-        usuarisEnviar = []
-        usuaris.forEach(usuari => {
-            usuariIndividual = { id: usuari.id, contrasena: usuari.contrasena, name: usuari.name, surname: usuari.cognoms, email: usuari.email }
-            usuarisEnviar.push(usuariIndividual)
+    mysqlConnection.SelectUsers((aulas) => {
+        aulasEnviar = []
+        aulas.forEach(aula => {
+            aulaIndividual = { id: aula.id, contrasena: aula.contrasena, name: aula.name, surname: aula.cognoms, email: aula.email }
+            aulasEnviar.push(aulaIndividual)
         })
 
-        res.json(usuarisEnviar)
+        res.json(aulasEnviar)
     })
         .catch(error => {
             console.error("Error:", error);
