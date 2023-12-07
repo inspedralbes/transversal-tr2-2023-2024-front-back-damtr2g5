@@ -19,10 +19,12 @@
 
 <script>
 import { socket, state } from '@/socket.js';
+import { useAppStore } from '@/store/app';
 export default {
   name: 'RoomCreator',
   data() {
     return {
+      store: useAppStore(),
       alert: false,
       gameTypes: ['PvP', 'PvE'],
       gameType: 'PvP',
@@ -50,7 +52,8 @@ export default {
   created() {
     socket.on('roomCreated', (room) => {
       console.log("roomCreated", room);
-      //this.$router.push({ name: 'Room', params: { id: room.id } });
+      this.store.setRoom(room);
+      this.$router.push({ name: 'Room' });
     });
 
     socket.on('roomNotCreated', (room) => {

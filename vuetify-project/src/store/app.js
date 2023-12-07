@@ -4,6 +4,7 @@ import {login, getLogin, endSession} from '@/communicationsManager';
 
 export const useAppStore = defineStore('app', {
     state: () => ({
+        room: null,
         auth: false,
         loginInfo: {
             id: '',
@@ -19,7 +20,9 @@ export const useAppStore = defineStore('app', {
         respuesta: '',
     }),
     getters: {
-      
+        getRoom() {
+            return this.room;
+        },
         getRespuesta() {
           return this.respuesta;
         },
@@ -31,6 +34,9 @@ export const useAppStore = defineStore('app', {
         }
     },
     actions: {
+        setRoom(room) {
+            this.room = room;
+        },
         setLoginInfo({name,contrasena, surname, email}) {
             this.loginInfo.name = name;
             this.loginInfo.contrasena = contrasena;

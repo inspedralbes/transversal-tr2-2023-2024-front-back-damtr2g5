@@ -90,6 +90,9 @@ module.exports = {
     getRooms: function() {
         return rooms;
     },
+    getRoom: function(roomId) {
+        return rooms.find((r) => r.id === roomId);
+    },
     addRoom: function(room, id) {
         room.id = `GameRoom-${id}`;
         if(rooms.find((r) => r.id === room.id)){
@@ -114,14 +117,18 @@ module.exports = {
             return true; // User joined the room successfully
         }
     },
-    removeUser: function(user) {
+    removeUser: function(id) {
         let removedFrom;
         rooms.forEach((r) => {
-            if (r.users.includes(user)) {
-                r.users = r.users.filter((u) => u !== user);
-                r.players--;
-                removedFrom = r;
-            }
+            console.log("r.users", r.users);
+            r.users.forEach((u) => {
+                if (u.id == id) {
+                    removedFrom = r;
+                    r.users = r.users.filter((u) => u.id !== id);
+                    r.players--;
+                }
+            });
+            
         });
         return removedFrom;
     },

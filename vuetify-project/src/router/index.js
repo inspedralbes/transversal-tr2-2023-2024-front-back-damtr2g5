@@ -111,6 +111,18 @@ const routes = [
         component: () => import(/* webpackChunkName: "home" */ '@/views/BuscadorBatalla.vue'),
       },      
     ],
+  },
+  {
+    path: '/room',
+    component: () => import('@/layouts/default/Default.vue'),
+    beforeEnter: requireAuth,
+    children: [
+      {
+        path: '',
+        name: 'Room',        
+        component: () => import(/* webpackChunkName: "home" */ '@/views/Room.vue'),
+      },      
+    ],
   }
   
   

@@ -55,12 +55,14 @@
 
 <script>
 import { getRooms } from '@/communicationsManager.js';
+import { useAppStore } from '@/store/app';
 import { socket } from '@/socket';
 import { mdiLock } from '@mdi/js';
 export default {
     name: 'RoomSeeker',
     data() {
         return {
+            store: useAppStore(),
             wrongPassword: false,
             dialog: false,
             mdiLock,
@@ -91,6 +93,8 @@ export default {
         this.initialize();
         socket.on('roomJoined', (room) => {
             console.log("roomJoined", room);
+            this.store.setRoom(room);
+            this.$router.push({ name: 'Room', params: { room: room.name } });
             this.wrongPassword = false;
             //TODO: Go to room
         });

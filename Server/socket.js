@@ -16,7 +16,7 @@ function initializeSocket(server, cors) {
             room.players = 1;
             room.owner = socket.request.session.user?.email || "???"; // TODO: Change this to the user's name
             room.users = [];
-            room.users.push(socket.request.session.id);
+            room.users.push({ id: socket.request.session.id, email: socket.request.session.user?.email || "???", image: socket.request.session.user?.image });
             console.log("socket rooms", socket.rooms);
             socket.join("GameRoom-" + socket.request.session.id);
             created = rooms.addRoom(room, socket.request.session.id);
@@ -37,7 +37,7 @@ function initializeSocket(server, cors) {
             }
 
             socket.join(room.id);
-            joined = rooms.joinRoom(room, socket.request.session.id);
+            joined = rooms.joinRoom(room, { id: socket.request.session.id, email: socket.request.session.user?.email || "???", image: socket.request.session.user?.image });
             if (joined) {
                 io.to(socket.request.session.id).emit("roomJoined", room);
             } else {
@@ -45,11 +45,55 @@ function initializeSocket(server, cors) {
             }
         });
 
+        socket.on('joinTeam', (team) => {
+            console.log("joinTeam", rooms.getRoom(team.roomId));
+            console.log("socket rooms", socket.rooms);
+            rooms.getRoom(team.roomId).users.forEach((user) => {
+                if (user.id === socket.request.session.id) {
+                    user.team = team.team;
+                    teams = {
+                        team1: [],
+                        team2: [],
+                    };
+                    rooms.getRoom(team.roomId).users.forEach((user) => {
+                        if (user.team === 1) {
+                            teams.team1.push(user);
+                        } else if (user.team === 2) {
+                            teams.team2.push(user);
+                        }
+                    });
+                    io.to(team.roomId).emit("teamUsers", teams);
+                }
+            });
+            
+        
+        });
+
+        socket.on('getTeamUsers', (room) => {
+            teams = {
+                team1: [],
+                team2: [],
+            };
+            rooms.getRoom(room.id).users.forEach((user) => {
+                if (user.team === 1) {
+                    teams.team1.push(user);
+                } else if (user.team === 2) {
+                    teams.team2.push(user);
+                }
+            });
+            io.to(socket.request.session.id).emit("teamUsers", teams);
+        });
+
         socket.on('disconnecting', () => {
+            rooms.getRooms().forEach((room) => {
+                if(room.users.find((u) => u.id === socket.request.session.id)){
+                    u = room.users.find((u) => u.id === socket.request.session.id);
+                    io.to(room.id).emit("userLeft", u);
+                }
             removedFrom = rooms.removeUser(socket.request.session.id);
             console.log("removedFrom", removedFrom);
-            io.to(removedFrom).emit("userLeft", socket.request.session.id);
         });
+    });
 
         socket.on("disconnect", () => {
             console.log("A user disconnected");
@@ -83,7 +127,7 @@ function filterRooms(search, sortBy, order) {
             roomsFilter.sort((a, b) => b.owner.localeCompare(a.owner));
         }
     }
-    
+
     // Remove room.password and room.users from roomsFilter
     roomsFilter = roomsFilter.map(({ password, users, ...rest }) => rest);
     return roomsFilter;
