@@ -2,7 +2,7 @@
     <v-dialog width="500" persistent v-model="dialog">
         <v-card height="100" style="text-align: center;">
             <v-card-title>Escull el teu team</v-card-title>
-            <v-row no-gutters="true">
+            <v-row :no-gutters="true">
                 <v-col cols="6">
                     <v-btn color="red" @click="joinTeam(1)">Team 1</v-btn>
                 </v-col>
@@ -141,6 +141,7 @@ export default {
     },
     mounted() {
         this.room = this.store.getRoom;
+        console.log("current room", this.room);
         if (this.room == null) {
             this.$router.push({ name: 'Home' });
         }else{

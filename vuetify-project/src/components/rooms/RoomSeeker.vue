@@ -98,6 +98,12 @@ export default {
             this.wrongPassword = false;
             //TODO: Go to room
         });
+        socket.on('alreadyJoined', (room) => {
+            console.log("alreadyJoined", room);
+            this.store.setRoom(room);
+            this.$router.push({ name: 'Room', params: { room: room.name } });
+            this.wrongPassword = false;
+        });
         socket.on('roomNotJoined', (room) => {
             console.log("roomNotJoined", room);
         });

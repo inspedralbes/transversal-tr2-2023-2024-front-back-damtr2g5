@@ -36,6 +36,10 @@ function initializeSocket(server, cors) {
                 return;
             }
 
+            if(rooms.getRoom(room.id).users.find((u) => u.id === socket.request.session.id)){
+                io.to(socket.request.session.id).emit("alreadyJoined", room);
+                return;
+            }
             socket.join(room.id);
             joined = rooms.joinRoom(room, { id: socket.request.session.id, email: socket.request.session.user?.email || "???", image: socket.request.session.user?.image });
             if (joined) {
