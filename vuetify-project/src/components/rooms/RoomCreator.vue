@@ -44,7 +44,7 @@ export default {
     createRoom() {
       this.alert = false;
       if ((this.privateRoom && this.password !== '' && this.name !== '') || (!this.privateRoom && this.name !== '')) {
-
+        socket.connect();
         socket.emit('createRoom', { name: this.name, private: this.privateRoom, mode: this.gameType, password: this.password });
       }
     },

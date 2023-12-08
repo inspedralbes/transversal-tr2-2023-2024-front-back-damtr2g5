@@ -1,6 +1,29 @@
 <template>
-    <h2>Team 1 hp: {{ team1hp }}/{{ team1maxhp }}</h2>
-    <h2>Team 2 hp: {{ team2hp }}/{{ team2maxhp }}</h2>
+    <v-dialog transition="dialog-top-transition" persistent width="500" v-model="finishDialog">
+        <v-sheet style="text-align: center; padding: 2em;">
+            <h1>{{ endMessage }}</h1>
+            <v-btn color="primary" @click="finalizarEjercicio()">Tornar al menu</v-btn>
+        </v-sheet>
+    </v-dialog>
+    <v-container>
+    <h2 style="color: red;">Team 1</h2>
+    <v-progress-linear
+      v-model="team1hpPercent"
+      color="red"
+      height="25"
+    >
+      <strong>{{ Math.ceil(team1hpPercent) }}%</strong>
+    </v-progress-linear>
+    <h2 style="color: blue;">Team 2</h2>
+    <v-progress-linear
+      v-model="team2hpPercent"
+        color="blue"
+      height="25"
+    >
+
+        <strong>{{ Math.ceil(team2hpPercent) }}%</strong>
+    </v-progress-linear>
+</v-container>
     <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto px-4" elevation="4" height="auto"
         rounded max-width="800" width="100%">
         <v-container>
@@ -57,6 +80,9 @@ export default {
     data() {
 
         return {
+            finishDialog: false,
+            yourTeam: null,
+            endMessage: '',
             team1hp: 0,
             team2hp: 0,
             team1maxhp: 0,
@@ -85,6 +111,7 @@ export default {
 
     methods: {
         finalizarEjercicio() {
+            socket.disconnect();
             this.$router.push({ name: 'Home' });
         },
         botoncliclado(pregunta) {
@@ -119,6 +146,7 @@ export default {
                 this.disableComponent = false;
                 this.overlay = false;
                 this.comprobado = false;
+                this.buttonText = 'Comprobar';
                 this.nuevaPregunta();
             } else {
                 socket.emit('checkAnswer', { answer: this.respuestaSelecionada, question: this.preguntaSeleccionada, room: store.getRoom });
@@ -164,6 +192,12 @@ export default {
         }
     },
     computed: {
+        team1hpPercent() {
+            return (this.team1hp / this.team1maxhp) * 100;
+        },
+        team2hpPercent() {
+            return (this.team2hp / this.team2maxhp) * 100;
+        },
         disabled() {
             if (this.respuestaSelecionada == "" && this.comprobado == false) {
                 return true;
@@ -176,6 +210,11 @@ export default {
 
     created() {
         this.nuevaPregunta();
+        store.getRoom.users.forEach(user => {
+                if(user.email == store.getLoginInfo.email){
+                    this.yourTeam = user.team;
+                }
+            });
 
         this.team1hp = store.$state.room.teams.team1[0].hp;
             this.team2hp = store.$state.room.teams.team2[0].hp;
@@ -204,6 +243,15 @@ export default {
         socket.on('updateTeams', (data) => {
             console.log("updateTeams", data.teams);
             store.setRoom(data);
+        })
+        socket.on('gameFinished', (data) => {
+            console.log("gameFinished", data);
+            if(data.winner == this.yourTeam){
+                this.endMessage = "Has guanyat!";
+            }else{
+                this.endMessage = "Has perdut...";
+            }
+            this.finishDialog = true;
         })
 
     },

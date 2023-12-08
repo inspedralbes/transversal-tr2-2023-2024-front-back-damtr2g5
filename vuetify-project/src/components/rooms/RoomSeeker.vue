@@ -117,15 +117,19 @@ export default {
         },
     },
     methods: {
+        conectar(){
+            socket.connect();
+            socket.emit('joinRoom', room);
+        },
         joinRoom(room) {
             room.password = this.codigo;
-            socket.emit('joinRoom', room);
+            this.conectar();
         },
         isPrivate(room) {
             if (room.private) {
                 this.dialog = true;
             } else {
-                socket.emit('joinRoom', room);
+                this.conectar();
                 //this.$router.push({ name: 'Game', params: { room: item.name } });
             }
         },

@@ -185,6 +185,13 @@ function initializeSocket(server, cors) {
                         }
                         io.to(room.id).emit("updateTeams", rooms.getRoom(room.id));
                     }
+                    //check if game is over
+                    console.log("team1", rooms.getRoom(room.id).teams.team1[0].hp);
+                    console.log("team2", rooms.getRoom(room.id).teams.team2[0].hp);
+                    if (rooms.getRoom(room.id).teams.team1[0].hp <= 0 || rooms.getRoom(room.id).teams.team2[0].hp <= 0) {
+                        rooms.getRoom(room.id).winner = (rooms.getRoom(room.id).teams.team1[0].hp <= 0) ? 2 : 1;
+                        io.to(room.id).emit("gameFinished", rooms.getRoom(room.id));
+                    }
                 })
                 .catch((error) => {
                     console.error("Error getting pregunta:", error);
