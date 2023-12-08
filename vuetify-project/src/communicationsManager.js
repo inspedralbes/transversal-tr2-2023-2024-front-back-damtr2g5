@@ -89,3 +89,9 @@ export async function getEjerciciosByCat(idCategoria){
   const categorias = await response.json();
   return categorias;
 }
+
+export async function getPreguntaRandom(){
+  const response = await fetch(`${SERVER_URL}/getPreguntaRandom`);
+  const pregunta = await response.json();
+  return pregunta;
+}

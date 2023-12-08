@@ -1,6 +1,6 @@
 const user = "a22osczapmar";
 const password = "Nitrome7.";
-module.exports = { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection, findRegisteredResults, getCategorias, getActivities };
+module.exports = { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection, findRegisteredResults, getCategorias, getActivities, getPreguntaRandom };
 const { MongoClient } = require("mongodb");
 
 // Replace the following with your Atlas connection string                                                                                                                                        
@@ -164,6 +164,20 @@ async function getPregunta(id) {
         const col = db.collection("question");
 
         const question = await col.findOne({ "id": id });
+        //console.log(question)
+        return question;
+    } catch (err) {
+        console.log(err.stack)
+    }
+}
+
+async function getPreguntaRandom() {
+    try {
+        await client.connect();
+        const db = client.db(dbName);
+        const col = db.collection("question");
+
+        const question = await col.aggregate([{ $sample: { size: 1 } }]).toArray();
         //console.log(question)
         return question;
     } catch (err) {

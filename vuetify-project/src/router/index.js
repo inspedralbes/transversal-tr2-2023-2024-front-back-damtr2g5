@@ -123,6 +123,18 @@ const routes = [
         component: () => import(/* webpackChunkName: "home" */ '@/views/Room.vue'),
       },      
     ],
+  },
+  {
+    path: '/game/:room',
+    component: () => import('@/layouts/default/Default.vue'),
+    beforeEnter: requireAuth,
+    children: [
+      {
+        path: '',
+        name: 'Game',        
+        component: () => import(/* webpackChunkName: "home" */ '@/views/Game.vue'),
+      },      
+    ],
   }
   
   

@@ -19,8 +19,8 @@ const app = express();
 const server = http.createServer(app);
 const port = 3001;
 
-const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, updateCollection, getActivities } = require("./mongoDB.js");
-const { comprobarRectaLineal, requireLogin, getRemainingExp } = require("./utils.js");
+const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, updateCollection, getActivities, getPreguntaRandom } = require("./mongoDB.js");
+const { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion } = require("./utils.js");
 const { connect } = require('http2');
 const { Console } = require('console');
 const { initializeSocket, filterRooms, getIo } = require("./socket.js");
@@ -37,6 +37,24 @@ server.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
 });
 
+app.get('/getPreguntaRandom', async (req, res) => {
+    try {
+        const pregunta = (await getPreguntaRandom())[0];
+        if (pregunta.muestra) {
+            shuffleArray(pregunta.muestra);
+        }
+        if (pregunta.componentes) {
+            shuffleArray(pregunta.componentes);
+        }
+        if (pregunta.respuestas) {
+            shuffleArray(pregunta.respuestas);
+        }
+        delete pregunta.correcta;
+        res.json(pregunta);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
 app.get('/getRooms', (req, res) => {
     var page = req.query.page || 1;
@@ -83,13 +101,6 @@ app.get('/getEjercicio', (req, res) => {
 
             res.json(ejercicio);
         });
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
 
     });
 
@@ -203,76 +214,11 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
 
         console.log("Formato recibido: ", pregunta.formato);
         preguntaid = pregunta.id;
-        switch (pregunta.formato) {
-            case "Seleccionar":
-            case "Imagen":
-                if (respuesta === pregunta.correcta) {
-                    console.log("Selección correcta");
-                    correcto = true
-                } else {
-                    console.log("Selección incorrecta");
-                    correcto = false
-                }
-                break;
-            case "Ordenar valores":
-                console.log("Respuesta: ", respuesta);
-                console.log("Correcta: ", pregunta.correcta);
-                if (JSON.stringify(respuesta) === JSON.stringify(pregunta.correcta)) {
-                    console.log("Selección correcta");
-                    correcto = true
-                } else {
-                    console.log("Selección incorrecta");
-                    correcto = false
-                }
-                break;
+        correcto = checkQuestion(pregunta, respuesta);
 
-            case "Respuesta":
-                respuesta = respuesta.replace(/\s/g, "").toLowerCase();
-                if (pregunta.correcta.includes(respuesta)) {
-                    correcto = true
-                } else {
-                    correcto = false
-                }
-                break;
-
-            case "Grafica":
-                respuesta = comprobarRectaLineal(respuesta[0], respuesta[1]);
-                console.log("Respuesta: ", respuesta);
-                console.log("Correcta: ", pregunta.correcta);
-                if (respuesta.tipo === pregunta.correcta.tipo) {
-                    console.log("Tipo correcto");
-                    if (respuesta.tipo === "horizontal" && respuesta.y === pregunta.correcta.y) {
-                        correcto = true
-                    } else if (respuesta.tipo === "vertical" && respuesta.x === pregunta.correcta.x) {
-                        correcto = true
-                    } else if (respuesta.tipo === "lineal" && respuesta.m === pregunta.correcta.m && respuesta.b === pregunta.correcta.b) {
-                        correcto = true
-                    } else {
-                        correcto = false
-                    }
-                } else {
-                    correcto = false
-                }
-                break;
-
-            case "Unir valores":
-                const respuestaString = respuesta.map(arr => arr.join(',')).sort().join(';');
-                const correctaString = pregunta.correcta.map(arr => arr.join(',')).sort().join(';');
-
-                if (respuestaString === correctaString) {
-                    correcto = true
-                } else {
-                    correcto = false
-                }
-                break;
-
-            default:
-                correcto = false // Handle default case
-                break;
-        }
         findRegisteredResult(idUser, req.body.ejercicioid, preguntaid).then((result) => {
             if (result != null) {
-                if (!result.correcta && correcta) {
+                if (!result.correcta && correcto) {
                     updateCollection(
                         { "idUsuario": idUser, "idPregunta": preguntaid, "idEjercicio": req.body.ejercicioid }, // Filtro para encontrar el usuario por su ID
                         {
@@ -291,6 +237,7 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
 
 
 

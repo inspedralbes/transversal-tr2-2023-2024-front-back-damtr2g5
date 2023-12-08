@@ -102,11 +102,30 @@ function UpdateUser(valores, callback) {
         });
     });
 }
+function selectLevel(level, callback) {
+    pool.getConnection((error, connection) => {
+        if (error) {
+            console.error('Error al obtener la conexión del pool:', error);
+            throw error;
+        }
+
+        connection.query('SELECT * FROM Levelsxp WHERE lvl = ?', level, (errorQuery, results, fields) => {
+            connection.release(); // Liberar la conexión al terminar la consulta
+
+            if (errorQuery) {
+                console.error('Error al ejecutar la consulta:', errorQuery);
+                throw errorQuery;
+            }
+            callback(results);
+        });
+    });
+}
 module.exports = {
     ejecutarConsulta,
     SelectUsers,
     SelectEmails,
     InsertUser,
-    UpdateUser
+    UpdateUser,
+    selectLevel
     // Puedes añadir más funciones según tus necesidades...
 };

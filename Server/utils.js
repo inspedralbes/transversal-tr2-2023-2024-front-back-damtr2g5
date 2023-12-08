@@ -1,4 +1,4 @@
-module.exports = { comprobarRectaLineal, requireLogin, getRemainingExp };
+module.exports = { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion };
 function comprobarRectaLineal(punto1, punto2) {
     if (punto1.x === punto2.x) {
         // Recta vertical
@@ -29,4 +29,70 @@ function getRemainingExp(id_activity, id_user) {
 
 
     return exp
+}
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+function checkQuestion(question, respuesta) {
+    let correcto = false;
+
+    switch (question.formato) {
+        case "Seleccionar":
+        case "Imagen":
+            if (respuesta === question.correcta) {
+                correcto = true;
+            }
+            break;
+
+        case "Ordenar valores":
+            if (
+                JSON.stringify(respuesta) ===
+                JSON.stringify(question.correcta)
+            ) {
+                correcto = true;
+            }
+            break;
+
+        case "Respuesta":
+            respuesta = respuesta.replace(/\s/g, "").toLowerCase();
+            if (question.correcta.includes(respuesta)) {
+                correcto = true;
+            }
+            break;
+
+        case "Grafica":
+            respuesta = comprobarRectaLineal(respuesta[0], respuesta[1]);
+            if (
+                respuesta.tipo === question.correcta.tipo &&
+                (
+                    (respuesta.tipo === "horizontal" &&
+                        respuesta.y === question.correcta.y) ||
+                    (respuesta.tipo === "vertical" &&
+                        respuesta.x === question.correcta.x) ||
+                    (respuesta.tipo === "lineal" &&
+                        respuesta.m === question.correcta.m &&
+                        respuesta.b === question.correcta.b)
+                )
+            ) {
+                correcto = true;
+            }
+            break;
+
+        case "Unir valores":
+            const respuestaString = respuesta.map(arr => arr.join(',')).sort().join(';');
+            const correctaString = question.correcta.map(arr => arr.join(',')).sort().join(';');
+            if (respuestaString === correctaString) {
+                correcto = true;
+            }
+            break;
+
+        default:
+            correcto = false; // Handle default case
+            break;
+    }
+
+    return correcto;
 }
