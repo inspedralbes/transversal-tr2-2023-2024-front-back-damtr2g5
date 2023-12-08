@@ -33,8 +33,11 @@ const routes = [
         name: 'Login',        
         component: () => import(/* webpackChunkName: "home" */ '@/views/PantallaLogin.vue'),
       },      
-    ],   
-  },
+    ],
+  },{
+  path: '/pr',
+  component: () => import(/* webpackChunkName: "home" */ '@/components/Formato2v2.vue')}
+  
   
 ]
 
