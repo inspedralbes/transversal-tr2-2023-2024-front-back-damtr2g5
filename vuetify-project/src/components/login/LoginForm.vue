@@ -1,5 +1,18 @@
 <template>
-        
+    
+    <v-dialog
+      v-model="dialogL"
+      width="auto"
+    >
+      <v-card>
+        <v-card-text>
+            Torna a intentarlo
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="primary" block @click="dialogL = false">Tancar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto h-auto pa-4" elevation="4" rounded
         max-width="300" width="100%">
         <div>
@@ -106,6 +119,7 @@ export default {
     data() {
 
         return {
+            dialogL: false,
             loading: false,
             allowed: false,
             dialog: false,
@@ -133,15 +147,15 @@ export default {
             this.appStore.login()
             .then((result)=> {
                 if (result) {
-                    console.log("Go Home")
-                    this.$router.push({ name: 'Home' })
+                    console.log("Go Home");
+                        this.$router.push({ name: 'Home' });
                 } else {
-                    console.log("Login failed")
-                    
-                }
-            })
+                    console.log("Login failed");
+                    this.dialogL = true;
+            }})
             .catch((error) => {
             console.error("Error during login:", error);
+            this.dialogL = true
             })
             .finally(() => {
                 this.loading = false;
