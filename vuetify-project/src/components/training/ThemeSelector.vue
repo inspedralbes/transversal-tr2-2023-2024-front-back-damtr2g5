@@ -56,7 +56,7 @@ export default {
             if (item) {
                 this.categoriaSeleccionada = item;
                 this.appStore.setTema(item)
-                 this.$router.push({ name: 'Categoria', params: { categoria: item } });
+                 this.$router.push({ name: 'Categoria', params: { categoria: item.raw.nombre } });
              } else {
                 console.error('Invalid item or item.id');
             }

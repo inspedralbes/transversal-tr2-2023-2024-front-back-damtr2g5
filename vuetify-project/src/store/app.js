@@ -17,7 +17,8 @@ export const useAppStore = defineStore('app', {
             image: ''
         },
         respuesta: '',
-        tema: null
+        tema: null,
+        ejercicio: null
     }),
     getters: {
       
@@ -26,6 +27,9 @@ export const useAppStore = defineStore('app', {
         },
         getTema() {
           return this.tema;
+        },
+        getEjercicio() {
+          return this.ejercicio
         },
         isAuthenticated() {
             return this.auth;
@@ -56,6 +60,9 @@ export const useAppStore = defineStore('app', {
         setTema(temaAcceso) {
           this.tema = temaAcceso.raw
           console.log("Tema de Acceso: ",this.tema)
+        },
+        setEjercicio(id) {
+          this.$state.ejercicio = id
         },
         
         login() {

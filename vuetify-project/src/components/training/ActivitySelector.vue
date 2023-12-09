@@ -2,7 +2,7 @@
     <v-card>
       <v-data-iterator
         :items="ejercicios"
-        :items-per-page="1"
+        :items-per-page="9"
         :search="search"
       >
         <template v-slot:header>
