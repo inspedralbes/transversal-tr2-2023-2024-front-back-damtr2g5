@@ -51,7 +51,7 @@
                       size="small"
                       class="text-none"
                       text="Comenzar"
-                      @click="seleccionarEjercicio(item.raw.id)"
+                      @click="seleccionarEjercicio(item.raw)"
                     >
                     </v-btn>
                   </div>
@@ -119,12 +119,9 @@
       },
   
       methods: {
-          seleccionarEjercicio(id) {
-              if (id) {
-                  console.log('Categoría de el ejercicio: ', this.appStore.getTema)
-                  console.log(id);
-                  this.ejercicioSeleccionado = id;
-                   this.$router.push({ name: 'InfoEjercicio', params: { id: id } });
+          seleccionarEjercicio(ejercicio) {
+              if (ejercicio) {
+                  this.$router.push({ name: 'InfoEjercicio', params: { id: ejercicio.id } });
                } else {
                   console.error('Invalid id');
               }
@@ -132,7 +129,6 @@
       },
       created() {
           this.categoria = this.appStore.getTema
-          console.log("Categoría escogida: ",this.categoria)
           getEjerciciosByCat(this.categoria.id).then(response => {
               this.ejercicios = response;
               console.log(response)

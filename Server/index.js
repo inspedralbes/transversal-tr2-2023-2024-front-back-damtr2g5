@@ -56,8 +56,11 @@ app.get('/getRooms', (req, res) => {
     }
     res.json(response);
 });
-app.get('/getEjercicio', (req, res) => {
-    getDocument(1).then((document) => {
+app.get('/getEjercicio/:id', (req, res) => {
+    let id = parseInt(req.params.id)
+    console.log("Inside Call:", id)
+    getDocument(id).then((document) => {
+        console.log("Inside Call:",document)
         getPreguntas(document.preguntas).then((preguntas) => {
             var ejercicio = {
                 "id": document.id,

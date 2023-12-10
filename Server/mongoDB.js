@@ -16,12 +16,14 @@ client.connect();
 
 async function getDocument(id) {
     try {
-
+        await client.connect();
         const db = client.db(dbName);
         const col = db.collection("activity");
         // Find and return the document
-        const filter = { "id": id };
+        const filter = {"id": id};
+        console.log("Inside Mongo Method:", id)
         const document = await col.findOne(filter);
+        console.log("Inside Mongo Method:", document)
         return document;
     } catch (err) {
         console.log(err.stack);

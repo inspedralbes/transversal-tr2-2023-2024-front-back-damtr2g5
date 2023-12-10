@@ -61,8 +61,9 @@ export const useAppStore = defineStore('app', {
           this.tema = temaAcceso.raw
           console.log("Tema de Acceso: ",this.tema)
         },
-        setEjercicio(id) {
-          this.$state.ejercicio = id
+        setEjercicio(ejercicio) {
+          this.$state.ejercicio = ejercicio
+          console.log("Store Side: ",this.$state.ejercicio)
         },
         
         login() {

@@ -1,7 +1,7 @@
 export const SERVER_URL = "http://localhost:3001"
 
-export async function getEjercicios() {
-  const response = await fetch(`${SERVER_URL}/getEjercicio`);
+export async function getEjercicios(id) {
+  const response = await fetch(`${SERVER_URL}/getEjercicio/${id}`, { method: 'GET', credentials: 'include', mode: 'cors' });
   const ejercicios = await response.json();
   return ejercicios;
 }
