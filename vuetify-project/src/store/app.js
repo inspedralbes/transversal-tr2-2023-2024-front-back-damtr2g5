@@ -1,6 +1,6 @@
 // Utilities
 import { defineStore } from 'pinia'
-import {login, getLogin, endSession} from '@/communicationsManager';
+import {login, getLogin, endSession,getAvatar} from '@/communicationsManager';
 
 export const useAppStore = defineStore('app', {
     state: () => ({

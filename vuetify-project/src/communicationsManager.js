@@ -73,7 +73,11 @@ export async function registrarUsuari(infoUsuario) {
 export async function getLogin() {
   return fetch(`${SERVER_URL}/getLogin`, { method: 'GET', credentials: 'include', mode: 'cors' });
 }
-
+export async function getAvatar(imagen) {
+  const resp= fetch(`${SERVER_URL}/imagen/${imagen}`, { method: 'GET', credentials: 'include', mode: 'cors' });
+  console.log(resp);
+  return resp;
+}
 export async function endSession() {
   return fetch(`${SERVER_URL}/logout`, { method: 'GET', credentials: 'include', mode: 'cors' });
 }

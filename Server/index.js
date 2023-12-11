@@ -123,6 +123,7 @@ app.post('/getActivities/:tema', async (req, res) => {
 app.get("/imagen/:nombreArchivo", (req, res) => {
     const nombreArchivo = req.params.nombreArchivo;
     const rutaImagen = path.join(__dirname, "avatars", nombreArchivo);
+    console.log(rutaImagen);
     res.sendFile(rutaImagen);
 });
 
@@ -281,7 +282,7 @@ app.post('/login', async (req, res) => {
                             email: usuari.email,
                             rank: usuari.rank,
                             lvl: usuari.lvl,
-                            image: usuari.image
+                            image: "http://localhost:3001/imagen/"+usuari.image
                         };
                         req.session.user = usuariIndividual;
                         comprovacio = true;
