@@ -65,8 +65,24 @@ export default {
     created() {
         
         getCategorias().then(response => {
+          
+          try {
             this.categorias = response;
-            console.log("Categorias obtenidas: ",this.categorias)
+
+            console.log("Categorias obtenidas: ", this.categorias);
+
+            // Check for empty or undefined items
+            const nonEmptyItems = this.categorias.filter(item => !!item);
+            console.log("Number of non-empty items in categorias: ", nonEmptyItems.length);
+            console.log("Content of non-empty items in categorias: ", nonEmptyItems);
+
+            // Check for unique keys
+            const uniqueKeys = new Set(this.categorias.map(item => item.id));
+            console.log("Number of unique keys in categorias: ", uniqueKeys.size);
+            console.log("Unique keys: ", uniqueKeys);
+        } catch (error) {
+            console.error("Error fetching categorias:", error);
+        }
         })
     },
 }
