@@ -242,7 +242,9 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
 
 
 
-//LOGIN SECTION
+//------------------------------LOGIN SECTION----------------------------------//
+
+
 app.get('/getLogin', (req, res) => {
 
     if (req.session.user?.email) {
@@ -252,6 +254,8 @@ app.get('/getLogin', (req, res) => {
         res.json(usuariIndividual);
     }
 });
+
+//LOGIN VUE
 app.post('/login', async (req, res) => {
     try {
         console.log("Login:id-session", req.session.id);
@@ -278,6 +282,56 @@ app.post('/login', async (req, res) => {
                             rank: usuari.rank,
                             lvl: usuari.lvl,
                             image: usuari.image
+                        };
+                        req.session.user = usuariIndividual;
+                        comprovacio = true;
+                        console.log("login", usuariIndividual);
+                        res.json(usuariIndividual);
+                        return; // Exit the loop if user found
+                    }
+                }
+            });
+
+            if (!comprovacio) {
+                usuariIndividual = { email: "" };
+                res.json(usuariIndividual);
+            }
+        })
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).send("Login fallido");
+    }
+});
+
+//LOGIN ANDROID
+app.post('/loginprofesor', async (req, res) => {
+    try {
+        console.log("Login:id-session", req.session.id);
+
+        req.session.user = {};
+        const login = req.body;
+        let usuariIndividual = {};
+        let comprovacio = false;
+
+        mysqlConnection.SelectProfessors((profesors) => {
+            profesors.forEach(profesor => {
+                console.log(profesor.email);
+                console.log(login.email);
+                console.log(profesor.contrasena);
+                console.log(login.contrasena);
+                if (profesor.email == login.email) {
+                    if (profesor.contrasena != login.contrasena) {
+                        console.log("Usuari o contrasenya incorrectes");
+                        usuariIndividual = { email: "" };
+                    } else {
+                        usuariIndividual = {
+                            sessionId: req.session.id,
+                            id: profesor.id,
+                            name: profesor.name,
+                            surname: profesor.surname,
+                            email: profesor.email,
+                            image: profesor.image,
+                            contrasena: profesor.contrasena
                         };
                         req.session.user = usuariIndividual;
                         comprovacio = true;
@@ -371,13 +425,13 @@ app.get('/getAulas', (req, res) => {
     mysqlConnection.SelectClassrooms((aulas) => {
         aulasEnviar = []
         aulas.forEach(aula => {
-            aulaIndividual = { id: aula.id, name: aula.name, acces_code: aula.acces_code}
+            aulaIndividual = { id: aula.id, name: aula.name, acces_code: aula.acces_code }
             aulasEnviar.push(aulaIndividual)
         })
 
         res.json(aulasEnviar)
     })
-        
+
 });
 
 //GET USUARIOS
