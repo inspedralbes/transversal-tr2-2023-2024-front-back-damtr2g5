@@ -365,6 +365,21 @@ app.post('/actualitzarUsuari', requireLogin, (req, res) => {
 
     res.status(200).send()
 })
+
+//GET AULAS
+app.get('/getAulas', (req, res) => {
+    mysqlConnection.SelectClassrooms((aulas) => {
+        aulasEnviar = []
+        aulas.forEach(aula => {
+            aulaIndividual = { id: aula.id, name: aula.name, acces_code: aula.acces_code}
+            aulasEnviar.push(aulaIndividual)
+        })
+
+        res.json(aulasEnviar)
+    })
+        
+});
+
 //GET USUARIOS
 app.get('/consultarUsuaris', (req, res) => {
     mysqlConnection.SelectUsers((usuaris) => {
