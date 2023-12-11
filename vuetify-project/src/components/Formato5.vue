@@ -103,9 +103,6 @@ export default {
         },
     },
     created() {
-
-
-        // Llenar los conjuntos de cartas con valores predefinidos
         this.pregunta = this.preguntaSeleccionada;
         this.posibles = this.pregunta.componentes.slice();
         this.respuesta = Array.apply(null, Array(this.posibles.length)); // Copiar los valores para no modificar los originales
