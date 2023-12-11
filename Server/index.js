@@ -8,7 +8,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const mysqlConnection = require('./mySQL.js');
 const corsOptions = {
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000", "http://mathproject.dam.inspedralbes.cat"],
     credentials: true,
     methods: ['GET', 'POST', 'DELETE'],
     exposedHeaders: ['set-cookie', 'ajax-redirect'],
@@ -19,25 +19,42 @@ const app = express();
 const server = http.createServer(app);
 const port = 3001;
 
-
-const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults,updateCollection, getActivities } = require("./mongoDB.js");
-const { comprobarRectaLineal, requireLogin, getRemainingExp } = require("./utils.js");
+const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, updateCollection, getActivities, getPreguntaRandom } = require("./mongoDB.js");
+const { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion } = require("./utils.js");
 const { connect } = require('http2');
 const { Console } = require('console');
 const { initializeSocket, filterRooms, getIo } = require("./socket.js");
 initializeSocket(server, { cors: corsOptions });
 const sessionMiddleware = require('./sessionMiddleware.js');
 
-app.use(sessionMiddleware);
 app.use(bodyParser.json());
 app.use(cookieParser("mySecretKey"));
 app.use(express.json())
 app.use(cors(corsOptions));
+app.use(sessionMiddleware);
 
 server.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
 });
 
+app.get('/getPreguntaRandom', async (req, res) => {
+    try {
+        const pregunta = (await getPreguntaRandom())[0];
+        if (pregunta.muestra) {
+            shuffleArray(pregunta.muestra);
+        }
+        if (pregunta.componentes) {
+            shuffleArray(pregunta.componentes);
+        }
+        if (pregunta.respuestas) {
+            shuffleArray(pregunta.respuestas);
+        }
+        delete pregunta.correcta;
+        res.json(pregunta);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
 app.get('/getRooms', (req, res) => {
     var page = req.query.page || 1;
@@ -45,7 +62,7 @@ app.get('/getRooms', (req, res) => {
     var sortBy = req.query.sortBy.replace(/\s/g, "") || "";
     var order = req.query.order.replace(/\s/g, "") || "";
     var search = req.query.search.replace(/\s/g, "") || "";
-    
+
     roomsFilter = filterRooms(search, sortBy, order);
 
     var roomsToSend = roomsFilter.slice((page - 1) * itemsPerPage, page * itemsPerPage);
@@ -85,26 +102,18 @@ app.get('/getEjercicio', (req, res) => {
             res.json(ejercicio);
         });
 
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-
     });
 
 
 
 });
 
-app.get('/getCategorias',async (req,res) => {
+app.get('/getCategorias', async (req, res) => {
     categorias = await getCategorias();
     res.json(categorias)
 })
 
-
-app.post('/getActivities/:tema', async (req,res) => {
+app.post('/getActivities/:tema', async (req, res) => {
     idTema = req.params.tema;
     ejercicios = await getActivities(idTema)
     console.log(ejercicios)
@@ -205,76 +214,11 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
 
         console.log("Formato recibido: ", pregunta.formato);
         preguntaid = pregunta.id;
-        switch (pregunta.formato) {
-            case "Seleccionar":
-            case "Imagen":
-                if (respuesta === pregunta.correcta) {
-                    console.log("Selección correcta");
-                    correcto = true
-                } else {
-                    console.log("Selección incorrecta");
-                    correcto = false
-                }
-                break;
-            case "Ordenar valores":
-                console.log("Respuesta: ", respuesta);
-                console.log("Correcta: ", pregunta.correcta);
-                if (JSON.stringify(respuesta) === JSON.stringify(pregunta.correcta)) {
-                    console.log("Selección correcta");
-                    correcto = true
-                } else {
-                    console.log("Selección incorrecta");
-                    correcto = false
-                }
-                break;
+        correcto = checkQuestion(pregunta, respuesta);
 
-            case "Respuesta":
-                respuesta = respuesta.replace(/\s/g, "").toLowerCase();
-                if (pregunta.correcta.includes(respuesta)) {
-                    correcto = true
-                } else {
-                    correcto = false
-                }
-                break;
-
-            case "Grafica":
-                respuesta = comprobarRectaLineal(respuesta[0], respuesta[1]);
-                console.log("Respuesta: ", respuesta);
-                console.log("Correcta: ", pregunta.correcta);
-                if (respuesta.tipo === pregunta.correcta.tipo) {
-                    console.log("Tipo correcto");
-                    if (respuesta.tipo === "horizontal" && respuesta.y === pregunta.correcta.y) {
-                        correcto = true
-                    } else if (respuesta.tipo === "vertical" && respuesta.x === pregunta.correcta.x) {
-                        correcto = true
-                    } else if (respuesta.tipo === "lineal" && respuesta.m === pregunta.correcta.m && respuesta.b === pregunta.correcta.b) {
-                        correcto = true
-                    } else {
-                        correcto = false
-                    }
-                } else {
-                    correcto = false
-                }
-                break;
-
-            case "Unir valores":
-                const respuestaString = respuesta.map(arr => arr.join(',')).sort().join(';');
-                const correctaString = pregunta.correcta.map(arr => arr.join(',')).sort().join(';');
-
-                if (respuestaString === correctaString) {
-                    correcto = true
-                } else {
-                    correcto = false
-                }
-                break;
-
-            default:
-                correcto = false // Handle default case
-                break;
-        }
         findRegisteredResult(idUser, req.body.ejercicioid, preguntaid).then((result) => {
             if (result != null) {
-                if (!result.correcta && correcta) {
+                if (!result.correcta && correcto) {
                     updateCollection(
                         { "idUsuario": idUser, "idPregunta": preguntaid, "idEjercicio": req.body.ejercicioid }, // Filtro para encontrar el usuario por su ID
                         {
@@ -295,20 +239,6 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
 });
 
 
-//GET AULAS
-app.get('/getAulas', (req, res) => {
-    mysqlConnection.SelectClassrooms((aulas) => {
-        aulasEnviar = []
-        aulas.forEach(aula => {
-            aulaIndividual = { id: aula.id, name: aula.name, acces_code: aula.acces_code}
-            aulasEnviar.push(aulaIndividual)
-        })
-
-        res.json(aulasEnviar)
-    })
-        
-});
-
 
 
 
@@ -318,8 +248,8 @@ app.get('/getLogin', (req, res) => {
     if (req.session.user?.email) {
         res.json(req.session.user);
     } else {
-        aulaIndividual = { email: "" };
-        res.json(aulaIndividual);
+        usuariIndividual = { email: "" };
+        res.json(usuariIndividual);
     }
 });
 app.post('/login', async (req, res) => {
@@ -328,39 +258,39 @@ app.post('/login', async (req, res) => {
 
         req.session.user = {};
         const login = req.body;
-        let aulaIndividual = {};
+        let usuariIndividual = {};
         let comprovacio = false;
 
-        mysqlConnection.SelectUsers((aulas) => {
-            for (const aula of aulas) {
-                if (aula.email == login.email) {
-                    if (aula.contrasena != login.contrasena) {
+        mysqlConnection.SelectUsers((usuaris) => {
+            usuaris.forEach(usuari => {
+                if (usuari.email == login.email) {
+                    if (usuari.contrasena != login.contrasena) {
                         console.log("Usuari o contrasenya incorrectes");
-                        aulaIndividual = { email: "" };
+                        usuariIndividual = { email: "" };
                     } else {
-                        aulaIndividual = {
+                        usuariIndividual = {
                             sessionId: req.session.id,
-                            id: aula.id,
-                            name : aula.name,
-                            contrasena : aula.contrasena,
-                                        surname : aula.surname,
-                            email : aula.email,
-                                        rank : aula.rank,
-                                        lvl : aula.lvl,
-                                        image : aula.image
+                            id: usuari.id,
+                            name: usuari.name,
+                            contrasena: usuari.contrasena,
+                            surname: usuari.surname,
+                            email: usuari.email,
+                            rank: usuari.rank,
+                            lvl: usuari.lvl,
+                            image: usuari.image
                         };
-                        req.session.user = aulaIndividual;
+                        req.session.user = usuariIndividual;
                         comprovacio = true;
-                        console.log("login",aulaIndividual);
-                        res.json(aulaIndividual);
+                        console.log("login", usuariIndividual);
+                        res.json(usuariIndividual);
                         return; // Exit the loop if user found
                     }
                 }
-            }
+            });
 
             if (!comprovacio) {
-                aulaIndividual = { email: "" };
-                res.json(aulaIndividual);
+                usuariIndividual = { email: "" };
+                res.json(usuariIndividual);
             }
         })
     } catch (error) {
@@ -435,16 +365,31 @@ app.post('/actualitzarUsuari', requireLogin, (req, res) => {
 
     res.status(200).send()
 })
-//GET USUARIOS
-app.get('/consultarUsuaris', (req, res) => {
-    mysqlConnection.SelectUsers((aulas) => {
+
+//GET AULAS
+app.get('/getAulas', (req, res) => {
+    mysqlConnection.SelectClassrooms((aulas) => {
         aulasEnviar = []
         aulas.forEach(aula => {
-            aulaIndividual = { id: aula.id, contrasena: aula.contrasena, name: aula.name, surname: aula.cognoms, email: aula.email }
+            aulaIndividual = { id: aula.id, name: aula.name, acces_code: aula.acces_code}
             aulasEnviar.push(aulaIndividual)
         })
 
         res.json(aulasEnviar)
+    })
+        
+});
+
+//GET USUARIOS
+app.get('/consultarUsuaris', (req, res) => {
+    mysqlConnection.SelectUsers((usuaris) => {
+        usuarisEnviar = []
+        usuaris.forEach(usuari => {
+            usuariIndividual = { id: usuari.id, contrasena: usuari.contrasena, name: usuari.name, surname: usuari.cognoms, email: usuari.email }
+            usuarisEnviar.push(usuariIndividual)
+        })
+
+        res.json(usuarisEnviar)
     })
         .catch(error => {
             console.error("Error:", error);
