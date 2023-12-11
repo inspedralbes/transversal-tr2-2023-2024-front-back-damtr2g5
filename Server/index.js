@@ -242,81 +242,7 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
 
 
 
-//----------------------LOGIN SECTION----------------------------------------------------------------------//
-
-//Login para vue
-app.get('/getLogin', (req, res) => {
-
-    if (req.session.user?.email) {
-        res.json(req.session.user);
-    } else {
-        usuariIndividual = { email: "" };
-        res.json(usuariIndividual);
-    }
-});
-app.post('/login', async (req, res) => {
-    try {
-        console.log("Login:id-session", req.session.id);
-
-        req.session.user = {};
-        const login = req.body;
-        let usuariIndividual = {};
-        let comprovacio = false;
-
-        mysqlConnection.SelectUsers((usuaris) => {
-            usuaris.forEach(usuari => {
-                if (usuari.email == login.email) {
-                    if (usuari.contrasena != login.contrasena) {
-                        console.log("Usuari o contrasenya incorrectes");
-                        usuariIndividual = { email: "" };
-                    } else {
-                        usuariIndividual = {
-                            sessionId: req.session.id,
-                            id: usuari.id,
-                            name: usuari.name,
-                            contrasena: usuari.contrasena,
-                            surname: usuari.surname,
-                            email: usuari.email,
-                            rank: usuari.rank,
-                            lvl: usuari.lvl,
-                            image: usuari.image
-                        };
-                        req.session.user = usuariIndividual;
-                        comprovacio = true;
-                        console.log("login", usuariIndividual);
-                        res.json(usuariIndividual);
-                        return; // Exit the loop if user found
-                    }
-                }
-            });
-
-            if (!comprovacio) {
-                usuariIndividual = { email: "" };
-                res.json(usuariIndividual);
-            }
-        })
-    } catch (error) {
-        console.error("Error:", error);
-        res.status(500).send("Login fallido");
-    }
-});
-app.get('/logout', (req, res) => {
-    const sessionId = req.session.id;
-    req.session.destroy((err) => {
-        if (err) {
-            console.error('Error al cerrar la sesión:', err);
-            res.status(500).json({ message: 'Error al cerrar la sesión' });
-        } else {
-            console.log("Sesión cerrada");
-            getIo().in(sessionId).disconnectSockets();
-
-            res.clearCookie('connect.sid'); // Elimina la cookie de sesión
-            res.status(200).send();
-        }
-    });
-});
-
-//Login para Android
+//LOGIN SECTION
 app.get('/getLogin', (req, res) => {
 
     if (req.session.user?.email) {
@@ -439,6 +365,21 @@ app.post('/actualitzarUsuari', requireLogin, (req, res) => {
 
     res.status(200).send()
 })
+
+//GET AULAS
+app.get('/getAulas', (req, res) => {
+    mysqlConnection.SelectClassrooms((aulas) => {
+        aulasEnviar = []
+        aulas.forEach(aula => {
+            aulaIndividual = { id: aula.id, name: aula.name, acces_code: aula.acces_code}
+            aulasEnviar.push(aulaIndividual)
+        })
+
+        res.json(aulasEnviar)
+    })
+        
+});
+
 //GET USUARIOS
 app.get('/consultarUsuaris', (req, res) => {
     mysqlConnection.SelectUsers((usuaris) => {
