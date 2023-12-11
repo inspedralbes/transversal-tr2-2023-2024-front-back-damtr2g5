@@ -23,11 +23,11 @@
               </p>
               <v-divider class="my-3"></v-divider>
               <v-btn rounded variant="text">
-                Editar conte
+                Editar compte
               </v-btn>
               <v-divider class="my-3"></v-divider>
               <v-btn @click="logout()" rounded variant="text">
-                Tancar sessiò
+                Tancar sessió
               </v-btn>
             </div>
           </v-card-text>

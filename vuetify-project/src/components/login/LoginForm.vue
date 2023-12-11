@@ -28,7 +28,7 @@
 
                 <v-btn @click="guardar()"  block class="mt-2">Login</v-btn>
             </form>
-            <p class="mt-3"> Aun no estas registrat? <a href="#" @click.stop.prevent="dialog = true,step=1"> Regist'rat </a></p>
+            <p class="mt-3"> Encara no t'has registrat? <a href="#" @click.stop.prevent="dialog = true,step=1"> Registra't </a></p>
             <v-dialog v-model="dialog" class="w-50">
                 <v-card class="mx-auto" max-width="800" width="500">
                     <v-card-title class="text-h6 font-weight-regular justify-space-between">
@@ -47,7 +47,7 @@
                                             v-model="surname"></v-text-field></v-col>
                                 </v-row>
                                 <span class="text-caption text-grey-darken-1">
-                                    Este es el email que usaras para el login
+                                    Aquest és el correu que faràs servir per al login
                                 </span>
 
                             </v-card-text>
