@@ -383,21 +383,13 @@ app.post('/registrarUsuari', (req, res) => {
         });
 
         if (comprovacio) {
-            mysqlConnection.InsertUser([usuariDades.name, usuariDades.surname, usuariDades.email, usuariDades.contrasena], ((result) => { return result }));
+            mysqlConnection.InsertUser([usuariDades.name, usuariDades.surname, usuariDades.email, usuariDades.contrasena], ((result) => { res.send(result) }));
         } else {
             // Mail en uso
             res.status(403).send();
             throw new Error("Mail en uso");
         }
     })
-        .then(successMessage => {
-            console.log("Operación completada:", successMessage);
-            res.status(200).send("Registro exitoso");
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            res.status(500).send("Error en el registro");
-        });
 });
 
 //UPDATE USER

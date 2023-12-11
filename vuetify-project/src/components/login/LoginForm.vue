@@ -70,6 +70,7 @@
                         </v-window-item>
                         <v-window-item :value="3">
                             <v-container>
+                                <v-img src="https://i.pinimg.com/originals/a7/01/b4/a701b416f376c51673ffe421d2b2d7b0.jpg"></v-img>
                             </v-container>
                         </v-window-item>
                         <v-window-item :value="4">
@@ -140,7 +141,7 @@ export default {
     methods: {
         
         guardar() {
-            
+            console.log(this.email+" "+this.password);
             this.loading = true;
             this.appStore.setEmail(this.email);
             this.appStore.setPassword(this.password);
@@ -163,17 +164,23 @@ export default {
             });
         },
         handleHashing(data) {
-            this.password = md5(data).toUpperCase();
+            let contr=md5(data).toUpperCase();
+            this.password = contr;
+            return contr
             },
         async register(){
-            var encryptPwd = handleHashing(passwordD)
-            
+            var encryptPwd = this.handleHashing(this.passwordD)
             var usuario = {name: this.username, surname: this.surname, email: this.emailD, contrasena: encryptPwd}
             const response =  await registrarUsuari(usuario)
             console.log(response);
             if(response.success) {
                 this.step=3
-                
+                this.email = this.emailD
+                this.password = encryptPwd
+                const cambio = setTimeout(() => {
+                    this.dialog = false
+                    this.guardar()
+                }, 2000);                
             } else {
                 this.step=4
                 this.errorMessage = response.message
