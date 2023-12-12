@@ -12,6 +12,7 @@
     "@mdi/font": "^7.0.96",
     "@mdi/js": "^7.3.67",
     "@mdi/svg": "^7.3.67",
+    "axios": "^1.6.2",
     "chart.js": "^4.4.0",
     "core-js": "^3.29.0",
     "md5": "^2.3.0",
@@ -20,7 +21,10 @@
     "socket.io-client": "^4.7.2",
     "vue": "^3.2.0",
     "vue-chartjs": "^5.2.0",
+    "vue-google-oauth2": "^1.5.10",
     "vue-router": "^4.0.0",
+    "vue3-google-login": "^2.0.25",
+    "vue3-google-oauth2": "^1.0.7",
     "vuetify": "^3.0.0"
   },
   "devDependencies": {

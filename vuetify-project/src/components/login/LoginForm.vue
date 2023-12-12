@@ -1,4 +1,5 @@
 <template>
+    <h1>Is Authorized: {{ Vue3Google0Auth.isAuthorized }}</h1>
     <v-dialog v-model="loginIncorrectDialog" width="auto">
         <v-card>
             <v-card-title>Login incorrecto</v-card-title>
@@ -7,9 +8,9 @@
                 <v-btn color="primary" text @click="loginIncorrectDialog = false">Cerrar</v-btn>
             </v-card-actions>
         </v-card>
-    </v-dialog>    
-    <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto h-auto pa-4" elevation="4" rounded
-        max-width="300" width="100%">
+    </v-dialog>
+
+    <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto h-auto pa-4" elevation="4" rounded max-width="300" width="100%">
         <div>
             <div class="text-h5 font-weight-medium mb-2">
                 LOGIN
@@ -17,12 +18,11 @@
             <form>
                 <v-text-field v-model="email" label="Email"></v-text-field>
 
-                <v-text-field @input="handleHashing($event.target.value)" :append-icon="show0 ? '$eye' : '$eyeOff'"
-                            :type="show0 ? 'text' : 'password'" label="Contrasenya"
-                            @click:append="show0 = !show0"></v-text-field>
+                <v-text-field @input="handleHashing($event.target.value)" :append-icon="show0 ? '$eye' : '$eyeOff'" :type="show0 ? 'text' : 'password'" label="Contrasenya" @click:append="show0 = !show0"></v-text-field>
 
-                <v-btn @click="guardar()"  block class="mt-2">Login</v-btn>
+                <v-btn @click="guardar()" block class="mt-2">Login</v-btn>
             </form>
+            <div class="g-signin2" data-onsuccess="onSignIn"></div>
             <p class="mt-3"> Encara no t'has registrat? <a href="#" @click.stop.prevent="dialog = true,step=1"> Registra't </a></p>
             <v-dialog v-model="dialog" class="w-50">
                 <v-card class="mx-auto" max-width="800" width="500">
@@ -37,14 +37,15 @@
                                 <v-text-field label="Email" placeholder="ejemplo@ejemplo.com" v-model="emailD"></v-text-field>
                                 <v-row>
                                     <v-col cols="6">
-                                        <v-text-field label="Nombre" v-model="username"></v-text-field></v-col>
-                                    <v-col cols="6"><v-text-field label="Apellidos"
-                                            v-model="surname"></v-text-field></v-col>
+                                        <v-text-field label="Nombre" v-model="username"></v-text-field>
+                                    </v-col>
+                                    <v-col cols="6">
+                                        <v-text-field label="Apellidos" v-model="surname"></v-text-field>
+                                    </v-col>
                                 </v-row>
                                 <span class="text-caption text-grey-darken-1">
                                     Aquest és el correu que faràs servir per al login
                                 </span>
-
                             </v-card-text>
                         </v-window-item>
 
@@ -52,22 +53,21 @@
                             <v-container>
                                 <v-card-text>
                                     <v-row>
-                                        <v-text-field :append-icon="show1 ? '$eye' : '$eyeOff'"
-                            :type="show1 ? 'text' : 'password'" label="Contrasenya"
-                            @click:append="show1 = !show1"
-                                            v-model="passwordD"></v-text-field></v-row>
+                                        <v-text-field :append-icon="show1 ? '$eye' : '$eyeOff'" :type="show1 ? 'text' : 'password'" label="Contrasenya" @click:append="show1 = !show1" v-model="passwordD"></v-text-field>
+                                    </v-row>
                                     <v-row>
-                                        <v-text-field :append-icon="show2 ? '$eye' : '$eyeOff'"
-                            :type="show2 ? 'text' : 'password'" label="Contrasenya"
-                            @click:append="show2 = !show2"
-                                            v-model="passwordComprobacion"></v-text-field></v-row>
-                                </v-card-text> </v-container>
+                                        <v-text-field :append-icon="show2 ? '$eye' : '$eyeOff'" :type="show2 ? 'text' : 'password'" label="Contrasenya" @click:append="show2 = !show2" v-model="passwordComprobacion"></v-text-field>
+                                    </v-row>
+                                </v-card-text>
+                            </v-container>
                         </v-window-item>
+
                         <v-window-item :value="3">
                             <v-container>
                                 <v-img src="https://i.pinimg.com/originals/a7/01/b4/a701b416f376c51673ffe421d2b2d7b0.jpg"></v-img>
                             </v-container>
                         </v-window-item>
+
                         <v-window-item :value="4">
                             <v-container>
                                 <v-card-text>
@@ -90,26 +90,34 @@
                         <v-btn v-if="step == 2 && this.passwordD == this.passwordComprobacion && this.passwordD != '' " color="primary" variant="flat" @click="register()">
                             Register
                         </v-btn>
-                        <v-btn  v-if="step > 2" color="primary" variant="flat" @click="dialog=false">
+                        <v-btn v-if="step > 2" color="primary" variant="flat" @click="dialog=false">
                             Exit
                         </v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
+
+            
         </div>
     </v-sheet>
 </template>
+
+
   
 
 <script>
 import { useAppStore } from '../../store/app'
-import { registrarUsuari } from '../../communicationsManager' 
+import { registrarUsuari } from '../../communicationsManager'
 import md5 from 'md5';
+import { inject } from 'vue';
+
 export default {
     setup() {
+        const Vue3Google0Auth = inject('Vue3Google0Auth')
         const appStore = useAppStore()
         return {
-            appStore
+            appStore,
+            Vue3Google0Auth
         };
     },
     data() {
@@ -135,7 +143,13 @@ export default {
         };
     },
     methods: {
-        
+        onSignIn(googleUser) {
+            var profile = googleUser.getBasicProfile();
+            console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+            console.log('Name: ' + profile.getName());
+            console.log('Image URL: ' + profile.getImageUrl());
+            console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+            },
         guardar() {
             console.log(this.email+" "+this.password);
             this.loading = true;
@@ -160,6 +174,9 @@ export default {
                 this.loading = false;
                 
             });
+        },
+        async loginWithGoogle() {
+          
         },
         handleHashing(data) {
             let contr=md5(data).toUpperCase();
