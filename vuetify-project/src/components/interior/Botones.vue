@@ -2,8 +2,8 @@
   <v-item-group selected-class="bg-primary">
     <v-container>
       <v-item v-for="n in opciones" :key="n">
-        <v-card class="d-flex align-center super-cool-button" dark height="200" @click="onToggle(n)">
-          <div class="text-h3 text-center">
+        <v-card class="d-flex align-center super-cool-button bitter-sweet oxford-blue-bg" dark height="200" @click="onToggle(n)">
+          <div class="myfont bigger-font text-center">
             {{ isSelected ? 'Log In' : n }}
           </div>
         </v-card>
@@ -51,7 +51,7 @@ export default {
     },
   data() {
     const opciones = [
-      'Entrenamiento',
+      'Entrenament',
       'Batalla',
     ]
     return {
@@ -70,7 +70,7 @@ export default {
         return;
       }
       switch(route) {
-        case 'Entrenamiento':
+        case 'Entrenament':
           this.$router.push({ name: 'Entrenamiento' })
           break;
         case 'Batalla':

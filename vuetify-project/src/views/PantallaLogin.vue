@@ -1,5 +1,5 @@
 <template>
-    <div class="background-container">
+    <div class="background-container blurred">
         <img src="@/assets/ringUFC4.jpg" alt="Background Image" class="background-image">
     </div>
     <v-app>
@@ -17,24 +17,6 @@
         </v-row>
     </v-app>
 </template>
-
-<style>
-.background-container {
-    position: fixed;
-    top: -1em;
-    left: -1em;
-    width: 103vw;
-    height: 103vh;
-    overflow: hidden;
-    filter: blur(10px);
-}
-
-.background-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-</style>
   
 <script setup>
 
