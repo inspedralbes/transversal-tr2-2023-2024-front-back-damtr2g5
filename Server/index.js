@@ -108,8 +108,9 @@ app.get('/getCategorias',async (req,res) => {
 })
 
 app.get('/getActivities/:tema', async (req,res) => {
-    idTema = req.params.tema;
-    ejercicios = await getActivities(idTema)
+    let tema = (req.params.tema).toString();
+    console.log(tema)
+    ejercicios = await getActivities(tema)
     console.log(ejercicios)
     res.json(ejercicios);
 })
@@ -200,7 +201,7 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
     try {
         console.log(req.body);
         console.log(req.session);
-        let idUser = req.session.user.userId;
+        let idUser = req.session.user.id;
         respuesta = req.body.respuesta;
         let correcto = false;
         let preguntaid = 0;
@@ -277,7 +278,7 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
         }
         findRegisteredResult(idUser, req.body.ejercicioid, preguntaid).then((result) => {
             if (result != null) {
-                if (!result.correcta && correcta) {
+                if (!result.correcta && correcto) {
                     updateCollection(
                         { "idUsuario": idUser, "idPregunta": preguntaid, "idEjercicio": req.body.ejercicioid }, // Filtro para encontrar el usuario por su ID
                         {

@@ -1,14 +1,13 @@
+
 <template>
     <v-sheet
       class="d-flex align-center justify-center flex-wrap text-center mx-auto px-4"
       height="auto"
       max-width="800"
-      width="100%"
-    >
-    <v-data-iterator :items="categorias">
-      <template v-slot:default="{ items }">
+      width="100%">
+    
         <v-row>
-          <v-col v-for="item in items" :key="item.raw.id" cols="12" sm="6" md="6">
+          <v-col v-for="item in categorias" :key="item.id" cols="12" sm="6" md="6">
             <v-card class="mb-3">
               <v-btn
                 class="red-btn"
@@ -16,13 +15,11 @@
                 text
                 tile
               >
-                <span class="text-h5">{{ item.raw.nombre }}</span>
+                <span class="text-h5">{{ item.nombre }}</span>
               </v-btn>
             </v-card>
           </v-col>
         </v-row>
-      </template>
-    </v-data-iterator>
     </v-sheet>
   </template>
   
@@ -55,8 +52,7 @@ export default {
         seleccionarCategoria(item) {
             if (item) {
                 this.categoriaSeleccionada = item;
-                this.appStore.setTema(item)
-                 this.$router.push({ name: 'Categoria', params: { categoria: item.raw.nombre } });
+                 this.$router.push({ name: 'Categoria', params: { categoria: item.nombre } });
              } else {
                 console.error('Invalid item or item.id');
             }

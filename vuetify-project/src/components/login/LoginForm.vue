@@ -1,5 +1,13 @@
 <template>
-        
+    <v-dialog v-model="loginIncorrectDialog">
+        <v-card>
+            <v-card-title>Login incorrecto</v-card-title>
+            <v-card-text>El nombre de usuario o la contraseña son incorrectos.</v-card-text>
+            <v-card-actions>
+                <v-btn color="primary" text @click="loginIncorrectDialog = false">Cerrar</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>    
     <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto h-auto pa-4" elevation="4" rounded
         max-width="300" width="100%">
         <div>
@@ -107,6 +115,7 @@ export default {
 
         return {
             loading: false,
+            loginIncorrectDialog : false,
             allowed: false,
             dialog: false,
             errorMessage: '',
@@ -139,6 +148,7 @@ export default {
                     this.$router.push({ name: 'Home' })
                 } else {
                     console.log("Login failed")
+                    this.loginIncorrectDialog = true;
                     
                 }
             })
@@ -190,5 +200,8 @@ export default {
 </script>
 
 <style scoped>
-/* Add your custom styles here */
+    .small-dialog .v-dialog__content {
+        width: 50%; /* Ajusta esto a tu preferencia */
+        max-width: 300px; /* Ajusta esto a tu preferencia */
+    }
 </style>

@@ -178,12 +178,14 @@ export default {
     },
 
     created() {
-            this.Ejercicio = this.appStore.getEjercicio
-            console.log("Ejercicio: ",this.Ejercicio)
-            this.botoncliclado(this.Ejercicio.preguntas[0]);
-            this.selectedButton = 0;
-            this.indexArray = Array.from(Array(this.Ejercicio.preguntas.length));
-            this.indexArray = this.indexArray.map(() => 0);
+            this.Ejercicio = getEjercicios(this.$route.params.id).then((res) => {
+                this.Ejercicio = res;
+                console.log("Ejercicio: ",this.Ejercicio)
+                this.botoncliclado(this.Ejercicio.preguntas[0]);
+                this.selectedButton = 0;
+                this.indexArray = Array.from(Array(this.Ejercicio.preguntas.length));
+                this.indexArray = this.indexArray.map(() => 0);
+            })
 
         store.$subscribe((mutation, state) => {
             console.log(state);

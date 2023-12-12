@@ -13,7 +13,7 @@
               density="comfortable"
               hide-details
               placeholder="Search"
-              prepend-inner-icon="mdi-magnify"
+              prepend-inner-icon="$magnify"
               style="max-width: 300px;"
               variant="solo"
             ></v-text-field>
@@ -40,7 +40,7 @@
   
                   <div class="d-flex justify-space-between px-4">
                     <div class="d-flex align-center text-caption text-medium-emphasis me-1">
-                      <v-icon icon="mdi-alert-octagram" start></v-icon>
+                      <v-icon icon="$alertOctogram" start></v-icon>
   
                       <div class="text-truncate">Número de preguntas: {{ item.raw.preguntas.length }}</div>
                     </div>
@@ -65,7 +65,7 @@
           <div class="d-flex align-center justify-center pa-4">
             <v-btn
               :disabled="page === 1"
-              icon="mdi-arrow-left"
+              icon="$arrowLeft"
               density="comfortable"
               variant="tonal"
               rounded
@@ -78,7 +78,7 @@
   
             <v-btn
               :disabled="page >= pageCount"
-              icon="mdi-arrow-right"
+              icon="$arrowRight"
               density="comfortable"
               variant="tonal"
               rounded
@@ -128,10 +128,11 @@
           }
       },
       created() {
-          this.categoria = this.appStore.getTema
-          getEjerciciosByCat(this.categoria.id).then(response => {
+          this.categoria = decodeURIComponent(this.$route.params.categoria).toString()
+          console.log("Categoria de Actividades: ",this.categoria)
+          getEjerciciosByCat(this.categoria).then(response => {
               this.ejercicios = response;
-              console.log(response)
+              console.log(response) 
           })
       },
   }

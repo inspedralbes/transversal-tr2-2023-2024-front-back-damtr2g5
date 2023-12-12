@@ -16,6 +16,20 @@ export async function getRooms(page, itemsPerPage, sortBy, search) {
   const rooms = await response.json();
   return rooms;
 }
+
+export async function getExpEjer(datos) {
+  const response = await fetch(`${SERVER_URL}/getExpEjer`,
+    {
+      method: 'POST', headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(datos),
+      credentials: 'include', mode: "cors"
+    },);
+  const experiencia = await response.json();
+  console.log("Experiencia:", experiencia)
+  return experiencia;
+}
 export async function comprobarRespuesta(respuesta,id) {
   console.log("respuesta" + respuesta + "id" + id);
   const response = await fetch(`${SERVER_URL}/comprobarPregunta/${id}`,
@@ -84,8 +98,8 @@ export async function getCategorias(){
   return categorias;
 }
 
-export async function getEjerciciosByCat(idCategoria){
-  const response = await fetch(`${SERVER_URL}/getActivities/${idCategoria}`,
+export async function getEjerciciosByCat(nombre){
+  const response = await fetch(`${SERVER_URL}/getActivities/${nombre}`,
   {method: 'GET',
   credentials: 'include', mode: 'cors'})
   const actividades = await response.json();
