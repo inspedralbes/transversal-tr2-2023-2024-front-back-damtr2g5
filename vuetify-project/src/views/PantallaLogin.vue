@@ -1,15 +1,12 @@
 <template>
     <v-app>
-        <v-container>
-            <v-row>
-                
-                <v-col>
-                    <LoginForm />
-                </v-col>
-            </v-row>
+        <v-container class="fill-height maya-blue-bg">
+            <LoginForm />
         </v-container>
     </v-app>
 </template>
+
+<style></style>
   
 <script setup>
 

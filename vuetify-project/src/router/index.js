@@ -5,78 +5,72 @@ import { useAppStore } from '../store/app.js'
 
 const requireAuth = (to, from, next) => {
   const store = useAppStore();
-  console.log("Autenticado: ",store.isAuthenticated)
+  console.log("Autenticado: ", store.isAuthenticated)
   if (store.isAuthenticated) {
-    console.log("Going to...",to)
+    console.log("Going to...", to)
     next();
   } else {
     store.hasCookieId()
-        .then((isAuthenticated) => {
-          if (isAuthenticated) {
-            next();
-          } else {
-            next({ name: "Login" });
-          }
-        });
-    
+      .then((isAuthenticated) => {
+        if (isAuthenticated) {
+          next();
+        } else {
+          next({ name: "Login" });
+        }
+      });
+
   }
 };
 const checkAuth = (to, from, next) => {
   const store = useAppStore();
-  console.log("Autenticado: ",store.isAuthenticated)
+  console.log("Autenticado: ", store.isAuthenticated)
   if (store.isAuthenticated) {
-    console.log("Going to...",to)
-    next({ name: "Home"});
+    console.log("Going to...", to)
+    next({ name: "Home" });
   } else {
     console.log("Cookie")
     store.hasCookieId()
-        .then((isAuthenticated) => {
-          console.log("Authenticated permission")
-          if (isAuthenticated) {
-            next({ name: "Home" });
-          } else {
-            next();
-          }
-        });
-    
+      .then((isAuthenticated) => {
+        console.log("Authenticated permission")
+        if (isAuthenticated) {
+          next({ name: "Home" });
+        } else {
+          next();
+        }
+      });
+
   }
 };
 const routes = [
   {
-    path: '/', 
-    component: () => import('@/layouts/default/Default.vue'),
-    children: [
-      {
-        path: '',
-        name: 'Login',        
-        component: () => import(/* webpackChunkName: "home" */ '@/views/PantallaLogin.vue'),
-        beforeEnter: checkAuth
-      },      
-    ],
+    path: '/',
+    name: 'Login',
+    component: () => import(/* webpackChunkName: "home" */ '@/views/PantallaLogin.vue'),
+    beforeEnter: checkAuth
   },
   {
-    path: '/home', 
+    path: '/home',
     component: () => import('@/layouts/default/Default.vue'),
     children: [
       {
         path: '',
-        name: 'Home',        
+        name: 'Home',
         component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue'),
         beforeEnter: requireAuth
-      },      
+      },
     ],
   },
   {
-    path: '/home/entrenamiento',  
+    path: '/home/entrenamiento',
     component: () => import('@/layouts/default/Default.vue'),
     beforeEnter: requireAuth,
     children: [
       {
         path: '',
-        name: 'Entrenamiento',        
+        name: 'Entrenamiento',
         component: () => import(/* webpackChunkName: "home" */ '@/views/Temas.vue'),
-      },      
-    ], 
+      },
+    ],
 
   },
   {
@@ -86,19 +80,19 @@ const routes = [
     props: true,
     beforeEnter: requireAuth,
   },
-  
+
   {
-    path: '/home/entrenamiento/:categoria/ejercicio/:id',  
+    path: '/home/entrenamiento/:categoria/ejercicio/:id',
     component: () => import('@/layouts/default/Default.vue'),
     beforeEnter: requireAuth,
     children: [
       {
         path: '',
-        name: 'Ejercicio',        
+        name: 'Ejercicio',
         component: () => import(/* webpackChunkName: "home" */ '@/views/InfoEjercicio.vue'),
         props: true,
-      },      
-    ],   
+      },
+    ],
   },
   {
     path: '/home/batalla',
@@ -107,9 +101,9 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'Batalla',        
+        name: 'Batalla',
         component: () => import(/* webpackChunkName: "home" */ '@/views/BuscadorBatalla.vue'),
-      },      
+      },
     ],
   },
   {
@@ -119,9 +113,9 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'Room',        
+        name: 'Room',
         component: () => import(/* webpackChunkName: "home" */ '@/views/Room.vue'),
-      },      
+      },
     ],
   },
   {
@@ -131,13 +125,13 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'Game',        
+        name: 'Game',
         component: () => import(/* webpackChunkName: "home" */ '@/views/Game.vue'),
-      },      
+      },
     ],
   }
-  
-  
+
+
 ]
 
 const router = createRouter({

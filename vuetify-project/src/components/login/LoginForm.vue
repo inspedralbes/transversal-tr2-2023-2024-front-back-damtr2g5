@@ -9,14 +9,14 @@
             Torna a intentarlo
         </v-card-text>
         <v-card-actions>
-          <v-btn color="primary" block @click="dialogL = false">Tancar</v-btn>
+          <v-btn class="oxford-blue" block @click="dialogL = false">Tancar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto h-auto pa-4" elevation="4" rounded
+    <v-sheet class=" d-flex align-center justify-center flex-wrap text-center mx-auto h-auto pa-4" elevation="4" rounded
         max-width="300" width="100%">
         <div>
-            <div class="text-h5 font-weight-medium mb-2">
+            <div class="text-h5 font-weight-medium mb-2 oxford-blue">
                 LOGIN
             </div>
             <form>
@@ -28,7 +28,7 @@
 
                 <v-btn @click="guardar()"  block class="mt-2">Login</v-btn>
             </form>
-            <p class="mt-3"> Encara no t'has registrat? <a href="#" @click.stop.prevent="dialog = true,step=1"> Registra't </a></p>
+            <p class="mt-3 oxford-blue"> Encara no t'has registrat? <a href="#" @click.stop.prevent="dialog = true,step=1"> Registra't </a></p>
             <v-dialog v-model="dialog" class="w-50">
                 <v-card class="mx-auto" max-width="800" width="500">
                     <v-card-title class="text-h6 font-weight-regular justify-space-between">
