@@ -8,8 +8,7 @@
             </v-card-actions>
         </v-card>
     </v-dialog>    
-    <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto h-auto pa-4" elevation="4" rounded
-        max-width="300" width="100%">
+    <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto h-auto pa-4" elevation="4" rounded >
         <div>
             <div class="text-h5 font-weight-medium mb-2 oxford-blue">
                 LOGIN
