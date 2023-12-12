@@ -58,7 +58,7 @@
 }
 
 .bitter-sweet {
-    color: #F87060 s!important;   
+    color: #F87060 !important;   
 }
 
 .platinum {
@@ -87,6 +87,18 @@
 
 .cream {
     color: #E5E8B6 !important;
+}
+.round-border {
+    border-radius: 40px;
+}
+.big-font {
+    font-size: 2em;
+}
+.myfont {
+    font-family: 'acme';
+}
+.button {
+    font-size: 1.5em;
 }
 
 /*#region AnimacionDeSello*/
