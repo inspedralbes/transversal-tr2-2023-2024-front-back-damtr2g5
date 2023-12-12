@@ -419,7 +419,7 @@ app.get('/getAulas', (req, res) => {
     mysqlConnection.SelectClassrooms(req.session.user.id, (aulas) => {
         aulasEnviar = []
         aulas.forEach(aula => {
-            aulaIndividual = { id: aula.id, name: aula.name, acces_code: aula.acces_code }
+            aulaIndividual = { id: aula.id, name: aula.name, access_code: aula.access_code }
             aulasEnviar.push(aulaIndividual)
         })
 
