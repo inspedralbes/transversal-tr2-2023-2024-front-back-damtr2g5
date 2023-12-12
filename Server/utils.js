@@ -1,4 +1,4 @@
-module.exports = { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion };
+module.exports = { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion,generarPassword};
 function comprobarRectaLineal(punto1, punto2) {
     if (punto1.x === punto2.x) {
         // Recta vertical
@@ -96,3 +96,26 @@ function checkQuestion(question, respuesta) {
 
     return correcto;
 }
+
+//Para generar un contraseñas aleatorias(hay que pasarle el length)
+function generarPassword(length) {
+    
+    if (
+      typeof crypto !== 'undefined' 
+      && typeof crypto.getRandomValues === 'function'
+    ) {
+      var tmp = new Uint8Array(Math.max((~~length)/2));
+      crypto.getRandomValues(tmp);
+      return Array.from(tmp)
+        .map(n => ('0'+n.toString(16)).substr(-2))
+        .join('')
+        .substr(0,length);
+    }
+  
+    
+    var ret = "";
+    while (ret.length < length) {
+      ret += Math.random().toString(16).substring(2);
+    }
+    return ret.substring(0,length);
+  }

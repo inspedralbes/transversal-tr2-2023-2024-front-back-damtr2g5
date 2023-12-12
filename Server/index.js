@@ -21,18 +21,19 @@ const port = 3001;
 const SERVER_URL = "http://localhost";
 
 const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, updateCollection, getActivities, getPreguntaRandom } = require("./mongoDB.js");
-const { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion } = require("./utils.js");
+const { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion, generarPassword } = require("./utils.js");
 const { connect } = require('http2');
 const { Console } = require('console');
 const { initializeSocket, filterRooms, getIo } = require("./socket.js");
 initializeSocket(server, { cors: corsOptions });
 const sessionMiddleware = require('./sessionMiddleware.js');
 
+app.use(cors(corsOptions));
+app.use(sessionMiddleware);
 app.use(bodyParser.json());
 app.use(cookieParser("mySecretKey"));
 app.use(express.json())
-app.use(cors(corsOptions));
-app.use(sessionMiddleware);
+
 
 server.listen(port, () => {
     console.log(`Server listening at ${SERVER_URL}:${port}`);
@@ -73,8 +74,11 @@ app.get('/getRooms', (req, res) => {
     }
     res.json(response);
 });
-app.get('/getEjercicio', (req, res) => {
-    getDocument(1).then((document) => {
+app.get('/getEjercicio/:id', (req, res) => {
+    let id = parseInt(req.params.id)
+    console.log("Inside Call:", id)
+    getDocument(id).then((document) => {
+        console.log("Inside Call:",document)
         getPreguntas(document.preguntas).then((preguntas) => {
             var ejercicio = {
                 "id": document.id,
@@ -114,9 +118,10 @@ app.get('/getCategorias', async (req, res) => {
     res.json(categorias)
 })
 
-app.post('/getActivities/:tema', async (req, res) => {
-    idTema = req.params.tema;
-    ejercicios = await getActivities(idTema)
+app.get('/getActivities/:tema', async (req,res) => {
+    let tema = (req.params.tema).toString();
+    console.log(tema)
+    ejercicios = await getActivities(tema)
     console.log(ejercicios)
     res.json(ejercicios);
 })
@@ -173,7 +178,7 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
     try {
         console.log(req.body);
         console.log(req.session);
-        let idUser = req.session.user.userId;
+        let idUser = req.session.user.id;
         respuesta = req.body.respuesta;
         let correcto = false;
         let preguntaid = 0;
@@ -379,9 +384,26 @@ app.post('/actualitzarUsuari', requireLogin, (req, res) => {
     res.status(200).send()
 })
 
+//CREAR AULA
+app.post('/crearAula', (req, res) => {
+    aulaDades = req.body;
+    let contrasena = generarPassword(6).toLocaleUpperCase();
+    console.log("Acces_code de Aula Creado: " + contrasena);
+    console.log("Id del profesor: " + req.session.user);
+    mysqlConnection.InsertAula([req.session.user.id, aulaDades.name, contrasena], ((result) => {
+        res.send("Aula creada correctament")
+           
+    })).catch(error => {
+        console.error("Error:", error);
+        res.status(500).send("Error al insertar aula");
+    });
+    
+
+});
+
 //GET AULAS
 app.get('/getAulas', (req, res) => {
-    mysqlConnection.SelectClassrooms(req.session.user.id,(aulas) => {
+    mysqlConnection.SelectClassrooms(req.session.user.id, (aulas) => {
         aulasEnviar = []
         aulas.forEach(aula => {
             aulaIndividual = { id: aula.id, name: aula.name, acces_code: aula.acces_code }
@@ -416,3 +438,8 @@ app.post('/pregunta', async (req, res) => {
     var pregunta = await getPregunta(req.body.idPregunta);
     res.json(pregunta);
 });
+
+
+
+
+

@@ -16,12 +16,14 @@ client.connect();
 
 async function getDocument(id) {
     try {
-
+        await client.connect();
         const db = client.db(dbName);
         const col = db.collection("activity");
         // Find and return the document
-        const filter = { "id": id };
+        const filter = {"id": id};
+        console.log("Inside Mongo Method:", id)
         const document = await col.findOne(filter);
+        console.log("Inside Mongo Method:", document)
         return document;
     } catch (err) {
         console.log(err.stack);
@@ -30,13 +32,17 @@ async function getDocument(id) {
 
 async function getActivities(theme) {
     try {
+        console.log("Tema a Buscar en Mongo: ",theme)
         await client.connect();
         const db = client.db(dbName);
-        const col = db.collection("activity");
-        const filter = { "id_tema": parseInt(theme)};
-        const resultadoEncontrado = await col.find(filter).toArray();
+        const colA = db.collection("activity");
+        const colT = db.collection('theme');
+        const filter = { "nombre": theme};
+        const idTema = await colT.findOne(filter)
+        console.log("ID TEMA: ",idTema)
+        const resultadoEncontrado = await colA.find({"id_tema":parseInt(idTema.id)}).toArray();
         
-        console.log(resultadoEncontrado); 
+        console.log("Resultado Encontrado: ",resultadoEncontrado); 
 
         return resultadoEncontrado; 
     } catch (err) {
@@ -67,7 +73,7 @@ async function findRegisteredResult(id_user, id_activity, id_pregunta) {
         const col = db.collection("result");
         const resultadoEncontrado = await col.findOne({
             idUsuario: id_user,
-            idEjercicio: id_ejercicio,
+            idEjercicio: id_activity,
             idPregunta: id_pregunta
         });
 

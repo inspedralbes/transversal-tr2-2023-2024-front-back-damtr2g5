@@ -1,7 +1,7 @@
 export const SERVER_URL = "http://localhost:3001"
 
-export async function getEjercicios() {
-  const response = await fetch(`${SERVER_URL}/getEjercicio`);
+export async function getEjercicios(id) {
+  const response = await fetch(`${SERVER_URL}/getEjercicio/${id}`, { method: 'GET', credentials: 'include', mode: 'cors' });
   const ejercicios = await response.json();
   return ejercicios;
 }
@@ -15,6 +15,20 @@ export async function getRooms(page, itemsPerPage, sortBy, search) {
     { method: 'GET', credentials: 'include', mode: 'cors' });
   const rooms = await response.json();
   return rooms;
+}
+
+export async function getExpEjer(datos) {
+  const response = await fetch(`${SERVER_URL}/getExpEjer`,
+    {
+      method: 'POST', headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(datos),
+      credentials: 'include', mode: "cors"
+    },);
+  const experiencia = await response.json();
+  console.log("Experiencia:", experiencia)
+  return experiencia;
 }
 export async function comprobarRespuesta(respuesta,id) {
   console.log("respuesta" + respuesta + "id" + id);
@@ -88,10 +102,12 @@ export async function getCategorias(){
   return categorias;
 }
 
-export async function getEjerciciosByCat(idCategoria){
-  const response = await fetch(`${SERVER_URL}/getCategorias/${idCategoria}`);
-  const categorias = await response.json();
-  return categorias;
+export async function getEjerciciosByCat(nombre){
+  const response = await fetch(`${SERVER_URL}/getActivities/${nombre}`,
+  {method: 'GET',
+  credentials: 'include', mode: 'cors'})
+  const actividades = await response.json();
+  return actividades;
 }
 
 export async function getPreguntaRandom(){

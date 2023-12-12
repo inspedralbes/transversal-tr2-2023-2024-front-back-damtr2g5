@@ -74,11 +74,18 @@ const routes = [
 
   },
   {
-    path: '/home/entrenamiento/:categoria',
-    name: 'Categoria',
-    component: () => import(/* webpackChunkName: "categoria" */ '../views/Categoria.vue'),
+    path: '/home/entrenamiento/:categoria',  
+    component: () => import('@/layouts/default/Default.vue'),
     props: true,
     beforeEnter: requireAuth,
+    children: [
+      {
+      path: '',
+      name: 'Categoria',
+      component: () => import(/* webpackChunkName: "categoria" */ '../views/Categoria.vue'),
+      
+      }
+    ]
   },
 
   {
@@ -88,11 +95,23 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'Ejercicio',
+        name: 'InfoEjercicio',
         component: () => import(/* webpackChunkName: "home" */ '@/views/InfoEjercicio.vue'),
         props: true,
       },
     ],
+  },
+  {
+    path: '/home/entrenamiento/:categoria/ejercicio/:id/juego',  
+    component: () => import('@/layouts/default/Default.vue'),
+    beforeEnter: requireAuth,
+    children: [
+      {
+        path: '',
+        name: 'Ejercicio',        
+        component: () => import(/* webpackChunkName: "home" */ '@/views/Ejercicio.vue'),
+      },      
+    ],   
   },
   {
     path: '/home/batalla',
