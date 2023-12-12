@@ -382,14 +382,30 @@ app.post('/actualitzarUsuari', requireLogin, (req, res) => {
 //CREAR AULA
 app.post('/crearAula', requireLogin, (req, res) => {
     aulaDades = req.body;
+    //let contrasena = "shu351";
+    codesAulas = [];    
     let contrasena = generarPassword(6).toLocaleUpperCase();
     //console.log("Acces_code de Aula Creado: " + contrasena);
     //console.log("Id del profesor: " + req.session.user);
-    mysqlConnection.InsertAula([req.session.user.id, aulaDades.name, contrasena], ((result) => {
-        res.send("Aula creada correctament")
-           
-    }));
-    
+
+    mysqlConnection.SelectAccesCode((codes) => {
+        
+        codes.forEach(code => {
+            codesAulas.push(code)
+        })
+        console.log(codesAulas)
+    })
+
+    if (codesAulas.includes(contrasena)) {
+        res.send("Error contrasenya repetida,torni a provar amb una altra contrasenya")       
+    }
+    else{
+        mysqlConnection.InsertAula([req.session.user.id, aulaDades.name, contrasena], ((result) => {
+            res.send("Aula creada correctament")
+
+        }));
+    }
+
 
 });
 

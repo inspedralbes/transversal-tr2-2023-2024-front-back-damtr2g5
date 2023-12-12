@@ -123,6 +123,26 @@ function InsertUser(valores, callback) {
     });
 }
 
+//Selecionar acces_code de Aulas
+function SelectAccesCode(callback) {
+    pool.getConnection((error, connection) => {
+        if (error) {
+            console.error('Error al obtener la conexión del pool:', error);
+            throw error;
+        }
+
+        connection.query('SELECT access_code FROM classrooms', [], (errorQuery, results, fields) => {
+            connection.release();
+
+            if (errorQuery) {
+                console.error('Error al ejecutar la consulta:', errorQuery);
+                throw errorQuery;
+            }
+            callback(results);
+        });
+    });
+}
+
 //AÑADIR UNA AULA NUEVA
 function InsertAula(valores, callback) {
     pool.getConnection((error, connection) => {
@@ -190,7 +210,8 @@ module.exports = {
     InsertAula,
     UpdateUser,
     selectLevel,
-    SelectClassrooms, 
+    SelectClassrooms,
+    SelectAccesCode, 
     SelectProfessors
     // Puedes añadir más funciones según tus necesidades...
 };
