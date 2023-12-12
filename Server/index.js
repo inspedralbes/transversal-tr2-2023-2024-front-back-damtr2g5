@@ -397,11 +397,11 @@ app.post('/crearAula', requireLogin, (req, res) => {
     })
 
     if (codesAulas.includes(contrasena)) {
-        res.send("Error contrasenya repetida,torni a provar amb una altra contrasenya")       
+        res.send(res)       
     }
     else{
         mysqlConnection.InsertAula([req.session.user.id, aulaDades.name, contrasena], ((result) => {
-            res.send("Aula creada correctament")
+            res.send(result)
 
         }));
     }
