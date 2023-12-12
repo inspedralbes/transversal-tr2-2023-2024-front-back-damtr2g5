@@ -381,7 +381,7 @@ app.post('/actualitzarUsuari', requireLogin, (req, res) => {
 
 //GET AULAS
 app.get('/getAulas', (req, res) => {
-    mysqlConnection.SelectClassrooms((aulas) => {
+    mysqlConnection.SelectClassrooms(req.session.user.id,(aulas) => {
         aulasEnviar = []
         aulas.forEach(aula => {
             aulaIndividual = { id: aula.id, name: aula.name, acces_code: aula.acces_code }

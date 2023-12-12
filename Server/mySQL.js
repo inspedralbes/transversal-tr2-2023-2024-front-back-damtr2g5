@@ -48,14 +48,14 @@ function SelectUsers(callback) {
     });
 }
 
-function SelectClassrooms(callback) {
+function SelectClassrooms(id,callback) {
     pool.getConnection((error, connection) => {
         if (error) {
             console.error('Error al obtener la conexión del pool:', error);
             throw error;
         }
 
-        connection.query('SELECT * FROM classrooms', [], (errorQuery, results, fields) => {
+        connection.query('SELECT * FROM classrooms WHERE professor_id=?',id, (errorQuery, results, fields) => {
             connection.release(); // Liberar la conexión al terminar la consulta
 
             if (errorQuery) {
