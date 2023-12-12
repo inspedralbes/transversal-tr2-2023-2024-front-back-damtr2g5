@@ -430,7 +430,7 @@ app.get('/getAulas', (req, res) => {
 
 //GET USUARIOS
 app.get('/consultarUsuaris', (req, res) => {
-    mysqlConnection.SelectUsers((usuaris) => {
+    mysqlConnection.SelectUsers(req.query,(usuaris) => {
         usuarisEnviar = []
         usuaris.forEach(usuari => {
             usuariIndividual = { id: usuari.id, contrasena: usuari.contrasena, name: usuari.name, surname: usuari.cognoms, email: usuari.email }

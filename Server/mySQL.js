@@ -29,14 +29,14 @@ function ejecutarConsulta(sql, valores, callback) {
         });
     });
 }
-function SelectUsers(callback) {
+function SelectUsers(id,callback) {
     pool.getConnection((error, connection) => {
         if (error) {
             console.error('Error al obtener la conexión del pool:', error);
             throw error;
         }
 
-        connection.query('SELECT * FROM users', [], (errorQuery, results, fields) => {
+        connection.query('SELECT * FROM users WHERE id_classroom=?',id, (errorQuery, results, fields) => {
             connection.release(); // Liberar la conexión al terminar la consulta
 
             if (errorQuery) {
