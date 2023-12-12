@@ -384,7 +384,7 @@ app.post('/crearAula', (req, res) => {
     aulaDades = req.body;
     let contrasena=generarPassword(6).toLocaleUpperCase();
     console.log("Acces_code de Aula Creado: "+contrasena);     
-    mysqlConnection.InsertUser([aulaDades.name,contrasena], ((result) => { 
+    mysqlConnection.InsertAula([req.session.user.id,aulaDades.name,contrasena], ((result) => { 
     res.send(result) 
     }));
         
