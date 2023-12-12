@@ -21,7 +21,7 @@ const port = 3001;
 const SERVER_URL = "http://localhost";
 
 const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, updateCollection, getActivities, getPreguntaRandom } = require("./mongoDB.js");
-const { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion,generarPassword } = require("./utils.js");
+const { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion, generarPassword } = require("./utils.js");
 const { connect } = require('http2');
 const { Console } = require('console');
 const { initializeSocket, filterRooms, getIo } = require("./socket.js");
@@ -380,20 +380,25 @@ app.post('/actualitzarUsuari', requireLogin, (req, res) => {
 })
 
 //CREAR AULA
-app.post('/crearAula', (req, res) => {    
+app.post('/crearAula', (req, res) => {
     aulaDades = req.body;
-    let contrasena=generarPassword(6).toLocaleUpperCase();
-    console.log("Acces_code de Aula Creado: "+contrasena);
-    console.log("Id del profesor: "+req.session.user);     
-    mysqlConnection.InsertAula([req.session.user.id,aulaDades.name,contrasena], ((result) => { 
-    res.send(result) 
-    }));
-        
+    let contrasena = generarPassword(6).toLocaleUpperCase();
+    console.log("Acces_code de Aula Creado: " + contrasena);
+    console.log("Id del profesor: " + req.session.user);
+    mysqlConnection.InsertAula([req.session.user.id, aulaDades.name, contrasena], ((result) => {
+        res.send("Aula creada correctament")
+           
+    })).catch(error => {
+        console.error("Error:", error);
+        res.status(500).send("Error al insertar aula");
+    });
+    
+
 });
 
 //GET AULAS
 app.get('/getAulas', (req, res) => {
-    mysqlConnection.SelectClassrooms(req.session.user.id,(aulas) => {
+    mysqlConnection.SelectClassrooms(req.session.user.id, (aulas) => {
         aulasEnviar = []
         aulas.forEach(aula => {
             aulaIndividual = { id: aula.id, name: aula.name, acces_code: aula.acces_code }
