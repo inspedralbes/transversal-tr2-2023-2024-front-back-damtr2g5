@@ -71,6 +71,7 @@
       </div>
     </div>
     <button class="btn" @click=""></button>
+    <v-btn  @click="mandar">Selecciona</v-btn>
   </template>
   
   <script lang="ts">
@@ -132,7 +133,9 @@
         result.blobURL = URL.createObjectURL(blob)
         isShowModal.value = false
       }
-  
+    function mandar(){  
+        
+  }
       return {
   
         // Data
