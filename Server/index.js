@@ -21,7 +21,7 @@ const port = 3001;
 const SERVER_URL = "http://localhost";
 
 const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, updateCollection, getActivities, getPreguntaRandom } = require("./mongoDB.js");
-const { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion } = require("./utils.js");
+const { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion,generarPassword } = require("./utils.js");
 const { connect } = require('http2');
 const { Console } = require('console');
 const { initializeSocket, filterRooms, getIo } = require("./socket.js");
@@ -379,6 +379,17 @@ app.post('/actualitzarUsuari', requireLogin, (req, res) => {
     res.status(200).send()
 })
 
+//CREAR AULA
+app.post('/crearAula', (req, res) => {    
+    aulaDades = req.body;
+    let contrasena=generarPassword(6).toLocaleUpperCase();
+    console.log("Acces_code de Aula Creado: "+contrasena);     
+    mysqlConnection.InsertUser([aulaDades.name,contrasena], ((result) => { 
+    res.send(result) 
+    }));
+        
+});
+
 //GET AULAS
 app.get('/getAulas', (req, res) => {
     mysqlConnection.SelectClassrooms(req.session.user.id,(aulas) => {
@@ -466,3 +477,8 @@ app.post('/comprobarPregunta', async (req, res) => {
     }
 
 });
+
+
+
+
+
