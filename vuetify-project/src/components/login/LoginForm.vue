@@ -1,18 +1,13 @@
 <template>
-    
-    <v-dialog
-      v-model="dialogL"
-      width="auto"
-    >
-      <v-card>
-        <v-card-text>
-            Torna a intentarlo
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="primary" block @click="dialogL = false">Tancar</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <v-dialog v-model="loginIncorrectDialog" width="auto">
+        <v-card>
+            <v-card-title>Login incorrecto</v-card-title>
+            <v-card-text>El nombre de usuario o la contraseña son incorrectos.</v-card-text>
+            <v-card-actions>
+                <v-btn color="primary" text @click="loginIncorrectDialog = false">Cerrar</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>    
     <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto h-auto pa-4" elevation="4" rounded
         max-width="300" width="100%">
         <div>
@@ -122,6 +117,7 @@ export default {
         return {
             dialogL: false,
             loading: false,
+            loginIncorrectDialog : false,
             allowed: false,
             dialog: false,
             errorMessage: '',
@@ -151,9 +147,11 @@ export default {
                     console.log("Go Home");
                         this.$router.push({ name: 'Home' });
                 } else {
-                    console.log("Login failed");
-                    this.dialogL = true;
-            }})
+                    console.log("Login failed")
+                    this.loginIncorrectDialog = true;
+                    
+                }
+            })
             .catch((error) => {
             console.error("Error during login:", error);
             this.dialogL = true
@@ -207,5 +205,8 @@ export default {
 </script>
 
 <style scoped>
-/* Add your custom styles here */
+    .small-dialog .v-dialog__content {
+        width: 50%; /* Ajusta esto a tu preferencia */
+        max-width: 300px; /* Ajusta esto a tu preferencia */
+    }
 </style>

@@ -70,6 +70,12 @@ export default {
         Formato5,
         Formato6
     },
+    setup() {
+          const appStore = useAppStore()
+          return {
+              appStore
+          };
+      },
     data() {
 
         return {
@@ -83,127 +89,7 @@ export default {
             icono: '',
             coloricono: '',
             disableComponent: false,
-            Ejercicio: {
-                id: 1,
-                nombre: "Ejercicio",
-                tipo: "Practicas",
-                id_tema: 1,
-                preguntas: [{
-                    id: 1,
-                    pregunta: "¿Cuál es el resultado de 1 + 1 * 2(Pregunta 1)?",
-                    respuestas: [{ id: 1, respuesta: "43", correcta: false }, { id: 2, respuesta: "4", correcta: true }, { id: 3, respuesta: "21", correcta: false }, { id: 4, respuesta: "6", correcta: false }],
-                    idTema: 1,
-                    formato: "Seleccionar"
-                },
-                {
-                    "_id": {
-                        "$oid": "6565b1a56f122bd6cf8e9f0e"
-                    },
-                    "id": 2,
-                    "pregunta": "Convierte a metros las siguientes unidades(Pregunta2)",
-                    "respuestas": [
-                        [
-                            "50 kilómetros",
-                            "50000 metros"
-                        ],
-                        [
-                            "5 decimetros",
-                            "0.5 metros"
-                        ],
-                        [
-                            "50 hectómetros",
-                            "5000 metros"
-                        ],
-                        [
-                            "5 milímetros",
-                            "0.005 metros"
-                        ]
-                    ],
-                    "muestra": [
-                        [
-                            "10 kilómetros",
-                            "0.005 metros"
-                        ],
-                        [
-                            "5 decimetros",
-                            "50000 metros"
-                        ],
-                        [
-                            "5 milímetros",
-                            "0.5 metros"
-                        ],
-                        [
-                            "50 hectómetros",
-                            "5000 metros"
-                        ]
-                    ],
-                    "correcta": "50000 metros",
-                    "idTema": "4",
-                    "formato": "Unir valores"
-                },
-                {
-                    "id": 3,
-                    "pregunta": "Resuelve la ecuación: 3(x - 2) = 15(Pregunta 3)",
-                    "correcta": [
-                        "x = 7",
-                        "x=7",
-                        "x =7",
-                        "x= 7"
-                    ],
-                    "idTema": 2,
-                    "formato": "Respuesta"
-                },
-                {
-                    "_id": {
-                        "$oid": "6565d7516f122bd6cf8e9fa6"
-                    },
-                    "id": 4,
-                    "pregunta": "¿Qué figura geométrica es un octógono?",
-                    "respuestas": [
-                        {
-                            "respuesta": "Pentagon",
-                            "imagen": "https://picsum.photos/500/300?image=232"
-                        },
-                        {
-                            "respuesta": "Hexagon",
-                            "imagen": "https://picsum.photos/500/300?image=232"
-                        },
-                        {
-                            "respuesta": "Octógono",
-                            "imagen": "https://picsum.photos/500/300?image=232"
-                        },
-                        {
-                            "respuesta": "Triangle",
-                            "imagen": "https://picsum.photos/500/300?image=232"
-                        }
-                    ],
-                    "correcta": "Octógono",
-                    "idTema": 5,
-                    "formato": "Imagen"
-                },
-                {
-                    "id": 5,
-                    "pregunta": "Organiza los siguientes elementos para obtener un resultado de 24(Pregunta 5).",
-                    "componentes": [
-                        "4",
-                        "*",
-                        "3",
-                        "+",
-                        "12"
-                    ],
-                    "correcta": "4*3+12",
-                    "idTema": 3,
-                    "formato": "Ordenar valores"
-                },
-                {
-                    "id": 6,
-                    "pregunta": "Representa la función y = 3x + 2 en un gráfico",
-                    "idTema": "3",
-                    "formato": "Grafica"
-
-                }],
-                xp: 100
-            }
+            Ejercicio: {}
 
         };
     },
@@ -292,14 +178,14 @@ export default {
     },
 
     created() {
-        getEjercicios().then(response => {
-            this.Ejercicio = response;
-            this.botoncliclado(this.Ejercicio.preguntas[0]);
-            this.selectedButton = 0;
-            this.indexArray = Array.from(Array(this.Ejercicio.preguntas.length));
-            this.indexArray = this.indexArray.map(() => 0);
-            console.log(response);
-        });
+            this.Ejercicio = getEjercicios(this.$route.params.id).then((res) => {
+                this.Ejercicio = res;
+                console.log("Ejercicio: ",this.Ejercicio)
+                this.botoncliclado(this.Ejercicio.preguntas[0]);
+                this.selectedButton = 0;
+                this.indexArray = Array.from(Array(this.Ejercicio.preguntas.length));
+                this.indexArray = this.indexArray.map(() => 0);
+            })
 
         store.$subscribe((mutation, state) => {
             console.log(state);

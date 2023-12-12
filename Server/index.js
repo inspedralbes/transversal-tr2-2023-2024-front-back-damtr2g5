@@ -28,11 +28,12 @@ const { initializeSocket, filterRooms, getIo } = require("./socket.js");
 initializeSocket(server, { cors: corsOptions });
 const sessionMiddleware = require('./sessionMiddleware.js');
 
+app.use(cors(corsOptions));
+app.use(sessionMiddleware);
 app.use(bodyParser.json());
 app.use(cookieParser("mySecretKey"));
 app.use(express.json())
-app.use(cors(corsOptions));
-app.use(sessionMiddleware);
+
 
 server.listen(port, () => {
     console.log(`Server listening at ${SERVER_URL}:${port}`);
@@ -73,8 +74,11 @@ app.get('/getRooms', (req, res) => {
     }
     res.json(response);
 });
-app.get('/getEjercicio', (req, res) => {
-    getDocument(1).then((document) => {
+app.get('/getEjercicio/:id', (req, res) => {
+    let id = parseInt(req.params.id)
+    console.log("Inside Call:", id)
+    getDocument(id).then((document) => {
+        console.log("Inside Call:",document)
         getPreguntas(document.preguntas).then((preguntas) => {
             var ejercicio = {
                 "id": document.id,
@@ -114,9 +118,10 @@ app.get('/getCategorias', async (req, res) => {
     res.json(categorias)
 })
 
-app.post('/getActivities/:tema', async (req, res) => {
-    idTema = req.params.tema;
-    ejercicios = await getActivities(idTema)
+app.get('/getActivities/:tema', async (req,res) => {
+    let tema = (req.params.tema).toString();
+    console.log(tema)
+    ejercicios = await getActivities(tema)
     console.log(ejercicios)
     res.json(ejercicios);
 })
@@ -173,7 +178,7 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
     try {
         console.log(req.body);
         console.log(req.session);
-        let idUser = req.session.user.userId;
+        let idUser = req.session.user.id;
         respuesta = req.body.respuesta;
         let correcto = false;
         let preguntaid = 0;

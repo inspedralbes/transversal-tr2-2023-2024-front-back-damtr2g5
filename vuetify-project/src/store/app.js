@@ -18,6 +18,8 @@ export const useAppStore = defineStore('app', {
             image: ''
         },
         respuesta: '',
+        tema: null,
+        ejercicio: null
     }),
     getters: {
         getRoom() {
@@ -25,6 +27,12 @@ export const useAppStore = defineStore('app', {
         },
         getRespuesta() {
           return this.respuesta;
+        },
+        getTema() {
+          return this.tema;
+        },
+        getEjercicio() {
+          return this.ejercicio
         },
         isAuthenticated() {
             return this.auth;
@@ -54,6 +62,14 @@ export const useAppStore = defineStore('app', {
         },
         setAuth(state, isAuthenticated) {
           this.state.auth = isAuthenticated;
+        },
+        setTema(temaAcceso) {
+          this.tema = temaAcceso.raw
+          console.log("Tema de Acceso: ",this.tema)
+        },
+        setEjercicio(ejercicio) {
+          this.$state.ejercicio = ejercicio
+          console.log("Store Side: ",this.$state.ejercicio)
         },
         
         login() {
