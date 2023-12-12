@@ -1,0 +1,150 @@
+<template>
+    <div class="live-demo">
+      <!-- Select a picture for cropping -->
+      <section class="section">
+        <p>TIP</p>
+  
+        <!-- Set a button that invokes selecting an image -->
+        <button class="select-picture">
+          <span>Selecciona</span>
+          <input
+            ref="uploadInput"
+            type="file"
+            accept="image/jpg, image/jpeg, image/png, image/gif"
+            @change="selectFile"
+          />
+        </button>
+      </section>
+  
+      <!-- Crop result preview -->
+      <section class="section" v-if="result.blobURL">
+        <p>BLOB</p>
+        <div class="preview">
+          <img :src="result.blobURL" />
+        </div>
+        <p>PRINT</p>
+      </section>
+  
+      <!-- A Popup for cropping -->
+      <!-- You can replace it with the framework's Modal component -->
+      <div class="modal-wrap" v-if="isShowModal">
+        <div class="modal-mask"></div>
+        <div class="modal-scroll-view">
+          <div class="modal">
+            <div class="modal-title">
+              <span class="title">Titulo</span>
+              <div class="tools">
+                <button class="btn" @click="isShowModal = false">
+                  Cancelar
+                </button>
+                <button class="btn primary" @click="getResult">
+                  Recortar
+                </button>
+              </div>
+            </div>
+  
+            <div class="modal-content">
+              <!-- The component imported from `vue-picture-cropper` plugin -->
+              <VuePictureCropper
+                :boxStyle="{
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: '#f8f8f8',
+                  margin: 'auto',
+                }"
+                :img="pic"
+                :options="{
+                  viewMode: 1,
+                  dragMode: 'move',
+                  aspectRatio: 1,
+                  cropBoxResizable: false,
+                }"
+                :presetMode="{
+                  mode: 'round',
+                  width: 100,
+                  height: 100,
+                }"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="btn" @click=""></button>
+  </template>
+  
+  <script lang="ts">
+  import { defineComponent, reactive, ref } from 'vue'
+  import VuePictureCropper, { cropper } from 'vue-picture-cropper'
+  
+  export default defineComponent({
+    components: {
+      VuePictureCropper,
+    },
+    setup() {
+      const isShowModal = ref<boolean>(false)
+      const uploadInput = ref<HTMLInputElement | null>(null)
+      const pic = ref<string>('')
+      const result = reactive({
+        dataURL: '',
+        blobURL: '',
+      })
+  
+      /**
+       * Select the picture to be cropped
+       */
+      function selectFile(e: Event) {
+        // Reset last selection and results
+        pic.value = ''
+        result.dataURL = ''
+        result.blobURL = ''
+  
+        // Get selected files
+        const { files } = e.target as HTMLInputElement
+        if (!files || !files.length) return
+  
+        // Convert to dataURL and pass to the cropper component
+        const file = files[0]
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => {
+          // Update the picture source of the `img` prop
+          pic.value = String(reader.result)
+  
+          // Show the modal
+          isShowModal.value = true
+  
+          // Clear selected files of input element
+          if (!uploadInput.value) return
+          uploadInput.value.value = ''
+        }
+      }
+  
+      /**
+       * Get cropping results
+       */
+      async function getResult() {
+        if (!cropper) return
+        const base64 = cropper.getDataURL()
+        const blob: Blob | null = await cropper.getBlob()
+        if (!blob) return
+        result.dataURL = base64
+        result.blobURL = URL.createObjectURL(blob)
+        isShowModal.value = false
+      }
+  
+      return {
+  
+        // Data
+        uploadInput,
+        pic,
+        result,
+        isShowModal,
+  
+        // Methods
+        selectFile,
+        getResult,
+      }
+    },
+  })
+  </script>
