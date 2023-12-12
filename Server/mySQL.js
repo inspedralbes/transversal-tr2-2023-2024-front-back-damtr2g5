@@ -142,6 +142,8 @@ function InsertAula(valores, callback) {
         });
     });
 }
+
+
 //UPDATE usuario SET name = ?, surname = ?, email = ? WHERE id = ?
 function UpdateUser(valores, callback) {
     pool.getConnection((error, connection) => {

@@ -380,18 +380,15 @@ app.post('/actualitzarUsuari', requireLogin, (req, res) => {
 })
 
 //CREAR AULA
-app.post('/crearAula', (req, res) => {
+app.post('/crearAula', requireLogin, (req, res) => {
     aulaDades = req.body;
     let contrasena = generarPassword(6).toLocaleUpperCase();
-    console.log("Acces_code de Aula Creado: " + contrasena);
-    console.log("Id del profesor: " + req.session.user);
+    //console.log("Acces_code de Aula Creado: " + contrasena);
+    //console.log("Id del profesor: " + req.session.user);
     mysqlConnection.InsertAula([req.session.user.id, aulaDades.name, contrasena], ((result) => {
         res.send("Aula creada correctament")
            
-    })).catch(error => {
-        console.error("Error:", error);
-        res.status(500).send("Error al insertar aula");
-    });
+    }));
     
 
 });
