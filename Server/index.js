@@ -18,6 +18,7 @@ const corsOptions = {
 const app = express();
 const server = http.createServer(app);
 const port = 3001;
+const SERVER_URL = "http://localhost";
 
 const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, updateCollection, getActivities, getPreguntaRandom } = require("./mongoDB.js");
 const { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion } = require("./utils.js");
@@ -34,7 +35,7 @@ app.use(cors(corsOptions));
 app.use(sessionMiddleware);
 
 server.listen(port, () => {
-    console.log(`Server listening at http://localhost:${port}`);
+    console.log(`Server listening at ${SERVER_URL}:${port}`);
 });
 
 app.get('/getPreguntaRandom', async (req, res) => {
@@ -167,41 +168,6 @@ app.post('/getExpEjer', async (req, res) => {
     }
 });
 
-//idPregunta: 1, respuesta: "1111"
-//Añadir datos de ejercicio respondido a MongoDB
-/*const actividad = {userId: 123 ,testId: 1234 , preguntasRespondidas:[
-    {idPregunta: 1, respuestaCorrecta: true },
-    {idPregunta: 2, respuestaCorrecta: false },
-    // ... más preguntas respondidas
-]};*/
-//INCOMPLETE
-/*app.post('/subirResultado', async (req, res) => {
-    var idPregunta = req.body.preguntasRespondidas;
-    var idActividad = req.body.testId
-    var idUsuario = req.body.userId
-
-    var experienciaGanada = 0
-    getDocument(re.body.testId).then((activity) => {
-        const expPerActivity = activity.exp / activity.preguntas.length
-        preguntasRespondidas.forEach((pregunta) => {
-            var response = {}
-            var questLocate = findRegisteredResult(idUsuario, idActividad, pregunta.idPregunta)
-            if (questLocate != null) {
-                if (!questLocate.respuestaCorrecta && pregunta.respuestaCorrecta) { //Si la pregunta ya respondida anteriormente se resuelve, cambia el estado
-                    response = { $set: { respuestaCorrecta: true } }
-                    experienciaGanada += expPerActivity;
-                    updateCollection(response, { idUsuario })
-                }
-            } else {
-                response = { idUser: idUser, idActivity, idQuestion, respuestaCorrecta }
-                insertInCollection()
-
-
-            }
-        })
-    })
-
-})*/
 //Comprobar si pregunta respondida es correcta o no
 app.post('/comprobarPregunta/:id', async (req, res) => {
     try {
@@ -282,7 +248,7 @@ app.post('/login', async (req, res) => {
                             email: usuari.email,
                             rank: usuari.rank,
                             lvl: usuari.lvl,
-                            image: "http://localhost:3001/imagen/"+usuari.image
+                            image: `${SERVER_URL}:${port}/imagen/${usuari.image}`
                         };
                         req.session.user = usuariIndividual;
                         comprovacio = true;
@@ -450,40 +416,6 @@ app.post('/pregunta', async (req, res) => {
     var pregunta = await getPregunta(req.body.idPregunta);
     res.json(pregunta);
 })
-//Añadir datos de ejercicio respondido a MongoDB
-/*const actividad = {userId: 123 ,testId: 1234 , preguntasRespondidas:[
-    {idPregunta: 1, respuestaCorrecta: true },
-    {idPregunta: 2, respuestaCorrecta: false },
-    // ... más preguntas respondidas
-]};*/
-//INCOMPLETE
-/*app.post('/subirResultado', async (req, res) => {
-    var idPregunta = req.body.preguntasRespondidas;
-    var idActividad = req.body.testId
-    var idUsuario = req.body.userId
-
-    var experienciaGanada = 0
-    getDocument(re.body.testId).then((activity) => {
-        const expPerActivity = activity.exp / activity.preguntas.length
-        preguntasRespondidas.forEach((pregunta) => {
-            var response = {}
-            var questLocate = findRegisteredResult(idUsuario, idActividad, pregunta.idPregunta)
-            if (questLocate != null) {
-                if (!questLocate.respuestaCorrecta && pregunta.respuestaCorrecta) { //Si la pregunta ya respondida anteriormente se resuelve, cambia el estado
-                    response = { $set: { respuestaCorrecta: true } }
-                    experienciaGanada += expPerActivity;
-                    updateCollection(response, { idUsuario })
-                }
-            } else {
-                response = { idUser: idUser, idActivity, idQuestion, respuestaCorrecta }
-                insertInCollection()
-
-
-            }
-        })
-    })
-
-})*/
 //Comprobar si pregunta respondida es correcta o no
 app.post('/comprobarPregunta', async (req, res) => {
     try {
