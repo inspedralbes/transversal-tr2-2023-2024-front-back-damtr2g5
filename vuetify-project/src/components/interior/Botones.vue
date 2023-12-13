@@ -2,7 +2,7 @@
   <v-container class="fill-height" style="margin: 1em;">
     <v-row>
       <v-col cols="8" v-for="n in opciones">
-        <v-card class="super-cool-button cream black-olive-bg" dark height="200" @click="onToggle(n)">
+        <v-card class="super-cool-button cream-bg black-olive" dark height="200" @click="onToggle(n)">
           <div class="myfont bigger-font">
             {{ isSelected ? 'Log In' : n }}
           </div>

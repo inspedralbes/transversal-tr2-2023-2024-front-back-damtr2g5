@@ -57,7 +57,7 @@
                                             v-model="passwordD"></v-text-field></v-row>
                                     <v-row>
                                         <v-text-field variant="outlined" :append-icon="show2 ? '$eye' : '$eyeOff'"
-                            :type="show2 ? 'text' : 'password'" label="Contrasenya"
+                            :type="show2 ? 'text' : 'password'" label="Confirmar contrasenya"
                             @click:append="show2 = !show2"
                                             v-model="passwordComprobacion"></v-text-field></v-row>
                                 </v-card-text> </v-container>

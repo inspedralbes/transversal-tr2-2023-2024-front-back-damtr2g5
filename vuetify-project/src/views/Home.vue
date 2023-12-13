@@ -1,8 +1,12 @@
 <template>
-  <v-row style="margin: auto;">
-    <v-col cols="12">
+  <v-row>
+    <v-col cols="6">
+      <Noticias style="text-align: center;"/>
+    </v-col>
+    <v-col cols="6">
       <Botones/>
     </v-col>
+    
   </v-row>
 </template>
 <script setup>
