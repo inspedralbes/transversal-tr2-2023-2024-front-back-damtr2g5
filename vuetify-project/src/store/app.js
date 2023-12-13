@@ -1,6 +1,6 @@
 // Utilities
 import { defineStore } from 'pinia'
-import {login, getLogin, endSession,getAvatar} from '@/communicationsManager';
+import {login, getLogin, endSession,getAvatar, loginGoogle} from '@/communicationsManager';
 
 export const useAppStore = defineStore('app', {
     state: () => ({
@@ -60,6 +60,9 @@ export const useAppStore = defineStore('app', {
         setPassword(pwdLogin) {
           this.loginInfo.contrasena = pwdLogin
         },
+        setImageG(imageLogin) {
+          this.loginInfo.image = imageLogin
+        },
         setAuth(state, isAuthenticated) {
           this.state.auth = isAuthenticated;
         },
@@ -76,6 +79,29 @@ export const useAppStore = defineStore('app', {
             return new Promise((resolve, reject) => {
               console.log("Login info: ", this.$state.loginInfo);
               login(this.$state.loginInfo).then((response) => response.json())
+                .then((data) => {
+                  this.$state.loginInfo = data;
+                  this.loading = false;
+                  if (data.email != '') {
+                    this.$state.auth = true;
+                    console.log("New auth state: ", this.$state.auth)
+                    resolve(true);
+                  } else {
+                    this.$state.auth = false;
+                    console.log(data)
+                    resolve(false);
+                  }
+                }).catch((error) => {
+                  console.error('Error al iniciar sesión:', error);
+                  this.$state.auth = false;
+                  reject(error);
+                });
+            });
+          },
+          loginGoogle() {
+            return new Promise((resolve, reject) => {
+              console.log("Login info: ", this.$state.loginInfo);
+              loginGoogle(this.$state.loginInfo).then((response) => response.json())
                 .then((data) => {
                   this.$state.loginInfo = data;
                   this.loading = false;

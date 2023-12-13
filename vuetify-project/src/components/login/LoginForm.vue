@@ -1,5 +1,5 @@
 <template>
-    <h1>Is Authorized: {{ Vue3Google0Auth.isAuthorized }}</h1>
+    
     <v-dialog v-model="loginIncorrectDialog" width="auto">
         <v-card>
             <v-card-title>Login incorrecto</v-card-title>
@@ -22,6 +22,7 @@
 
                 <v-btn @click="guardar()" block class="mt-2">Login</v-btn>
             </form>
+            <GoogleLogin :callback="callback" prompt/>
             <div class="g-signin2" data-onsuccess="onSignIn"></div>
             <p class="mt-3"> Encara no t'has registrat? <a href="#" @click.stop.prevent="dialog = true,step=1"> Registra't </a></p>
             <v-dialog v-model="dialog" class="w-50">
@@ -109,15 +110,17 @@
 import { useAppStore } from '../../store/app'
 import { registrarUsuari } from '../../communicationsManager'
 import md5 from 'md5';
-import { inject } from 'vue';
+import { decodeCredential } from 'vue3-google-login'
+import { googleLogout } from "vue3-google-login"
+
+
 
 export default {
     setup() {
-        const Vue3Google0Auth = inject('Vue3Google0Auth')
+        
         const appStore = useAppStore()
         return {
-            appStore,
-            Vue3Google0Auth
+            appStore
         };
     },
     data() {
@@ -143,13 +146,38 @@ export default {
         };
     },
     methods: {
-        onSignIn(googleUser) {
-            var profile = googleUser.getBasicProfile();
-            console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-            console.log('Name: ' + profile.getName());
-            console.log('Image URL: ' + profile.getImageUrl());
-            console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-            },
+        callback(response) {
+        const userData = decodeCredential(response.credential)
+        this.appStore.setEmail(userData.email);
+        this.appStore.setPassword("")
+        this.appStore.setImageG(userData.picture)
+        this.appStore.loginGoogle()
+        .then(async (result) => {
+            if (result) {
+                this.$router.push({ name: 'Home' });
+            }
+            else {
+                var usuario = {name: userData.given_name, surname: userData.family_name, email: userData.email, contrasena: ""}
+                const response =  await registrarUsuari(usuario)
+                if(response.success) {
+                    this.email = userData.email
+                    this.password = ""
+                    this.$router.push({ name: 'Home' });          
+                } else {
+                    this.loginIncorrectDialog = true
+                    
+                }
+            }
+        })
+        console.log("Handle the userData", userData)
+        },
+
+        onSuccess(userInfo) {
+            this.userInfo = userInfo;
+        },
+        onError(error) {
+            console.error('Google Sign-In Error:', error);
+        },
         guardar() {
             console.log(this.email+" "+this.password);
             this.loading = true;
@@ -175,8 +203,9 @@ export default {
                 
             });
         },
-        async loginWithGoogle() {
-          
+        GoogleLogoutFunction() {
+            this.appStore.logout()
+            googleLogout()
         },
         handleHashing(data) {
             let contr=md5(data).toUpperCase();

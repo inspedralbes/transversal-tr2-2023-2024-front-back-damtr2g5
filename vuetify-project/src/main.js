@@ -12,17 +12,11 @@ import { createApp } from 'vue'
 
 // Plugins
 import { registerPlugins } from '@/plugins'
-import gAuthPlugin from 'vue3-google-oauth2';
-
-let client_id = '623367203604-5gso6i27u38v9n6m7spkij5cqklq8toq.apps.googleusercontent.com'
-  
+import vue3GoogleLogin from 'vue3-google-login'
 
 const app = createApp(App)
-
+app.use(vue3GoogleLogin, {
+    clientId: '623367203604-5gso6i27u38v9n6m7spkij5cqklq8toq.apps.googleusercontent.com'
+  }) 
 registerPlugins(app)
-app.use(gAuthPlugin, {
-    clientId: client_id,
-    scope:'email',
-    prompt:'consent'
-})
 app.mount('#app')

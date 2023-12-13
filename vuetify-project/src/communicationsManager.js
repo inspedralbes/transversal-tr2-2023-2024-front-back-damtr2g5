@@ -54,6 +54,17 @@ export async function GetResueltas(datos) {
     return resueltas;
 }
 
+export async function loginGoogle(usuario) {
+
+  return fetch(`${SERVER_URL}/loginGoogle`, 
+  {method: 'POST',
+  credentials: 'include', mode: 'cors',
+   headers: {
+    'Content-Type':  'application/json' ,
+  },
+  body: JSON.stringify(usuario)});
+  
+}
 export async function login(usuario) {
 
   return fetch(`${SERVER_URL}/login`, 
