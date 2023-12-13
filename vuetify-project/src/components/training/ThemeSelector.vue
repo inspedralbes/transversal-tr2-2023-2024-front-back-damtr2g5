@@ -1,29 +1,22 @@
-
 <template>
-    <v-sheet
-      class="d-flex align-center justify-center flex-wrap text-center mx-auto px-4"
-      height="auto"
-      max-width="800"
-      width="100%">
-    
-        <v-row>
-          <v-col v-for="item in categorias" :key="item.id" cols="12" sm="6" md="6">
-            <v-card class="mb-3">
-              <v-btn
-                class="red-btn"
-                @click="seleccionarCategoria(item)"
-                text
-                tile
-              >
-                <span class="text-h5">{{ item.nombre }}</span>
-              </v-btn>
-            </v-card>
-          </v-col>
-        </v-row>
-    </v-sheet>
-  </template>
-  
-    
+  <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto px-4"
+    height="auto"
+    max-width="800"
+    width="100%"
+  >
+    <v-row>
+      <v-col v-for="item in categorias" :key="item.id" cols="12" sm="6" md="6">
+        <v-card class="mb-3">
+          <v-btn class="red-btn" @click="seleccionarCategoria(item)" text tile>
+            <span class="text-h5">{{ item.nombre }}</span>
+          </v-btn>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-sheet>
+</template>
+
+
 <script>
 import { useAppStore } from '../../store/app'
 const store = useAppStore();

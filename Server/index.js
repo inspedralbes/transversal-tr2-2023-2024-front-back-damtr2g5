@@ -240,8 +240,9 @@ app.post('/login', async (req, res) => {
         mysqlConnection.SelectUsers((usuaris) => {
             usuaris.forEach(usuari => {
                 if (usuari.email == login.email) {
-                    if (usuari.contrasena != login.contrasena) {
+                    if (usuari.contrasena != login.contrasena || login.contrasena == '') {
                         console.log("Usuari o contrasenya incorrectes");
+                        console.log("Contraseña Incorrecta: ",login.contrasena )
                         usuariIndividual = { email: "" };
                     } else {
                         usuariIndividual = {
@@ -254,6 +255,54 @@ app.post('/login', async (req, res) => {
                             rank: usuari.rank,
                             lvl: usuari.lvl,
                             image: `${SERVER_URL}:${port}/imagen/${usuari.image}`
+                        };
+                        req.session.user = usuariIndividual;
+                        comprovacio = true;
+                        console.log("login", usuariIndividual);
+                        res.json(usuariIndividual);
+                        return; // Exit the loop if user found
+                    }
+                }
+            });
+
+            if (!comprovacio) {
+                usuariIndividual = { email: "" };
+                res.json(usuariIndividual);
+            }
+        })
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).send("Login fallido");
+    }
+});
+
+app.post('/loginGoogle', async (req, res) => {
+    try {
+        console.log("Login:id-session", req.session.id);
+
+        req.session.user = {};
+        const login = req.body;
+        let usuariIndividual = {};
+        let comprovacio = false;
+
+        mysqlConnection.SelectUsers((usuaris) => {
+            usuaris.forEach(usuari => {
+                if (usuari.email == login.email) {
+                    if (usuari.contrasena != login.contrasena) {
+                        console.log("Usuari o contrasenya incorrectes");
+                        console.log("Contraseña Incorrecta: ",login.contrasena )
+                        usuariIndividual = { email: "" };
+                    } else {
+                        usuariIndividual = {
+                            sessionId: req.session.id,
+                            id: usuari.id,
+                            name: usuari.name,
+                            contrasena: usuari.contrasena,
+                            surname: usuari.surname,
+                            email: usuari.email,
+                            rank: usuari.rank,
+                            lvl: usuari.lvl,
+                            image: login.image
                         };
                         req.session.user = usuariIndividual;
                         comprovacio = true;
