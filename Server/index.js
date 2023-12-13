@@ -254,7 +254,8 @@ app.post('/login', async (req, res) => {
                             email: usuari.email,
                             rank: usuari.rank,
                             lvl: usuari.lvl,
-                            image: `${SERVER_URL}:${port}/imagen/${usuari.image}`
+                            image: `${SERVER_URL}:${port}/imagen/${usuari.image}`,
+                            id_classroom: usuari.id_classroom_code
                         };
                         req.session.user = usuariIndividual;
                         comprovacio = true;
@@ -476,6 +477,17 @@ app.get('/getAulas', (req, res) => {
     })
 
 });
+
+app.get('/getAula/:classroom', (req,res) =>{
+    const classroomId = req.params.classroom.toUpperCase()
+    mysqlConnection.SelectClassroom(classroomId, (results) => {
+        if (results.length > 0) {
+            res.json(results); 
+        } else {
+            res.json(null); 
+        }
+    });
+})
 
 //GET USUARIOS
 app.get('/consultarUsuaris', (req, res) => {

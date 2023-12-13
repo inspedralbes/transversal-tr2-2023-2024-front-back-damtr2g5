@@ -1,6 +1,6 @@
 // Utilities
 import { defineStore } from 'pinia'
-import {login, getLogin, endSession,getAvatar, loginGoogle} from '@/communicationsManager';
+import {login, getLogin, endSession,getAvatar, loginGoogle, getAula} from '@/communicationsManager';
 
 export const useAppStore = defineStore('app', {
     state: () => ({
@@ -16,6 +16,12 @@ export const useAppStore = defineStore('app', {
             lifetotal: '',
             experience: '',
             image: ''
+        },
+        aulaInfo: {
+          id:'',
+          professor_id:'',
+          name:'',
+          access_code:''
         },
         respuesta: '',
         tema: null,
@@ -37,11 +43,17 @@ export const useAppStore = defineStore('app', {
         isAuthenticated() {
             return this.auth;
         },
+        getAulaInfo() {
+          return this.aulaInfo;
+        },
         getLoginInfo() {
             return this.loginInfo;
         }
     },
     actions: {
+      setAulaInfo(aula) {
+        this.aulaInfo = aula
+      },
         setRoom(room) {
             this.room = room;
         },
@@ -85,6 +97,9 @@ export const useAppStore = defineStore('app', {
                   if (data.email != '') {
                     this.$state.auth = true;
                     console.log("New auth state: ", this.$state.auth)
+                    if(data.id_classroom != null) {
+                      this.$state.aulaInfo = this.setAulaInfo(data.id_classroom_code)
+                    }
                     resolve(true);
                   } else {
                     this.$state.auth = false;
@@ -111,7 +126,7 @@ export const useAppStore = defineStore('app', {
                     resolve(true);
                   } else {
                     this.$state.auth = false;
-                    console.log(data)
+                    console.log("Not mails:", data)
                     resolve(false);
                   }
                 }).catch((error) => {

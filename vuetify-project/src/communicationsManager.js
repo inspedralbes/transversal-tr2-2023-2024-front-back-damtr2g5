@@ -1,5 +1,10 @@
 export const SERVER_URL = "http://localhost:3001"
 
+export async function getAula(aulaId) {
+  const response = await fetch(`${SERVER_URL}/getAula/${aulaId}`, { method: 'GET', credentials: 'include', mode: 'cors' });
+  const aula = await response.json();
+  return aula
+}
 export async function getEjercicios(id) {
   const response = await fetch(`${SERVER_URL}/getEjercicio/${id}`, { method: 'GET', credentials: 'include', mode: 'cors' });
   const ejercicios = await response.json();

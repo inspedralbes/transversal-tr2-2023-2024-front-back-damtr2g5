@@ -16,7 +16,7 @@
       </v-col>
       <v-col cols="2" class="d-flex flex-row-reverse mb-6">
         <v-btn v-if="codigo == ''" color="primary" @click="dialog = true">Unirte a una clase</v-btn>
-        <v-btn v-else color="primary" @click="dialog = true">{{ codigo }}</v-btn>
+        <v-btn v-else color="primary" @click="dialog = true">{{ codigoNuevo }}</v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -26,21 +26,28 @@
         Codigo de Clase
       </v-card-title>
       <v-text-field v-model="codigo" label="Codigo de clase" class="ma-4 mb-0"></v-text-field>
+      <div class="error-container ma-4 mb-0" v-if="error.error">
+        <v-icon color="red darken-4" start>$alert</v-icon>
+        <div class="error-message red--text">{{ error.message }}</div>
+      </div>
       <v-divider></v-divider>
+      
       <v-card-actions>
         <v-btn variant="text" @click="dialog = false">
           Cancelar
         </v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="deep-purple" variant="tonal" @click="dialog = false">
+        <v-btn color="deep-purple" variant="tonal" @click="toggleClassroom(codigo)">
           Aceptar
         </v-btn>
       </v-card-actions>
+      
     </v-card>
   </v-dialog>
 </template>
 <script>
 import { useAppStore } from '../../store/app'
+import { getAula } from '@/communicationsManager';
 export default {
   name: 'Botones',
   setup() {
@@ -58,11 +65,31 @@ export default {
       dialog: false,
       cambio: true,
       codigo: '',
-      opciones
+      opciones,
+      error: {
+        error:false,
+        message:""
+      }
     };
   },
   methods:{
-    
+    toggleClassroom(room) {
+      this.error = {error: false, message:''}
+      if (!room) {
+        this.error = {error: true,message: "Codi buit"}
+      } else {
+        getAula(room).then((res) => {
+          if (res!=null) {
+            console.log("AULA ENCONTRADA: ",res)
+            this.appStore.setAulaInfo = res
+            
+          } else {
+            this.error = {error: true,message: "Aula no existeix"}
+          }
+
+        })
+      }
+    },
     onToggle(route) {
       var isAuth = this.appStore.isAuthenticated
       if (!isAuth) {
@@ -100,5 +127,17 @@ export default {
 
 .super-cool-button:hover {
   background-color: #ff80ab;
+}
+.error-container {
+  display: flex;
+  align-items: center;
+}
+
+.error-message {
+  font-size: 14px;
+}
+
+.red--text {
+  color: red;
 }
 </style>

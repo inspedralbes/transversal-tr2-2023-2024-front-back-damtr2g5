@@ -153,6 +153,7 @@ export default {
         this.appStore.setImageG(userData.picture)
         this.appStore.loginGoogle()
         .then(async (result) => {
+            console.log("Login Google Result: ",result)
             if (result) {
                 this.$router.push({ name: 'Home' });
             }
