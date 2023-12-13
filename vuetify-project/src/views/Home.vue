@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col>
-      <Noticias />
+      <Noticias/>
     </v-col>
     <v-col>
       <Botones />

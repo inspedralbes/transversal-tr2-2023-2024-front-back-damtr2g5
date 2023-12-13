@@ -99,12 +99,3 @@ export async function getPreguntaRandom(){
   const pregunta = await response.json();
   return pregunta;
 }
-
-export async function GuardarImagen(formData) {
-  console.log(formData);
-  return await fetch(`${SERVER_URL}/descargar`, {
-    method: 'POST',
-    mode: 'cors',
-    body: formData
-  });
-}
