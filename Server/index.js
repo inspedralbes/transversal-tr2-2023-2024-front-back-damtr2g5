@@ -452,7 +452,8 @@ app.get('/consultarUsuaris', async (req, res) => {
                 email: usuari.email,
                 rank: usuari.rank,
                 lvl: usuari.lvl,
-                image: `${SERVER_URL}:${port}/imagen/${usuari.image}`
+                image: usuari.image
+                //image: `${SERVER_URL}:${port}/imagen/${usuari.image}`
             };
         });
 
