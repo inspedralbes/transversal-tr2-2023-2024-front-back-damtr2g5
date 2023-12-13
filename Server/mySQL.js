@@ -29,7 +29,26 @@ function ejecutarConsulta(sql, valores, callback) {
         });
     });
 }
-function SelectUsers(id,callback) {
+function SelectUsers(callback) {
+    pool.getConnection((error, connection) => {
+        if (error) {
+            console.error('Error al obtener la conexión del pool:', error);
+            throw error;
+        }
+
+        connection.query('SELECT * FROM users', [], (errorQuery, results, fields) => {
+            connection.release(); // Liberar la conexión al terminar la consulta
+
+            if (errorQuery) {
+                console.error('Error al ejecutar la consulta:', errorQuery);
+                throw errorQuery;
+            }
+            callback(results);
+        });
+    });
+}
+
+function SelectUsersByAula(id,callback) {
     pool.getConnection((error, connection) => {
         if (error) {
             console.error('Error al obtener la conexión del pool:', error);
@@ -204,6 +223,7 @@ function selectLevel(level, callback) {
 module.exports = {
     ejecutarConsulta,
     SelectUsers,
+    SelectUsersByAula,
     SelectEmails,
     SelectClassrooms,
     InsertUser,

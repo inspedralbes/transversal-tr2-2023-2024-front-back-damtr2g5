@@ -430,10 +430,10 @@ app.get('/getAulas', (req, res) => {
 
 //GET USUARIOS
 app.get('/consultarUsuaris', (req, res) => {
-    mysqlConnection.SelectUsers(req.query,(usuaris) => {
+    mysqlConnection.SelectUsersByAula(req.query,(usuaris) => {
         usuarisEnviar = []
         usuaris.forEach(usuari => {
-            usuariIndividual = { id: usuari.id, contrasena: usuari.contrasena, name: usuari.name, surname: usuari.cognoms, email: usuari.email }
+            usuariIndividual = { id: usuari.id, name: usuari.name, contrasena: usuari.contrasena, surname: usuari.surname, email: usuari.email, rank: usuari.rank, lvl: usuari.lvl, image: `${SERVER_URL}:${port}/imagen/${usuari.image}` }
             usuarisEnviar.push(usuariIndividual)
         })
 
