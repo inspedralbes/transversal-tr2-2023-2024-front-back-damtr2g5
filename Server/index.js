@@ -78,7 +78,7 @@ app.get('/getEjercicio/:id', (req, res) => {
     let id = parseInt(req.params.id)
     console.log("Inside Call:", id)
     getDocument(id).then((document) => {
-        console.log("Inside Call:",document)
+        console.log("Inside Call:", document)
         getPreguntas(document.preguntas).then((preguntas) => {
             var ejercicio = {
                 "id": document.id,
@@ -118,7 +118,7 @@ app.get('/getCategorias', async (req, res) => {
     res.json(categorias)
 })
 
-app.get('/getActivities/:tema', async (req,res) => {
+app.get('/getActivities/:tema', async (req, res) => {
     let tema = (req.params.tema).toString();
     console.log(tema)
     ejercicios = await getActivities(tema)
@@ -388,13 +388,13 @@ app.post('/actualitzarUsuari', requireLogin, (req, res) => {
 app.post('/crearAula', requireLogin, (req, res) => {
     aulaDades = req.body;
     //let contrasena = "shu351";
-    codesAulas = [];    
+    codesAulas = [];
     let contrasena = generarPassword(6).toLocaleUpperCase();
     //console.log("Acces_code de Aula Creado: " + contrasena);
     //console.log("Id del profesor: " + req.session.user);
 
     mysqlConnection.SelectAccesCode((codes) => {
-        
+
         codes.forEach(code => {
             codesAulas.push(code)
         })
@@ -402,9 +402,9 @@ app.post('/crearAula', requireLogin, (req, res) => {
     })
 
     if (codesAulas.includes(contrasena)) {
-        res.send(res)       
+        res.send(res)
     }
-    else{
+    else {
         mysqlConnection.InsertAula([req.session.user.id, aulaDades.name, contrasena], ((result) => {
             res.send(result)
 
@@ -429,20 +429,38 @@ app.get('/getAulas', (req, res) => {
 });
 
 //GET USUARIOS
-app.get('/consultarUsuaris', (req, res) => {
-    mysqlConnection.SelectUsersByAula(req.query,(usuaris) => {
-        usuarisEnviar = []
-        usuaris.forEach(usuari => {
-            usuariIndividual = { id: usuari.id, name: usuari.name, contrasena: usuari.contrasena, surname: usuari.surname, email: usuari.email, rank: usuari.rank, lvl: usuari.lvl, image: `${SERVER_URL}:${port}/imagen/${usuari.image}` }
-            usuarisEnviar.push(usuariIndividual)
-        })
-
-        res.json(usuarisEnviar)
-    })
-        .catch(error => {
-            console.error("Error:", error);
-            // Manejar el error de alguna manera
+app.get('/consultarUsuaris', async (req, res) => {
+    try {
+        const usuaris = await new Promise((resolve, reject) => {
+            if (req.query.id) {
+                mysqlConnection.SelectUsersByAula(req.query.id, (usuaris) => {
+                    resolve(usuaris);
+                });
+            } else {
+                mysqlConnection.SelectUsers((usuaris) => {
+                    resolve(usuaris);
+                });
+            }
         });
+
+        const usuarisEnviar = usuaris.map(usuari => {
+            return {
+                id: usuari.id,
+                name: usuari.name,
+                contrasena: usuari.contrasena,
+                surname: usuari.surname,
+                email: usuari.email,
+                rank: usuari.rank,
+                lvl: usuari.lvl,
+                image: `${SERVER_URL}:${port}/imagen/${usuari.image}`
+            };
+        });
+
+        res.json(usuarisEnviar);
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: 'Hubo un error al procesar la solicitud' });
+    }
 });
 
 
