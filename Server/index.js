@@ -7,6 +7,7 @@ const client = require('https');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const mysqlConnection = require('./mySQL.js');
+const { v4: uuidv4 } = require('uuid');
 const corsOptions = {
     origin: ["http://localhost:3000", "http://mathproject.dam.inspedralbes.cat"],
     credentials: true,
@@ -127,11 +128,47 @@ app.get('/getActivities/:tema', async (req, res) => {
 })
 
 app.get("/imagen/:nombreArchivo", (req, res) => {
-    const nombreArchivo = req.params.nombreArchivo;
-    const rutaImagen = path.join(__dirname, "avatars", nombreArchivo);
-    console.log(rutaImagen);
-    res.sendFile(rutaImagen);
+    const fileName = req.params.nombreArchivo;
+  const filePath = path.join(__dirname, 'avatars', fileName);
+
+  res.download(filePath, (err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Error al descargar el archivo.');
+    }
+  });
 });
+  
+const multer = require('multer');
+const upload = multer({ dest: 'avatars/' });
+
+app.post('/descargar', upload.single('file'), (req, res) => {
+    console.log(req.session.user);
+  if (!req.file) {
+    return res.status(400).send('Por favor, selecciona una imagen.');
+  }
+
+  const uploadedFile = req.file;
+
+  // Hacer lo que necesites con el archivo cargado, como moverlo a un directorio específico.
+  const fileName = uploadedFile.originalname;
+   const uniqueFileName = uuidv4() + path.extname(fileName); // Añade la extensión original
+
+  // Ruta de destino para guardar el archivo
+  const uploadPath = path.join(__dirname, 'avatars', uniqueFileName);
+  // Mover el archivo a la ubicación deseada
+  fs.rename(uploadedFile.path, uploadPath, (err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Error al subir el archivo.');
+    }
+
+    mysqlConnection.UpdateImage([uniqueFileName, req.session.user.id], (successMessage) => {console.log(successMessage);})
+    req.session.user.image = "http://localhost:3001/imagen/"+uniqueFileName;
+    res.status(200).json({imagen:"http://localhost:3001/imagen/"+uniqueFileName});
+  });
+});
+
 
 //Coger ejercicios respondidos
 app.post('/getResueltas', (req, res) => {

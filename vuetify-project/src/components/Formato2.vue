@@ -64,7 +64,40 @@ export default {
 
             ]),
             pregunta: {
+                "_id": {
+                    "$oid": "6576ff079e727e42ea7d5f90"
+                },
+                "id": 35,
+                "pregunta": "Convierte a kilómetros las siguientes unidades:",
+                "respuestas": [
+                    [
+                        "3500 metros",
+
+                        "25 decámetros",
+
+                        "120 hectómetros",
+
+                        "800 milímetros"
+                    ],
+                    [
+                        "0.8 kilómetros",
+                        "3.5 kilómetros",
+                        ,
+                        "12 kilómetros",
+                        "0.25 kilómetros"
+                    ]
+                ],
+                "idTema": 4,
+                "formato": "Unir valores",
+                "correcta": [
+                    ["3500 metros", "3.5 kilómetros"],
+                    ["25 decámetros", "0.25 kilómetros"],
+                    ["120 hectómetros", "12 kilómetros"],
+                    ["800 milímetros", "0.8 kilómetros"]
+                ],
+                "experiencia": 10
             }
+
         });
 
         function selectCard(row, index) {

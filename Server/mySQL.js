@@ -191,7 +191,25 @@ function UpdateUser(valores, callback) {
             throw error;
         }
 
-        connection.query('UPDATE usuario SET name = ?, surname = ?, email = ? WHERE id = ?', valores, (errorQuery, results, fields) => {
+        connection.query('UPDATE users SET name = ?, surname = ?, email = ? WHERE id = ?', valores, (errorQuery, results, fields) => {
+            connection.release(); // Liberar la conexión al terminar la consulta
+
+            if (errorQuery) {
+                console.error('Error al ejecutar la consulta:', errorQuery);
+                throw errorQuery;
+            }
+            callback(results);
+        });
+    });
+}
+function UpdateImage(valores, callback) {
+    pool.getConnection((error, connection) => {
+        if (error) {
+            console.error('Error al obtener la conexión del pool:', error);
+            throw error;
+        }
+
+        connection.query('UPDATE users SET image = ? WHERE id = ?', valores, (errorQuery, results, fields) => {
             connection.release(); // Liberar la conexión al terminar la consulta
 
             if (errorQuery) {
@@ -232,6 +250,7 @@ module.exports = {
     selectLevel,
     SelectClassrooms,
     SelectAccesCode, 
-    SelectProfessors
+    SelectProfessors,
+    UpdateImage
     // Puedes añadir más funciones según tus necesidades...
 };

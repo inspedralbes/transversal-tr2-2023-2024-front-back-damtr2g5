@@ -18,7 +18,9 @@
             <form>
                 <v-text-field v-model="email" label="Email"></v-text-field>
 
-                <v-text-field @input="handleHashing($event.target.value)" :append-icon="show0 ? '$eye' : '$eyeOff'" :type="show0 ? 'text' : 'password'" label="Contrasenya" @click:append="show0 = !show0"></v-text-field>
+                <v-text-field @input="handleHashing($event.target.value)" :append-icon="show0 ? '$eye' : '$eyeOff'"
+                            :type="show0 ? 'text' : 'password'" label="Contrasenya"
+                            @click:append="show0 = !show0" @keyup.enter="guardar()"></v-text-field>
 
                 <v-btn @click="guardar()" block class="mt-2">Login</v-btn>
             </form>

@@ -12,8 +12,8 @@
         <v-card>
           <v-card-text>
             <div class="mx-auto text-center">
-              <v-badge :icon="`${mdiPencil}`" location="bottom end">
-                <v-avatar color="brown">
+              <v-badge :icon="`${mdiPencil}`" class="av" location="bottom end" @click="dialogL = true">
+                <v-avatar color="brown" @click="dialogL = true">
                   <v-img :src="user.image" alt="John"></v-img>
                 </v-avatar>
               </v-badge>
@@ -30,37 +30,74 @@
                 Tancar sessió
               </v-btn>
             </div>
+
           </v-card-text>
         </v-card>
       </v-menu>
     </v-row>
   </v-container>
+  <v-dialog v-model="dialogL" width="500" height="700">
+    <v-card>
+      <v-card-title>
+        Elige una imagen
+      </v-card-title>
+      <div class="mx-auto text-center">
+        <v-img v-if="!boton" :src="user.image"></v-img>
+        <pruebas @botones="precionado"/>
+      </div>
+      <v-card-actions class="mx-auto text-center">
+        <v-btn color="primary" @click="dialogL = false">Cancelar</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script >
 import { useAppStore } from '@/store/app';
 import { mdiPencil } from '@mdi/js'
+import pruebas from '@/components/recortarimagen.vue'
+import VuePictureCropper from 'vue-picture-cropper'
 export default {
-  
+  components: {
+    VuePictureCropper,
+    pruebas
+  },
   data() {
-    const appStore = useAppStore()
-    const user = appStore.getLoginInfo;
     return {
-      user,
+      rules: [
+        value => {
+          return !value || !value.length || value[0].size < 1000000 || 'La mida excedeix els 1 MB!'
+        },
+      ],
+
       mdiPencil,
-      appStore
+      dialogL: false,
+      boton: null,
     };
   },
-  methods: {
+  setup() {
+    const store = useAppStore()
+    const user = store.getLoginInfo;
+    return {
+      user, store,
+    }
+  },
+  methods:
+  {
     logout() {
-      this.appStore.logout().then((result)=> {
+      this.store.logout().then((result) => {
         if (result) {
-          console.log("Login Session: ",this.appStore.getLoginInfo)
-          this.$router.push({name:"Login"});
+          console.log("Login Session: ", this.store.getLoginInfo)
+          this.$router.push({ name: "Login" });
         }
       })
-      
-    }
+
+    },
+    precionado() {
+      // Realizar acciones necesarias cuando el modal se cierra
+      console.log("precionado");
+      // Puedes realizar otras acciones aquí según tu lógica
+    },
   }
 }
 </script>
@@ -68,5 +105,10 @@ export default {
 <style scoped>
 .v-icon {
   margin-right: 10px;
+}
+
+.av,
+.av v-avatar {
+  cursor: pointer;
 }
 </style>
