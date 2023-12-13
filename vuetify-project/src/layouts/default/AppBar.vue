@@ -12,8 +12,8 @@
         <v-card>
           <v-card-text>
             <div class="mx-auto text-center">
-              <v-badge :icon="`${mdiPencil}`" location="bottom end">
-                <v-avatar color="brown">
+              <v-badge :icon="`${mdiPencil}`" class="av" location="bottom end">
+                <v-avatar color="brown" @click="dialogL = true">
                   <v-img :src="user.image" alt="John"></v-img>
                 </v-avatar>
               </v-badge>
@@ -30,37 +30,86 @@
                 Tancar sessió
               </v-btn>
             </div>
+
           </v-card-text>
         </v-card>
       </v-menu>
     </v-row>
   </v-container>
+  <v-dialog v-model="dialogL" width="500" height="700">
+    <v-card>
+      <v-card-title>
+        Elige una imagen
+      </v-card-title>
+      <div class="mx-auto text-center">
+        <vue-avatar-editor :width="400" :height="400" :rotation="rotation" :scale="scale" ref="vueavatar"
+          image="http://localhost:3001/imagen/avatar1.jpg" accept="image/jpg, image/png, image/jpeg" border="0" @finished="saveClicked"
+          @select-file="onSelectFile($event)">
+        </vue-avatar-editor>
+
+      </div>
+      <v-card-actions class="mx-auto text-center">
+        <v-btn @click="saveClicked"> Guardar</v-btn>
+        <v-btn color="primary" @click="dialogL = false">Tancar</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script >
 import { useAppStore } from '@/store/app';
 import { mdiPencil } from '@mdi/js'
+import { VueAvatarEditor } from 'vue-avatar-editor-improved'
+import { GuardarImagen } from '@/communicationsManager'
 export default {
-  
+  components: {
+    VueAvatarEditor: VueAvatarEditor
+  },
   data() {
     const appStore = useAppStore()
     const user = appStore.getLoginInfo;
     return {
+      rotation: 0,
+      scale: 1,
+      rules: [
+        value => {
+          return !value || !value.length || value[0].size < 1000000 || 'La mida excedeix els 1 MB!'
+        },
+      ],
       user,
       mdiPencil,
-      appStore
+      appStore, dialogL: false, imagen: null
     };
   },
-  methods: {
+  methods:
+  {
     logout() {
-      this.appStore.logout().then((result)=> {
+      this.appStore.logout().then((result) => {
         if (result) {
-          console.log("Login Session: ",this.appStore.getLoginInfo)
-          this.$router.push({name:"Login"});
+          console.log("Login Session: ", this.appStore.getLoginInfo)
+          this.$router.push({ name: "Login" });
         }
       })
+
+    },
+    onSelectFile (files) {
+      this.imagen = files[0];
+            console.log('here is your file', this.imagen);
+        },
+    saveClicked: function saveClicked(img) {
+      this.dialogL = false
+      var image = img
+      console.log(this.$refs.vueavatar);
       
-    }
+      GuardarImagen(image).then((result) => {
+        console.log(result)
+      })
+        },
+    onImageReady: function onImageReady() {
+      this.scale = 1;
+      this.rotation = 0;
+    },
+
   }
 }
 </script>
@@ -68,5 +117,10 @@ export default {
 <style scoped>
 .v-icon {
   margin-right: 10px;
+}
+
+.av,
+.av v-avatar {
+  cursor: pointer;
 }
 </style>

@@ -123,9 +123,30 @@ app.post('/getActivities/:tema', async (req, res) => {
 app.get("/imagen/:nombreArchivo", (req, res) => {
     const nombreArchivo = req.params.nombreArchivo;
     const rutaImagen = path.join(__dirname, "avatars", nombreArchivo);
-    console.log(rutaImagen);
     res.sendFile(rutaImagen);
 });
+  
+app.post('/descargar', (req, res) => {
+    console.log(req.body);
+    const uploadedFile = req.body; // Accede al archivo enviado desde el cliente
+
+  if (!uploadedFile) {
+        return res.status(400).send('Por favor, selecciona una imagen.');
+      }
+    
+      const fileName = uploadedFile.name;
+      const uploadPath = path.join(__dirname, 'avatars', fileName); // Ruta de destino para guardar el archivo
+    
+      // Guarda el archivo en el servidor
+      uploadedFile.mv(uploadPath, (err) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).send('Error al subir el archivo.');
+        }
+    
+        res.send('Imagen subida correctamente.');
+  });
+})
 
 //Coger ejercicios respondidos
 app.post('/getResueltas', (req, res) => {

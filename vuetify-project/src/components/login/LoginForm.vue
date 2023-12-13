@@ -24,7 +24,7 @@
 
                 <v-text-field @input="handleHashing($event.target.value)" :append-icon="show0 ? '$eye' : '$eyeOff'"
                             :type="show0 ? 'text' : 'password'" label="Contrasenya"
-                            @click:append="show0 = !show0"></v-text-field>
+                            @click:append="show0 = !show0" @keyup.enter="guardar()"></v-text-field>
 
                 <v-btn @click="guardar()"  block class="mt-2">Login</v-btn>
             </form>
