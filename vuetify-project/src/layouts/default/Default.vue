@@ -1,6 +1,6 @@
 <template>
-  <div class="background-container">
-        <img src="@/assets/mural_mates2.png" alt="Background Image" class="background-image">
+  <div class="background-container blurred">
+        <img src="@/assets/ringUFC.jpg" alt="Background Image" class="background-image">
     </div>
   <v-app>
     <default-bar />

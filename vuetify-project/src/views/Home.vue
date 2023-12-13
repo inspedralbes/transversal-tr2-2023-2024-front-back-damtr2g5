@@ -1,11 +1,7 @@
 <template>
-  
-  <v-row>
-    <v-col cols="5">
-      <Noticias class="myfont" />
-    </v-col >
-    <v-col cols="5">
-      <Botones />
+  <v-row style="margin: auto;">
+    <v-col cols="12">
+      <Botones/>
     </v-col>
   </v-row>
 </template>

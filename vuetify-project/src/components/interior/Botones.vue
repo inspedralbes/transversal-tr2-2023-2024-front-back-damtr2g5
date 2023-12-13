@@ -1,22 +1,16 @@
 <template>
-  <v-item-group selected-class="bg-primary">
-    <v-container>
-      <v-item v-for="n in opciones" :key="n">
-        <v-card class="d-flex align-center super-cool-button bitter-sweet oxford-blue-bg" dark height="200" @click="onToggle(n)">
-          <div class="myfont bigger-font text-center">
+  <v-container class="fill-height" style="margin: 1em;">
+    <v-row>
+      <v-col cols="8" v-for="n in opciones">
+        <v-card class="super-cool-button cream black-olive-bg" dark height="200" @click="onToggle(n)">
+          <div class="myfont bigger-font">
             {{ isSelected ? 'Log In' : n }}
           </div>
         </v-card>
-      </v-item>
-    </v-container>
-  </v-item-group>
-  <v-container>
-    <v-row>
-      <v-col cols="10">
       </v-col>
-      <v-col cols="2" class="d-flex flex-row-reverse mb-6">
-        <v-btn v-if="codigo == ''" color="primary" @click="dialog = true">Unirte a una clase</v-btn>
-        <v-btn v-else color="primary" @click="dialog = true">{{ codigo }}</v-btn>
+      <v-col cols="12">
+        <v-btn variant="plain outlined" class="mt-10 myfont oxford-blue-bg bitter-sweet" v-if="codigo == ''" @click="dialog = true">Unirte a una clase</v-btn>
+        <v-btn v-else class=" myfont oxford-blue-bg bitter-sweet" @click="dialog = true">{{ codigo }}</v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -44,11 +38,11 @@ import { useAppStore } from '../../store/app'
 export default {
   name: 'Botones',
   setup() {
-        const appStore = useAppStore()
-        return {
-            appStore
-        };
-    },
+    const appStore = useAppStore()
+    return {
+      appStore
+    };
+  },
   data() {
     const opciones = [
       'Entrenament',
@@ -61,15 +55,10 @@ export default {
       opciones
     };
   },
-  methods:{
-    
+  methods: {
+
     onToggle(route) {
-      var isAuth = this.appStore.isAuthenticated
-      if (!isAuth) {
-        alert('Has de logearte para acceder');
-        return;
-      }
-      switch(route) {
+      switch (route) {
         case 'Entrenament':
           this.$router.push({ name: 'Entrenamiento' })
           break;
@@ -83,22 +72,13 @@ export default {
 </script>
 <style>
 .super-cool-button {
-  background-color: #ff4081;
-  color: white;
-  border: none;
+  width: 100%;
   padding: 20px;
-  font-size: 16px;
-  border-radius: 5px;
   cursor: pointer;
-  margin-bottom: 20px; 
-  display: inline-flex; 
-  min-width: 150px; 
-  box-sizing: border-box; 
-  justify-content: center; 
-  align-items: center; 
-}
-
-.super-cool-button:hover {
-  background-color: #ff80ab;
+  margin-bottom: 20px;
+  display: inline-flex;
+  min-width: 150px;
+  justify-content: center;
+  align-items: center;
 }
 </style>
