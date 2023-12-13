@@ -13,12 +13,11 @@
     <div class="modal-wrap" v-if="isShowModal">
         <div class="modal">
           <div class="modal-title">
-            <span class="title">Titulo</span>
             <div class="tools">
               <v-btn  @click="isShowModal = false">
                 Cancelar
               </v-btn>
-              <v-btn @click="getResult">
+              <v-btn @click="getResult(); boton=true">
                 Recortar
               </v-btn>
             </div>
@@ -38,8 +37,8 @@
   cropBoxResizable: false,
 }" :presetMode="{
   mode: 'round',
-  width: 100,
-  height: 100,
+  width: 200,
+  height: 200,
 }" />
           </div>
         </div>
@@ -47,35 +46,25 @@
   </div>
   
   <section class="section" v-if="result.blobURL">
-      <p>Recorte</p>
       <div class="preview">
         <img :src="result.blobURL" />
       </div>
     </section>
-  <v-btn @click="mandar" >Guardar</v-btn>
+  <v-btn @click="mandar" v-if="boton">Guardar</v-btn>
 </template>
   
 <script>
-import { useAppStore } from '@/store/app'
-import { ref, reactive } from 'vue';
+import { useAppStore } from '@/store/app';
+import { ref, reactive, watch, defineComponent } from 'vue';
 import VuePictureCropper, { cropper } from 'vue-picture-cropper';
 
-export default {
+export default defineComponent({
   name: 'pruebas',
-  props: {
-    boton: {
-      type: Boolean,
-      required: false,
-    },
-    foto: {
-      type: Boolean,
-      required: false,
-    },
-  },
+  emits: ['botones'], // Declaración de eventos que el componente emite
   components: {
     VuePictureCropper,
   },
-  setup() {
+  setup(props, { emit }) {
     const store = useAppStore();
     const isShowModal = ref(false);
     const uploadInput = ref(null);
@@ -85,8 +74,8 @@ export default {
       blobURL: '',
       archivo: null,
     });
-
-    var blobE = null;
+    let boton = false;
+    let blobE = null;
 
     function selectFile(e) {
       pic.value = '';
@@ -98,18 +87,24 @@ export default {
       if (!files || !files.length) return;
 
       const file = files[0];
-      console.log('Archivo');
-      console.log(file);
       result.archivo = file;
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => {
-        pic.value = String(reader.result);
-        isShowModal.value = true;        
+        pic.value = String(reader.result);        
+        isShowModal.value = true;
         if (!uploadInput.value) return;
         uploadInput.value.value = '';
       };
     }
+
+    watch(() => uploadInput, () => {
+        // Emitir evento 'botones' al componente padre cuando isShowModal cambia a false
+          // Verificar si newValue no es undefined para evitar emitir al inicio
+          // Emitir el evento 'botones' con la función emit proporcionada por Vue
+          emit('botones');
+
+    });
 
     async function getResult() {
       if (!cropper) return;
@@ -161,11 +156,11 @@ export default {
       result,
       isShowModal,
       store,
+      boton,
       selectFile,
       getResult,
       mandar,
     };
   },
-};
-
+});
 </script>
