@@ -569,8 +569,10 @@ app.get('/consultarUsuariPerId/:id', async (req, res) => {
             email: usuari.email,
             rank: usuari.rank,
             lvl: usuari.lvl,
-            image: usuari.image
+            image: usuari.image,
             //image: `${SERVER_URL}:${port}/imagen/${usuari.image}`
+            id_classroom: usuari.id_classroom,
+            nom_aula: usuari.nomaula
         }
 
         res.json(usuariEnviar);

@@ -73,9 +73,9 @@ function SelectUserById(id,callback) {
         if (error) {
             console.error('Error al obtener la conexión del pool:', error);
             throw error;
-        }
+        }      
 
-        connection.query('SELECT * FROM users WHERE id=?',id, (errorQuery, results, fields) => {
+        connection.query('SELECT U.*, C.name AS nomaula FROM users U,classrooms C WHERE U.id=? AND U.id_classroom=C.id',id, (errorQuery, results, fields) => {
             connection.release(); // Liberar la conexión al terminar la consulta
 
             if (errorQuery) {
