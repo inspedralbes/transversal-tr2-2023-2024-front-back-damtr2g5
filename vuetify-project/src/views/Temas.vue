@@ -1,7 +1,7 @@
 <template>
-    <v-app class="no-background">
-        <v-container>
-            <v-row>
+    <v-app class="no-background" >
+        <v-container class="fill-height" >
+            <v-row >
                 <v-col>
                     <ThemeSelector />
                 </v-col>

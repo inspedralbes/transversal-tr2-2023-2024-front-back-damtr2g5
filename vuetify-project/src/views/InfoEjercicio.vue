@@ -1,21 +1,20 @@
 <template>
-    <v-container>
-        <v-btn elevation="6" border="lg opacity-12" rounded="lg" class="red-btn"
-            :style="{ marginBottom: '20px', width: '40vw', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">{{
-                this.Ejercicio.nombre }}</v-btn>
-        <v-sheet color="#f68b1f" elevation="6" border="lg opacity-12" max-width="2000" max-height="500" rounded="xl"
-            width="1200" height="500" class="pa-4 text-center mx-auto">
+    <v-container style="display: flex;justify-content: center;  text-align: center; align-items: center;">
+        <v-card style="position: ;">
+        <v-btn>{{this.Ejercicio.nombre }}</v-btn>
             <v-card-title>Numero de preguntes: {{ this.cantidadEjerciciosH.length }}</v-card-title>
             <v-card-title>Tematica: {{ this.tema }}</v-card-title>
             <v-card-title>Realitzat: {{ estado }}</v-card-title>
             <v-card-title>Preguntes contestades: {{ this.cantidadEjercicios.length }} / {{ this.cantidadEjerciciosH.length }}</v-card-title>            
             <v-card-title>EXP: {{ this.exp }} xp</v-card-title>
-        </v-sheet>
-        <v-btn @click="empezarEjercicio" elevation="6" border="lg opacity-12" rounded="lg" class="blue-btn"
-            :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Començar</v-btn>
+        <v-btn @click="empezarEjercicio">Començar</v-btn>
+    </v-card>
     </v-container>
+
 </template>
-  
+<style>
+
+</style>
     
 <script>
 import { GetResueltas, getEjercicios, getExpEjer } from '@/communicationsManager';
@@ -93,15 +92,3 @@ export default {
 }
 
 </script>
-
-<style>
-.red-btn {
-    background-color: #ff3547 !important;
-    color: white !important;
-}
-
-.blue-btn {
-    background-color: #007bff !important;
-    color: white !important;
-}
-</style>

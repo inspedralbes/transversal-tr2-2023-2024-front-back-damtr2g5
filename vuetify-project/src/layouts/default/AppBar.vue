@@ -1,13 +1,14 @@
 <template>
-  <v-container fluid style="height: 100px">
+  <v-container fluid style="padding: 0;">
     <v-row class="d-flex justify-end w-full mt-3 mr-3">
       <v-menu min-width="200px" rounded>
         <template v-slot:activator="{ props }">
-          <v-btn icon v-bind="props">
+          <v-btn style="z-index: 20;" position="absolute" icon v-bind="props">
             <v-avatar color="brown" size="large">
               <v-img :src="user.image" alt="?"></v-img>
             </v-avatar>
           </v-btn>
+          
         </template>
         <v-card>
           <v-card-text>
@@ -65,8 +66,10 @@ export default {
 }
 </script>
 
-<style scoped>
-.v-icon {
-  margin-right: 10px;
-}
+<style>
+#lateral .v-btn--example {
+    bottom: 0;
+    position: absolute;
+    margin: 0 0 16px 16px;
+  }
 </style>
