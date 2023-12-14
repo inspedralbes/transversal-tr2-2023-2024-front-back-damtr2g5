@@ -15,14 +15,12 @@ export const useAppStore = defineStore('app', {
             rank: '',
             lifetotal: '',
             experience: '',
-            image: ''
+            image: '',
+            id_classroom:'',
+            access_code:''
         },
-        aulaInfo: {
-          id:'',
-          professor_id:'',
-          name:'',
-          access_code:''
-        },
+        aulaInfo: null
+        ,
         respuesta: '',
         tema: null,
         ejercicio: null
@@ -92,13 +90,21 @@ export const useAppStore = defineStore('app', {
               console.log("Login info: ", this.$state.loginInfo);
               login(this.$state.loginInfo).then((response) => response.json())
                 .then((data) => {
+                  console.log()
                   this.$state.loginInfo = data;
                   this.loading = false;
                   if (data.email != '') {
                     this.$state.auth = true;
                     console.log("New auth state: ", this.$state.auth)
                     if(data.id_classroom != null) {
-                      this.$state.aulaInfo = this.setAulaInfo(data.id_classroom_code)
+
+                      getAula(data.id_classroom).then((response) => {
+                        console.log("Aula nueva B): ",response)
+                        this.$state.aulaInfo = this.setAulaInfo(response)
+                      })
+                    }
+                    else {
+                      console.log("No hay aulas :'(")
                     }
                     resolve(true);
                   } else {
@@ -114,15 +120,22 @@ export const useAppStore = defineStore('app', {
             });
           },
           loginGoogle() {
+            console.log("ACCEDER")
             return new Promise((resolve, reject) => {
               console.log("Login info: ", this.$state.loginInfo);
               loginGoogle(this.$state.loginInfo).then((response) => response.json())
                 .then((data) => {
+                  console.log("Data received: ",data)
                   this.$state.loginInfo = data;
                   this.loading = false;
                   if (data.email != '') {
                     this.$state.auth = true;
                     console.log("New auth state: ", this.$state.auth)
+                    if(data.id_classroom != null) {
+                      getAula(data.id_classroom).then((response) => {
+                        this.$state.aulaInfo = this.setAulaInfo(response)
+                      })
+                    }
                     resolve(true);
                   } else {
                     this.$state.auth = false;
@@ -145,7 +158,11 @@ export const useAppStore = defineStore('app', {
                   this.loading = false;
                   if (data.email != '') {
                     this.$state.auth = true;
-                    
+                    if(data.id_classroom != null) {
+                      getAula(data.id_classroom).then((response) => {
+                        this.$state.aulaInfo = this.setAulaInfo(response)
+                      })
+                    }
                     console.log("New auth state getLogin: ", this.$state.auth)
                     resolve(true)
                   } else {

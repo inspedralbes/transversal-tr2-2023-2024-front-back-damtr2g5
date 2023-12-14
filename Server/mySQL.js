@@ -36,8 +36,8 @@ function SelectUsers(callback) {
             throw error;
         }
 
-        connection.query('SELECT u.*, c.access_code AS id_classroom_code FROM users u JOIN classrooms c ON u.id_classroom = c.id', [], (errorQuery, results, fields) => {
-            connection.release(); // Liberar la conexión al terminar la consulta
+        connection.query('SELECT u.*, c.access_code AS id_classroom_code FROM users u LEFT JOIN classrooms c ON u.id_classroom = c.id', [], (errorQuery, results, fields) => {
+            connection.release(); // Liberar la conexión al terminar la consultas
 
             if (errorQuery) {
                 console.error('Error al ejecutar la consulta:', errorQuery);
@@ -47,14 +47,32 @@ function SelectUsers(callback) {
         });
     });
 }
-function SelectClassroom(classroom,callback) {
+function SelectClassroomId(id,callback) {
     pool.getConnection((error, connection) => {
         if (error) {
             console.error('Error al obtener la conexión del pool:', error);
             throw error;
         }
 
-        connection.query('SELECT * FROM classrooms WHERE access_code = ?',classroom, (errorQuery, results, fields) => {
+        connection.query('SELECT * FROM classrooms WHERE id = ?',id, (errorQuery, results, fields) => {
+            connection.release(); // Liberar la conexión al terminar la consulta
+
+            if (errorQuery) {
+                console.error('Error al ejecutar la consulta:', errorQuery);
+                throw errorQuery;
+            }
+            callback(results);
+        });
+    }); 
+}
+function SelectClassroom(access_code,callback) {
+    pool.getConnection((error, connection) => {
+        if (error) {
+            console.error('Error al obtener la conexión del pool:', error);
+            throw error;
+        }
+
+        connection.query('SELECT * FROM classrooms WHERE access_code = ?',access_code, (errorQuery, results, fields) => {
             connection.release(); // Liberar la conexión al terminar la consulta
 
             if (errorQuery) {
@@ -200,6 +218,25 @@ function UpdateUser(valores, callback) {
         });
     });
 }
+
+function UpdateUserClassroom(valores, callback) {
+    pool.getConnection((error, connection) => {
+        if (error) {
+            console.error('Error al obtener la conexión del pool:', error);
+            throw error;
+        }
+
+        connection.query('UPDATE users SET id_classroom = ? WHERE id = ?', valores, (errorQuery, results, fields) => {
+            connection.release(); // Liberar la conexión al terminar la consulta
+
+            if (errorQuery) {
+                console.error('Error al ejecutar la consulta:', errorQuery);
+                throw errorQuery;
+            }
+            callback(results);
+        });
+    });
+}
 function selectLevel(level, callback) {
     pool.getConnection((error, connection) => {
         if (error) {
@@ -227,9 +264,10 @@ module.exports = {
     InsertAula,
     UpdateUser,
     selectLevel,
-    SelectClassrooms,
     SelectAccesCode, 
     SelectProfessors,
-    SelectClassroom
+    SelectClassroom,
+    UpdateUserClassroom,
+    SelectClassroomId
     // Puedes añadir más funciones según tus necesidades...
 };

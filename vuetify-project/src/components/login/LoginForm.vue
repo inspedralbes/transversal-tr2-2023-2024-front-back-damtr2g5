@@ -151,6 +151,7 @@ export default {
         this.appStore.setEmail(userData.email);
         this.appStore.setPassword("")
         this.appStore.setImageG(userData.picture)
+        console.log("Login Google Info: ",this.appStore.getLoginInfo)
         this.appStore.loginGoogle()
         .then(async (result) => {
             console.log("Login Google Result: ",result)
@@ -187,6 +188,7 @@ export default {
             this.appStore.login()
             .then((result)=> {
                 if (result) {
+                    console.log(this.appStore.getAulaInfo)
                     console.log("Go Home");
                         this.$router.push({ name: 'Home' });
                 } else {

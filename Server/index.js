@@ -133,6 +133,13 @@ app.get("/imagen/:nombreArchivo", (req, res) => {
     res.sendFile(rutaImagen);
 });
 
+app.get("imagenPregunta/:nombreArchivo", (req, res) => {
+    const nombreArchivo = req.params.nombreArchivo;
+    const rutaImagen = path.join(__dirname, "image_preguntas", nombreArchivo);
+    console.log(rutaImagen);
+    res.sendFile(rutaImagen);
+})
+
 //Coger ejercicios respondidos
 app.post('/getResueltas', (req, res) => {
     let idUsuario = req.body.userId
@@ -255,7 +262,8 @@ app.post('/login', async (req, res) => {
                             rank: usuari.rank,
                             lvl: usuari.lvl,
                             image: `${SERVER_URL}:${port}/imagen/${usuari.image}`,
-                            id_classroom: usuari.id_classroom_code
+                            id_classroom: usuari.id_classroom,
+                            classroom_code: usuari.id_classroom_code
                         };
                         req.session.user = usuariIndividual;
                         comprovacio = true;
@@ -285,7 +293,6 @@ app.post('/loginGoogle', async (req, res) => {
         const login = req.body;
         let usuariIndividual = {};
         let comprovacio = false;
-
         mysqlConnection.SelectUsers((usuaris) => {
             usuaris.forEach(usuari => {
                 if (usuari.email == login.email) {
@@ -303,7 +310,9 @@ app.post('/loginGoogle', async (req, res) => {
                             email: usuari.email,
                             rank: usuari.rank,
                             lvl: usuari.lvl,
-                            image: login.image
+                            image: login.image,
+                            id_classroom: usuari.id_classroom,
+                            classroom_code: usuari.id_classroom_code
                         };
                         req.session.user = usuariIndividual;
                         comprovacio = true;
@@ -478,9 +487,11 @@ app.get('/getAulas', (req, res) => {
 
 });
 
-app.get('/getAula/:classroom', (req,res) =>{
-    const classroomId = req.params.classroom.toUpperCase()
-    mysqlConnection.SelectClassroom(classroomId, (results) => {
+app.get('/getAulaById/:id', (req,res) =>{
+    const id = parseInt(req.params.id)
+    console.log("Código de Acceso en Server: ",id)
+    mysqlConnection.SelectClassroomId(id, (results) => {
+        console.log("Resultados en Server: ",results)
         if (results.length > 0) {
             res.json(results); 
         } else {
@@ -488,6 +499,36 @@ app.get('/getAula/:classroom', (req,res) =>{
         }
     });
 })
+
+app.get('/getAula/:classroom', (req,res) =>{
+    const classroomId = req.params.classroom.toUpperCase()
+    console.log("Código de Acceso en Server: ",classroomId)
+    mysqlConnection.SelectClassroom(classroomId, (results) => {
+        console.log("Resultados en Server: ",results)
+        if (results.length > 0) {
+            res.json(results); 
+        } else {
+            res.json(null); 
+        }
+    });
+})
+
+//JOIN AULA
+app.post('/joinAula',  (req, res) => {
+    console.log("Body content: ",req.body)
+    const aula  = req.body;
+    const id_classroom = aula.id;
+    console.log("ID CLASS: ", id_classroom)
+    const id = req.session.user.id;
+    console.log("Id del usuario: " + req.session.user.id);
+     mysqlConnection.UpdateUserClassroom([id_classroom,id], (successMessage) => {
+                console.log("Operación completada:", successMessage);
+                req.session.user.id_classroom = id_classroom;
+                req.session.user.classroom_code = aula.access_code;
+                res.status(200).send("Registro exitoso");
+            })
+    });
+
 
 //GET USUARIOS
 app.get('/consultarUsuaris', (req, res) => {
