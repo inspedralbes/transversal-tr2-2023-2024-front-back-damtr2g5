@@ -2,8 +2,8 @@ const socketIo = require('socket.io');
 const rooms = require('./rooms.js');
 const mysqlConnection = require('./mySQL.js');
 const sessionMiddleware = require('./sessionMiddleware.js');
-const { checkQuestion } = require('./utils.js')
-const { getPregunta } = require('./mongoDB.js')
+const { checkQuestion,calcularTiempoTranscurrido,obtenerFechaYHoraActual } = require('./utils.js')
+const { getPregunta,insertInCollection } = require('./mongoDB.js')
 let io;
 function initializeSocket(server, cors) {
     io = socketIo(server, cors);
@@ -14,7 +14,7 @@ function initializeSocket(server, cors) {
         console.log("a user connected", socket.request.session.id);
 
         socket.join(socket.request.session.id);
-
+        
         socket.on('createRoom', (room) => {
             room.players = 1;
             room.started = false;
@@ -23,8 +23,10 @@ function initializeSocket(server, cors) {
             room.users = [];
             room.users.push({
                 id: socket.request.session.id, email: socket.request.session.user?.email || "???",
-                image: socket.request.session.user?.image, level: socket.request.session.user?.lvl
+                image: socket.request.session.user?.image, level: socket.request.session.user?.lvl, answers:0
             });
+            room.starttime = ''
+            room.endtime = ''
             console.log("socket rooms", socket.rooms);
             socket.join("GameRoom-" + socket.request.session.id);
             created = rooms.addRoom(room, socket.request.session.id);
@@ -57,7 +59,7 @@ function initializeSocket(server, cors) {
             socket.join(room.id);
             joined = rooms.joinRoom(room, {
                 id: socket.request.session.id, email: socket.request.session.user?.email || "???",
-                image: socket.request.session.user?.image, level: socket.request.session.user?.lvl
+                image: socket.request.session.user?.image, level: socket.request.session.user?.lvl, answers:0
             });
             if (joined) {
                 io.to(socket.request.session.id).emit("roomJoined", room);
@@ -65,7 +67,6 @@ function initializeSocket(server, cors) {
                 io.to(socket.request.session.id).emit("roomNotJoined", room);
             }
         });
-
         socket.on('joinTeam', (team) => {
             console.log("joinTeam", rooms.getRoom(team.roomId));
             console.log("socket rooms", socket.rooms);
@@ -164,6 +165,9 @@ function initializeSocket(server, cors) {
                 //wait 5 seconds
                 setTimeout(() => {
                     io.to(room.id).emit("gameStarted", rooms.getRoom(room.id));
+                    let inicio = obtenerFechaYHoraActual()
+                    rooms.getRoom(room.id).starttime= inicio
+                    console.log("INICIO "+room.starttime);
                 }, 5000);
             });
         });
@@ -172,12 +176,13 @@ function initializeSocket(server, cors) {
             getPregunta(data.question.id)
                 .then((pregunta) => {
                     answer = data.answer;
-                    room = data.room;
+                    let room = data.room;
                     console.log("to check", pregunta.correcta, answer);
                     correcto = checkQuestion(pregunta, answer);
                     io.to(socket.request.session.id).emit("answerChecked", {"correct": correcto});
                     if (correcto) {
                         team = rooms.getRoom(room.id).users.find((u) => u.id === socket.request.session.id).team;
+                        room.users.filter((u)=>u.id===socket.request.session.id).answers++
                         if(team === 1){
                             rooms.getRoom(room.id).teams.team2[0].hp -= 1;
                         }else if(team === 2){
@@ -191,6 +196,15 @@ function initializeSocket(server, cors) {
                     if (rooms.getRoom(room.id).teams.team1[0].hp <= 0 || rooms.getRoom(room.id).teams.team2[0].hp <= 0) {
                         rooms.getRoom(room.id).winner = (rooms.getRoom(room.id).teams.team1[0].hp <= 0) ? 2 : 1;
                         io.to(room.id).emit("gameFinished", rooms.getRoom(room.id));
+                        let fin =obtenerFechaYHoraActual()
+                        rooms.getRoom(room.id).endtime = fin
+                        let ganadores=null
+                        if(rooms.getRoom(room.id).teams.team1[0].hp <= 0){
+                            ganadores = 1
+                        }else{
+                            ganadores = 2
+                        }
+                        insertInCollection({ "battle":  rooms.getRoom(room.id).name, "winners": rooms.getRoom(room.id).winner, "matchsize":  rooms.getRoom(room.id).players,time: rooms.getRoom(room.id).starttime, duration:calcularTiempoTranscurrido( rooms.getRoom(room.id).starttime,  rooms.getRoom(room.id).endtime)}, 'Battles')
                     }
                 })
                 .catch((error) => {

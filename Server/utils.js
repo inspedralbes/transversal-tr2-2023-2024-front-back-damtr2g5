@@ -1,4 +1,4 @@
-module.exports = { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion,generarPassword};
+module.exports = { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion,generarPassword,obtenerFechaYHoraActual,calcularTiempoTranscurrido};
 function comprobarRectaLineal(punto1, punto2) {
     if (punto1.x === punto2.x) {
         // Recta vertical
@@ -118,4 +118,42 @@ function generarPassword(length) {
       ret += Math.random().toString(16).substring(2);
     }
     return ret.substring(0,length);
+  }
+  function obtenerFechaYHoraActual() {
+    const ahora = new Date();
+    
+    const dia = ahora.getDate().toString().padStart(2, '0');
+    const mes = (ahora.getMonth() + 1).toString().padStart(2, '0'); // Los meses comienzan desde 0, por eso se suma 1
+    const año = ahora.getFullYear();
+  
+    const hora = ahora.getHours().toString().padStart(2, '0');
+    const minutos = ahora.getMinutes().toString().padStart(2, '0');
+    const segundos = ahora.getSeconds().toString().padStart(2, '0');
+  
+    const fechaHoraFormateada = `${año}/${mes}/${dia} ${hora}:${minutos}:${segundos}`;
+  
+    return fechaHoraFormateada;
+  }
+  function calcularTiempoTranscurrido(tiempoInicial, tiempoFinal) {
+    // Convertir las cadenas de tiempo en objetos Date
+    const fechaInicial = new Date(tiempoInicial);
+    const fechaFinal = new Date(tiempoFinal);
+  
+    // Obtener la diferencia en milisegundos
+    const diferenciaEnMilisegundos = fechaFinal - fechaInicial;
+  
+    // Convertir la diferencia de milisegundos a días, horas, minutos y segundos
+    const segundos = Math.floor(diferenciaEnMilisegundos / 1000);
+    const minutos = Math.floor(segundos / 60);
+    const horas = Math.floor(minutos / 60);
+    const dias = Math.floor(horas / 24);
+  
+    const tiempoTranscurrido = {
+      dias,
+      horas: horas % 24,
+      minutos: minutos % 60,
+      segundos: segundos % 60
+    };
+  
+    return tiempoTranscurrido;
   }
