@@ -5,15 +5,15 @@
         <template v-slot:activator="{ props }">
           <v-btn icon v-bind="props">
             <v-avatar color="brown" size="large">
-              <v-img :src="user.image" alt="John"></v-img>
+              <v-img :src="user.image" alt="?"></v-img>
             </v-avatar>
           </v-btn>
         </template>
         <v-card>
           <v-card-text>
             <div class="mx-auto text-center">
-              <v-badge :icon="`${mdiPencil}`" location="bottom end">
-                <v-avatar color="brown">
+              <v-badge :icon="`${mdiPencil}`" location="bottom end" offset-x="15" offset-y="7">
+                <v-avatar color="brown" size="100">
                   <v-img :src="user.image" alt="John"></v-img>
                 </v-avatar>
               </v-badge>

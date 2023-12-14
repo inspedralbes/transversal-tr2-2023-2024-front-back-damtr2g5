@@ -1,9 +1,9 @@
 <template>
-  <v-app>
+  <v-app class="no-background">
       <v-container>
-          <v-row>
-              <v-col>
-                  <ActivitySelector/>
+          <v-row justify="center">
+              <v-col cols="12" sm="8" md="12" lg="10" xl="12">
+                  <ActivitySelector />
               </v-col>
           </v-row>
       </v-container>
