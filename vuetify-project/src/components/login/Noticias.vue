@@ -1,28 +1,29 @@
 
 <template>
     <div class="bg myfont">
-        <h2 class="bigger-font">Noticias</h2>
-        <div>
-           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-             Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure 
-             dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non 
-             proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        <v-row>
+            <v-col cols="12" sm="5" md="12" lg="12">
+                <h2 class="bigger-font">Notícies</h2>
+                <div>
+                    Sabías que para hacer que esto se vea medio bien he perdido 2 años de vida?
 
 
-        </div>
+                </div>
+            </v-col>
+        </v-row>
     </div>
 </template>
 <style>
-.bg{
+.bg {
     background: url(..\..\assets\scroll-transparent.png);
     background-size: contain;
     background-repeat: no-repeat;
     width: 100%;
     height: 31vmax;
-    padding-top: 5em;
+    padding-top: 10%;
     padding-left: 5em;
     padding-right: 5em;
-    
+
 }
 </style>
   
