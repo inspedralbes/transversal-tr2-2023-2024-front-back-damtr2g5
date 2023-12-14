@@ -1,6 +1,6 @@
 
 <template>
-    <v-sheet class="bg myfont" elevation="4" rounded width="100%">
+    <div class="bg myfont">
         <h2 class="bigger-font">Noticias</h2>
         <div>
            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
@@ -10,17 +10,19 @@
 
 
         </div>
-    </v-sheet>
+    </div>
 </template>
 <style>
 .bg{
     background: url(..\..\assets\scroll-transparent.png);
     background-size: contain;
     background-repeat: no-repeat;
-    width: 100vw;
-    padding-top: 2em;
+    width: 100%;
+    height: 31vmax;
+    padding-top: 5em;
     padding-left: 5em;
     padding-right: 5em;
+    
 }
 </style>
   
