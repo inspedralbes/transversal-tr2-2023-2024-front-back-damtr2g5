@@ -551,13 +551,15 @@ app.get('/consultarUsuaris', async (req, res) => {
 });
 
 //GET USUARIO POR ID
-app.get('/consultarUsuariPerId', async (req, res) => {
+app.get('/consultarUsuariPerId/:id', async (req, res) => {
     try {
+        console.log(req.params.id);        
         const usuari = await new Promise((resolve, reject) => {
-            mysqlConnection.SelectUserById(req.query.id, (usuari) => {
-                resolve(usuari);
+            mysqlConnection.SelectUserById(req.params.id, (usuari) => {
+                resolve(usuari[0]);
             });
-        });
+        });      
+        
 
         let usuariEnviar = {
             id: usuari.id,
@@ -569,7 +571,7 @@ app.get('/consultarUsuariPerId', async (req, res) => {
             lvl: usuari.lvl,
             image: usuari.image
             //image: `${SERVER_URL}:${port}/imagen/${usuari.image}`
-        };
+        }
 
         res.json(usuariEnviar);
     } catch (error) {
