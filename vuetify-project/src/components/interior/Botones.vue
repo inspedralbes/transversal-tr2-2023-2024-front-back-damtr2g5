@@ -76,17 +76,6 @@ export default {
 }
 </script>
 <style>
-.super-cool-button {
-  width: 100%;
-  padding: 20px;
-  cursor: pointer;
-  margin-bottom: 20px;
-  display: inline-flex;
-  min-width: 150px;
-  justify-content: center;
-  align-items: center;
-}
-
 .custom-btn {
   width: 100%;
   position: relative;
