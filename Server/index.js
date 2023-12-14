@@ -444,8 +444,7 @@ app.post('/registrarUsuari', (req, res) => {
             mysqlConnection.InsertUser([usuariDades.name, usuariDades.surname, usuariDades.email, usuariDades.contrasena], ((result) => { res.send(result) }));
         } else {
             // Mail en uso
-            res.status(403).send();
-            throw new Error("Mail en uso");
+            res.status(123).send("Mail en uso");
         }
     })
 });
