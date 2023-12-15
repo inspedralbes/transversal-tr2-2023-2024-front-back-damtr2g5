@@ -240,6 +240,26 @@ function UpdateImage(valores, callback) {
         });
     });
 }
+
+//Quitar un usuario de una aula
+function RemoveUserFromClassroom(id, callback) {
+    pool.getConnection((error, connection) => {
+        if (error) {
+            console.error('Error al obtener la conexión del pool:', error);
+            throw error;
+        }
+
+        connection.query('UPDATE users SET id_classroom = NULL WHERE id = ?', id, (errorQuery, results, fields) => {
+            connection.release(); // Liberar la conexión al terminar la consulta
+
+            if (errorQuery) {
+                console.error('Error al ejecutar la consulta:', errorQuery);
+                throw errorQuery;
+            }
+            callback(results);
+        });
+    });
+}
 function selectLevel(level, callback) {
     pool.getConnection((error, connection) => {
         if (error) {
