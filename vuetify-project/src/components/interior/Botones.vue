@@ -1,22 +1,21 @@
 <template>
-  <v-item-group selected-class="bg-primary">
-    <v-container>
-      <v-item v-for="n in opciones" :key="n">
-        <v-card class="d-flex align-center super-cool-button" dark height="200" @click="onToggle(n)">
-          <div class="text-h3 text-center">
+  <v-container class="fill-height" style="padding-right: 5%; padding-left: 5%;">
+    <v-row>
+      <v-col cols="12" v-for="n in opciones">
+        <button class="custom-btn" @click="onToggle(n)">
+          <span class="shadow"></span>
+          <span class="edge"></span>
+          <span class="front text">
+            <div class="myfont biggest-font">
             {{ isSelected ? 'Log In' : n }}
           </div>
-        </v-card>
-      </v-item>
-    </v-container>
-  </v-item-group>
-  <v-container>
-    <v-row>
-      <v-col cols="10">
+          </span>
+        </button>
       </v-col>
-      <v-col cols="2" class="d-flex flex-row-reverse mb-6">
-        <v-btn v-if="codigoNuevo == ''" color="primary" @click="dialog = true">Unirte a una clase</v-btn>
-        <v-btn v-else color="primary" @click="dialog = true">{{ codigoNuevo }}</v-btn>
+      <v-col style="text-align: end;" cols="12">
+        <v-btn variant="plain outlined" class="mt-10 myfont oxford-blue-bg bitter-sweet" v-if="codigoNuevo == ''"
+          @click="dialog = true">Unirte a una clase</v-btn>
+        <v-btn v-else class=" myfont oxford-blue-bg bitter-sweet" @click="dialog = true">{{ codigoNuevo }}</v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -76,7 +75,7 @@ export default {
     },
   data() {
     const opciones = [
-      'Entrenamiento',
+      'Entrenament',
       'Batalla',
     ]
     return {
@@ -112,13 +111,8 @@ export default {
       }
     },
     onToggle(route) {
-      var isAuth = this.appStore.isAuthenticated
-      if (!isAuth) {
-        alert('Has de logearte para acceder');
-        return;
-      }
-      switch(route) {
-        case 'Entrenamiento':
+      switch (route) {
+        case 'Entrenament':
           this.$router.push({ name: 'Entrenamiento' })
           break;
         case 'Batalla':

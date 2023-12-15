@@ -1,21 +1,46 @@
 <template>
-    <v-container>
-        <v-btn elevation="6" border="lg opacity-12" rounded="lg" class="red-btn"
-            :style="{ marginBottom: '20px', width: '40vw', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">{{
-                this.Ejercicio.nombre }}</v-btn>
-        <v-sheet color="#f68b1f" elevation="6" border="lg opacity-12" max-width="2000" max-height="500" rounded="xl"
-            width="1200" height="500" class="pa-4 text-center mx-auto">
-            <v-card-title>Numero de preguntes: {{ this.cantidadEjerciciosH.length }}</v-card-title>
-            <v-card-title>Tematica: {{ this.tema }}</v-card-title>
-            <v-card-title>Realitzat: {{ estado }}</v-card-title>
-            <v-card-title>Preguntes contestades: {{ this.cantidadEjercicios.length }} / {{ this.cantidadEjerciciosH.length }}</v-card-title>            
-            <v-card-title>EXP: {{ this.exp }} xp</v-card-title>
-        </v-sheet>
-        <v-btn @click="empezarEjercicio" elevation="6" border="lg opacity-12" rounded="lg" class="blue-btn"
-            :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Començar</v-btn>
+    <v-container class="centered">
+        <v-card class="myfont platinum-bg round-border">
+            <v-card-title class="violet-bg white biggest-font pa-8">{{ this.Ejercicio.nombre }}</v-card-title>
+            <v-row>
+                <v-col style="padding-right: 0;" cols="12" md="6" lg="6">
+                    <div style="text-align: left;" class="white-bg">
+                        <div class="bigger-font ml-6 pt-2">Informació</div>
+                        <v-divider></v-divider>
+                        <div style="margin-left: 3em;" class="mt-4 pb-4">
+                            <ul>
+                                <li>Tematica: {{ this.tema }} </li>
+                                <li>Tipus: {{ this.tipo }} </li>
+                                <li>{{ this.cantidadEjerciciosH.length }} preguntes</li>
+                                <li>{{ this.cantidadEjercicios.length }} / {{ this.cantidadEjerciciosH.length }} contestades
+                                </li>
+                                <li>{{ this.expTotal }} punts d'exp.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </v-col>
+                <v-col class="pr-6 pb-10" cols="16" md="6" lg="6">
+                    <div class="mt-3" style="height: 70%;">
+                        <v-progress-circular width="15" style="height: 100%; width: 100%;" :model-value="(expTotal - expRestante)/expTotal *100" :color="barColor">
+                            <div class="display-1">{{ expTotal - expRestante }}/{{ expTotal }} exp</div>
+                        </v-progress-circular>
+                    </div>
+                    <button class="custom-btn mt-3" @click="empezarEjercicio">
+                        <span class="shadow"></span>
+                        <span class="edge"></span>
+                        <span class="front text">
+                            Jugar
+                        </span>
+                    </button>
+                </v-col>
+            </v-row>
+
+
+        </v-card>
+
     </v-container>
 </template>
-  
+<style></style>
     
 <script>
 import { GetResueltas, getEjercicios, getExpEjer } from '@/communicationsManager';
@@ -24,47 +49,51 @@ import { useAppStore } from '@/store/app';
 export default {
     name: 'InfoEjercicio',
     setup() {
-          const appStore = useAppStore()
-          return {
-              appStore
-          };
-      },
+        const appStore = useAppStore()
+        return {
+            appStore
+        };
+    },
     data() {
         return {
-            estado:"No",
+            barColor: '#69306D',
+            estado: false,
             ejercicioId: null,
             cantidadEjerciciosH: 0,
-            cantidadEjercicios:0,
-            tema: "Básico",
-            exp:0,
+            cantidadEjercicios: 0,
+            tema: "???",
+            tipo: "???",
+            expTotal: 0,
+            expRestante: 0,
             Ejercicio: {}
         };
     },
 
     methods: {
         empezarEjercicio() {
-            
-            this.$router.push({ name: 'Ejercicio', params: { id: this.Ejercicio.id }});
+
+            this.$router.push({ name: 'Ejercicio', params: { id: this.Ejercicio.id } });
         }
 
     },
 
     created() {
-        
+
         // Para guardar el parámetro 'id' de la ruta en 'ejercicioId'
-        
-        getEjercicios(this.$route.params.id).then((res)=> {
+
+        getEjercicios(this.$route.params.id).then((res) => {
             this.Ejercicio = res
-            console.log(this.Ejercicio.preguntas)
+            console.log("Ejercicio", this.Ejercicio)
             this.appStore.setEjercicio(this.Ejercicio)
             let userid = this.appStore.getLoginInfo
-            
+
             this.cantidadEjerciciosH = res.preguntas;
-            
+            this.tipo = res.tipo;
+
             res.preguntas.forEach(element => {
-                
+
                 //Se calcula la máxima experiencia que se puede conseguir en el ejercicio
-                this.exp = this.exp + element.experiencia;
+                this.expTotal = this.expTotal + element.experiencia;
             })
             let dato = {
                 "userId": parseInt(userid.id),
@@ -74,34 +103,35 @@ export default {
             GetResueltas(dato).then((res) => {
                 this.cantidadEjercicios = res.filter(element => element.correcta == true);
                 if (res.length > 0) {
-                console.log("Preguntas respondidas: ",res)
-                this.estado = "Si"
-            }
+                    console.log("Preguntas respondidas: ", res)
+                    this.estado = true
+                }
             });
             //Calcular experiencia de intentos anteriores (se mostrará la experiencia restante por conseguir)
             getExpEjer(dato).then((res) => {
-                this.exp = this.exp - res.xp
+                this.expRestante = this.expTotal - res.xp
+                console.log("Experiencia: ", this.expRestante, " / ", this.expTotal);
+                if (this.expRestante == this.expTotal) {
+                    this.barColor = '#69306D'
+                }
+                if (this.expRestante/this.expTotal < 1) {
+                    this.barColor = 'error'
+                }
+                if (this.expRestante/this.expTotal < 0.4) {
+                    this.barColor = 'warning'
+                } 
+                if (this.expRestante == 0) {
+                    this.barColor = 'success'
+                }
             })
 
-            
+
         })
-        
-       
+
+
     },
 
 
 }
 
 </script>
-
-<style>
-.red-btn {
-    background-color: #ff3547 !important;
-    color: white !important;
-}
-
-.blue-btn {
-    background-color: #007bff !important;
-    color: white !important;
-}
-</style>

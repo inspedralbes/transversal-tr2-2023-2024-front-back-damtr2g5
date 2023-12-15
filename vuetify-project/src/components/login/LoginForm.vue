@@ -8,61 +8,61 @@
                 <v-btn color="primary" text @click="loginIncorrectDialog = false">Cerrar</v-btn>
             </v-card-actions>
         </v-card>
-    </v-dialog>
-
-    <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto h-auto pa-4" elevation="4" rounded max-width="300" width="100%">
+    </v-dialog>    
+    <v-sheet class="round-border myfont bitter-sweet d-flex align-center justify-center flex-wrap text-center mx-auto h-auto pa-9" elevation="4" >
         <div>
-            <div class="text-h5 font-weight-medium mb-2 oxford-blue">
-                LOGIN
+            <div class="big-font mb-2">
+                Et donem la benvinguda
             </div>
             <form>
-                <v-text-field v-model="email" label="Email"></v-text-field>
+                <v-text-field variant="underlined" v-model="email" label="Email"></v-text-field>
 
-                <v-text-field @input="handleHashing($event.target.value)" :append-icon="show0 ? '$eye' : '$eyeOff'"
+                <v-text-field variant="underlined" @input="handleHashing($event.target.value)" :append-icon="show0 ? '$eye' : '$eyeOff'"
                             :type="show0 ? 'text' : 'password'" label="Contrasenya"
                             @click:append="show0 = !show0" @keyup.enter="guardar()"></v-text-field>
 
-                <v-btn @click="guardar()" block class="mt-2">Login</v-btn>
+                <v-btn @click="guardar()" block class="mt-2 pa-6 button bitter-sweet oxford-blue-bg">LOGIN</v-btn>
             </form>
             <GoogleLogin :callback="callback" prompt/>
             <div class="g-signin2" data-onsuccess="onSignIn"></div>
-            <p class="mt-3"> Encara no t'has registrat? <a href="#" @click.stop.prevent="dialog = true,step=1"> Registra't </a></p>
-            <v-dialog v-model="dialog" class="w-50">
+            <p class="mt-3 black-olive"> Encara no t'has registrat? <a href="#" class="lavender-pink" @click.stop.prevent="dialog = true,step=1"> Registra't </a></p>
+            <v-dialog v-model="dialog" class="w-50 myfont">
                 <v-card class="mx-auto" max-width="800" width="500">
-                    <v-card-title class="text-h6 font-weight-regular justify-space-between">
-                        <span>{{ currentTitle }}</span>
-                        <v-avatar color="primary" size="24" v-text="step"></v-avatar>
+                    <v-card-title class="text-h6  justify-space-between">
+                        {{ currentTitle }}
+                        <v-avatar class="text-h6 bitter-sweet-bg" style="color: white;" size="20" v-text="step"></v-avatar>
                     </v-card-title>
 
                     <v-window v-model="step">
-                        <v-window-item :value="1">
+                        <v-window-item class="bitter-sweet" :value="1">
                             <v-card-text>
-                                <v-text-field label="Email" placeholder="ejemplo@ejemplo.com" v-model="emailD"></v-text-field>
+                                <v-text-field variant="outlined" label="Email" placeholder="ejemplo@ejemplo.com" v-model="emailD"></v-text-field>
                                 <v-row>
                                     <v-col cols="6">
-                                        <v-text-field label="Nombre" v-model="username"></v-text-field>
-                                    </v-col>
-                                    <v-col cols="6">
-                                        <v-text-field label="Apellidos" v-model="surname"></v-text-field>
-                                    </v-col>
+                                        <v-text-field variant="outlined" label="Nom" v-model="username"></v-text-field></v-col>
+                                    <v-col cols="6"><v-text-field variant="outlined" label="Cognoms"
+                                            v-model="surname"></v-text-field></v-col>
                                 </v-row>
-                                <span class="text-caption text-grey-darken-1">
+                                <span  class="bitter-sweet">
                                     Aquest és el correu que faràs servir per al login
                                 </span>
                             </v-card-text>
                         </v-window-item>
 
-                        <v-window-item :value="2">
+                        <v-window-item class="bitter-sweet" :value="2">
                             <v-container>
                                 <v-card-text>
                                     <v-row>
-                                        <v-text-field :append-icon="show1 ? '$eye' : '$eyeOff'" :type="show1 ? 'text' : 'password'" label="Contrasenya" @click:append="show1 = !show1" v-model="passwordD"></v-text-field>
-                                    </v-row>
+                                        <v-text-field variant="outlined" :append-icon="show1 ? '$eye' : '$eyeOff'"
+                            :type="show1 ? 'text' : 'password'" label="Contrasenya"
+                            @click:append="show1 = !show1"
+                                            v-model="passwordD"></v-text-field></v-row>
                                     <v-row>
-                                        <v-text-field :append-icon="show2 ? '$eye' : '$eyeOff'" :type="show2 ? 'text' : 'password'" label="Contrasenya" @click:append="show2 = !show2" v-model="passwordComprobacion"></v-text-field>
-                                    </v-row>
-                                </v-card-text>
-                            </v-container>
+                                        <v-text-field variant="outlined" :append-icon="show2 ? '$eye' : '$eyeOff'"
+                            :type="show2 ? 'text' : 'password'" label="Confirmar contrasenya"
+                            @click:append="show2 = !show2"
+                                            v-model="passwordComprobacion"></v-text-field></v-row>
+                                </v-card-text> </v-container>
                         </v-window-item>
 
                         <v-window-item :value="3">
@@ -83,17 +83,17 @@
                     <v-divider></v-divider>
 
                     <v-card-actions>
-                        <v-btn v-if="step == 2" variant="text" @click="step--">
-                            Back
+                        <v-btn class="platinum-bg oxford-blue" v-if="step == 2" variant="text" @click="step--">
+                            Enrere
                         </v-btn>
                         <v-spacer></v-spacer>
-                        <v-btn v-if="step < 2" color="primary" variant="flat" @click="step++">
-                            Next
+                        <v-btn class="oxford-blue-bg bitter-sweet" v-if="step < 2"  variant="flat" @click="step++">
+                            Seguent
                         </v-btn>
-                        <v-btn v-if="step == 2 && this.passwordD == this.passwordComprobacion && this.passwordD != '' " color="primary" variant="flat" @click="register()">
-                            Register
+                        <v-btn class="oxford-blue-bg bitter-sweet" v-if="step == 2 && this.passwordD == this.passwordComprobacion && this.passwordD != '' " color="primary" variant="flat" @click="register()">
+                            Registrar-se
                         </v-btn>
-                        <v-btn v-if="step > 2" color="primary" variant="flat" @click="dialog=false">
+                        <v-btn  v-if="step > 2" class="oxford-blue-bg bitter-sweet" variant="flat" @click="dialog=false">
                             Exit
                         </v-btn>
                     </v-card-actions>
@@ -244,11 +244,11 @@ export default {
     }, computed: {
         currentTitle() {
             switch (this.step) {
-                case 1: return 'Sign-up'
-                case 2: return 'Create a password'
-                case 3: return 'Account created'
-                case 4: return 'Register error'
-                default: return 'Account created'
+                case 1: return `Registra't`
+                case 2: return 'Crea una contrasenya'
+                case 3: return 'Compte creat'
+                case 4: return 'Error de registre'
+                default: return 'Compte creat'
             }
         },
     },
@@ -256,6 +256,7 @@ export default {
 </script>
 
 <style scoped>
+
     .small-dialog .v-dialog__content {
         width: 50%; /* Ajusta esto a tu preferencia */
         max-width: 300px; /* Ajusta esto a tu preferencia */
