@@ -131,12 +131,7 @@ app.get("/imagen/:nombreArchivo", (req, res) => {
     const fileName = req.params.nombreArchivo;
     const filePath = path.join(__dirname, 'avatars', fileName);
 
-    res.download(filePath, (err) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send('Error al descargar el archivo.');
-        }
-    });
+    res.sendFile(filePath);
 });
 
 const multer = require('multer');
@@ -155,7 +150,7 @@ app.post('/descargar', upload.single('file'), (req, res) => {
     const uniqueFileName = uuidv4() + path.extname(fileName); // Añade la extensión original
 
     // Ruta de destino para guardar el archivo
-    const uploadPath = path.join(__dirname, 'avatars', uniqueFileName);
+    const uploadPath = path.join(__dirname, 'avatars', uniqueFileName+".jpg");
     // Mover el archivo a la ubicación deseada
     fs.rename(uploadedFile.path, uploadPath, (err) => {
         if (err) {
