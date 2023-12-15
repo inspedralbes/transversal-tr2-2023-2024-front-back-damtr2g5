@@ -19,13 +19,13 @@
                         </div>
                     </div>
                 </v-col>
-                <v-col class="pr-6 pb-8" cols="16" md="6" lg="6">
-                    <div style="height: 70%;">
-                        <v-progress-circular style="height: 100%; width: 100%;" :model-value="(expTotal - expRestante)/expTotal *100" class="violet">
-                            <div class="display-1">{{ expTotal - expRestante }} exp</div>
+                <v-col class="pr-6 pb-10" cols="16" md="6" lg="6">
+                    <div class="mt-3" style="height: 70%;">
+                        <v-progress-circular width="15" style="height: 100%; width: 100%;" :model-value="(expTotal - expRestante)/expTotal *100" :color="barColor">
+                            <div class="display-1">{{ expTotal - expRestante }}/{{ expTotal }} exp</div>
                         </v-progress-circular>
                     </div>
-                    <button class="custom-btn" @click="empezarEjercicio">
+                    <button class="custom-btn mt-3" @click="empezarEjercicio">
                         <span class="shadow"></span>
                         <span class="edge"></span>
                         <span class="front text">
@@ -56,6 +56,7 @@ export default {
     },
     data() {
         return {
+            barColor: '#69306D',
             estado: false,
             ejercicioId: null,
             cantidadEjerciciosH: 0,
@@ -109,6 +110,19 @@ export default {
             //Calcular experiencia de intentos anteriores (se mostrará la experiencia restante por conseguir)
             getExpEjer(dato).then((res) => {
                 this.expRestante = this.expTotal - res.xp
+                console.log("Experiencia: ", this.expRestante, " / ", this.expTotal);
+                if (this.expRestante == this.expTotal) {
+                    this.barColor = '#69306D'
+                }
+                if (this.expRestante/this.expTotal < 1) {
+                    this.barColor = 'error'
+                }
+                if (this.expRestante/this.expTotal < 0.4) {
+                    this.barColor = 'warning'
+                } 
+                if (this.expRestante == 0) {
+                    this.barColor = 'success'
+                }
             })
 
 
