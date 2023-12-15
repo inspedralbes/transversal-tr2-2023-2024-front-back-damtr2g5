@@ -15,8 +15,6 @@ function initializeSocket(server, cors) {
         console.log("a user connected", socket.request.session.id);
 
         socket.join(socket.request.session.id);
-        let equipo1=[]
-        let equipo2=[]
         socket.on('createRoom', (room) => {
             room.players = 1;
             room.started = false;
@@ -25,10 +23,10 @@ function initializeSocket(server, cors) {
             room.users = [];
             room.users.push({
                 id: socket.request.session.id, email: socket.request.session.user?.email || "???",
-                image: socket.request.session.user?.image, level: socket.request.session.user?.lvl, answers: 0
+                image: socket.request.session.user?.image, level: socket.request.session.user?.lvl, preguntas: []
             });
             room.starttime = ''
-            room.endtime = ''            
+            room.endtime = ''       
             console.log("socket rooms", socket.rooms);
             socket.join("GameRoom-" + socket.request.session.id);
             created = rooms.addRoom(room, socket.request.session.id);
@@ -61,7 +59,7 @@ function initializeSocket(server, cors) {
             socket.join(room.id);
             joined = rooms.joinRoom(room, {
                 id: socket.request.session.id, email: socket.request.session.user?.email || "???",
-                image: socket.request.session.user?.image, level: socket.request.session.user?.lvl, answers: 0
+                image: socket.request.session.user?.image, level: socket.request.session.user?.lvl, preguntas: []
             });
             if (joined) {
                 io.to(socket.request.session.id).emit("roomJoined", room);
@@ -70,7 +68,6 @@ function initializeSocket(server, cors) {
             }
         });
         socket.on('joinTeam', (team) => {
-            console.log("joinTeam", rooms.getRoom(team.roomId));
             console.log("socket rooms", socket.rooms);
             const room = rooms.getRoom(team.roomId);
             room.users.forEach((user) => {
@@ -88,15 +85,14 @@ function initializeSocket(server, cors) {
                     room.users.forEach((user) => {
                         if (user.team === 1) {
                             teams.team1.push(user);
-                            equipo1.push({"user":user.id,"preguntas":[]})
                         } else if (user.team === 2) {
                             teams.team2.push(user);
-                            equipo2.push({"user":user.id,"preguntas":[]})
                         }
                     });
                     io.to(team.roomId).emit("teamUsers", teams);
                 }
-            });
+            });            
+            console.log("joinTeam", rooms.getRoom(team.roomId));
         });
 
         socket.on('getTeamUsers', (room) => {
@@ -177,8 +173,6 @@ function initializeSocket(server, cors) {
         });
 
         socket.on('checkAnswer', (data) => {
-            console.log(equipo1);
-            console.log(equipo2);
             getPregunta(data.question.id)
                 .then((pregunta) => {
                     answer = data.answer;
@@ -196,27 +190,35 @@ function initializeSocket(server, cors) {
                         }
                         io.to(room.id).emit("updateTeams", rooms.getRoom(room.id));
                     }
-                    try{
-                        equipo1.filter((u) => u.user === socket.request.session.id)[0].preguntas.push({"pregunta":pregunta.id,"correcta":correcto})
-                    }catch(e){
-                        console.log("error",e);
-                    }try{
-                        equipo2.filter((u) => u.user === socket.request.session.id)[0].preguntas.push({"pregunta":pregunta.id,"correcta":correcto})
-                    }catch(e){
-                        console.log("error",e);
-                    }
-                    console.log("team1", rooms.getRoom(room.id).teams.team1[0].hp);
-                    console.log("team2", rooms.getRoom(room.id).teams.team2[0].hp);
+                    rooms.getRoom(room.id).users.filter((u)=>u.id===socket.request.session.id)[0].preguntas.push({"pregunta":pregunta.id,"correcta":correcto})
+
+                    console.log("team1 hp ", rooms.getRoom(room.id).teams.team1[0].hp);
+                    console.log("team2 hp", rooms.getRoom(room.id).teams.team2[0].hp);
                     if (rooms.getRoom(room.id).teams.team1[0].hp <= 0 || rooms.getRoom(room.id).teams.team2[0].hp <= 0) {
                         rooms.getRoom(room.id).winner = (rooms.getRoom(room.id).teams.team1[0].hp <= 0) ? 2 : 1;
                         io.to(room.id).emit("gameFinished", rooms.getRoom(room.id));
                         let fin = obtenerFechaYHoraActual()
                         rooms.getRoom(room.id).endtime = fin
+
+                        let equipo1 =  rooms.getRoom(room.id).users.filter((u)=>u.team===1)
+                        const resultado1 = equipo1.map(item => {
+                            return {
+                                email: item.email,
+                                preguntas: item.preguntas
+                            };
+                        });
+                        let equipo2 =  rooms.getRoom(room.id).users.filter((u)=>u.team===2)
+                        const resultado2 = equipo2.map(item => {
+                            return {
+                                email: item.email,
+                                preguntas: item.preguntas
+                            };
+                        });
                         let batalla = {
                             "battle": rooms.getRoom(room.id).name,
                             "ganador": rooms.getRoom(room.id).winner,
-                            "equipo1": equipo1,
-                            "equipo2": equipo2,
+                            "equipo1": resultado1,
+                            "equipo2": resultado2,
                             "matchsize": rooms.getRoom(room.id).players,
                             "time": rooms.getRoom(room.id).starttime,
                             "duration": calcularTiempoTranscurrido(rooms.getRoom(room.id).starttime, rooms.getRoom(room.id).endtime)
