@@ -1,7 +1,7 @@
 <!--FORMATO SELECCIONAR-->
 <template>
     <div class="mt-15 ml-15 mr-15">
-        <div class="text-h5 font-weight-medium mb-2 ">
+        <div class="big-font mb-2 ">
             {{ pregunta.pregunta }}
         </div>
         <v-btn-toggle :disabled="isDisabled" v-model="selectedAnswer" mandatory color="rgb(0, 0, 0,0.9)"

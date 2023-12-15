@@ -117,7 +117,7 @@ export default {
                 if (this.expRestante/this.expTotal < 1) {
                     this.barColor = 'error'
                 }
-                if (this.expRestante/this.expTotal < 0.4) {
+                if (this.expRestante/this.expTotal < 0.5) {
                     this.barColor = 'warning'
                 } 
                 if (this.expRestante == 0) {

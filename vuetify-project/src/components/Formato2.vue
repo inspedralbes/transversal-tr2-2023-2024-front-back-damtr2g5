@@ -1,7 +1,7 @@
 <!--FORMATO UNIR-->
 <template >
     <div class="mt-15 ml-15 mr-15">
-        <div class="text-h5 font-weight-medium mb-2">
+        <div class="big-font font-weight-medium mb-2">
             {{ state.pregunta.pregunta }}
         </div>
 

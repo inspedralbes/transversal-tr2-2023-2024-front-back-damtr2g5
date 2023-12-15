@@ -4,6 +4,16 @@
     text-align: center; 
     align-items: center;
 }
+.mydisabled{
+    pointer-events: none;
+
+}
+
+.disabledTransparent{
+    pointer-events: none;
+    opacity: 0.5;
+}
+
 .bottom-center{
     display: flex;
     justify-content: center;

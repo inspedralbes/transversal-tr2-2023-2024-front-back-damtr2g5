@@ -1,9 +1,12 @@
 <template>
     <v-container>
-        <v-row>
-            <v-col cols="12" class="py-2">
-                <v-btn-toggle v-model="selectedButton" rounded="0" color="deep-purple-accent-3" group mandatory>
-                    <v-btn :disabled="isButtonDisabled(index)" :class="indexColor(index)"
+        <v-row class="myfont centered">
+            <div class="violet-bg white biggest-font round-border pt-4 pl-6 pr-6 mb-12" style="margin-top: 70px;">{{
+                Ejercicio.nombre }}</div>
+            <v-col cols="12" class="py-2 centered">
+                <v-btn-toggle style="overflow-x: auto;max-width: 800px; display: flex;" class="round-border"
+                    v-model="selectedButton" divided mandatory>
+                    <v-btn :active="false" color="#69306D" :class="buttonClass(index) + ' big-font'"
                         v-for="(boton, index) in Ejercicio.preguntas" :key="boton.id" :value="index"
                         @click="botoncliclado(boton)">
                         {{ index + 1 }}
@@ -12,36 +15,32 @@
             </v-col>
         </v-row>
     </v-container>
-    <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto px-4" elevation="4" height="auto"
-        rounded max-width="800" width="100%"  >
-        <v-container>
+    <v-container class="centered">
+        <v-row class="centered">
+            <v-col class="white-bg round-border" cols="12" lg="8" md="10" sm="11">
 
-            <v-row style="position: relative;" justify="center">
-                <v-overlay v-model="overlay" :scrim="false" contained class="align-center justify-center">
-                    <v-icon class="stamp" :color="coloricono" :icon="icono"
-                        style="width: 1em; height: 1em; font-size: 10em;"></v-icon>
-                </v-overlay>
-                <v-col>
-                    <component :isDisabled.sync="disableComponent" :key="key" :is="componentSelecionat"
+                <v-col style="position: relative;">
+                    <v-overlay v-model="overlay" :scrim="false" contained class="align-center justify-center">
+                        <v-icon class="stamp" :color="coloricono" :icon="icono"
+                            style="width: 1em; height: 1em; font-size: 10em;"></v-icon>
+                    </v-overlay>
+                    <component class="myfont" :isDisabled.sync="disableComponent" :key="key" :is="componentSelecionat"
                         v-if="componentSelecionat" :preguntaSeleccionada="preguntaSeleccionada" />
                 </v-col>
-            </v-row>
-            <v-row>
-                <v-col>
-                    <v-btn :disabled="disabled" @click="comprobar(Ejercicio.preguntas[selectedButton].id)" elevation="6"
-                        border="lg opacity-12" rounded="lg" class="blue-btn mb-4"
-                        :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Comprobar</v-btn>
-                    <v-btn v-if="indexArray.indexOf(0) === -1" @click="finalizarEjercicio" elevation="6"
-                        border="lg opacity-12" rounded="lg" class="mb-10" color="red"
-                        :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">Finalizar
-                        Ejercicio</v-btn>
+
+                <button v-if="indexArray.indexOf(0) !== -1" v-bind:class="'custom-btn ' + disabled" style="width: 30%;"
+                    @click="comprobar(Ejercicio.preguntas[selectedButton].id)">
+                    <span class="shadow"></span>
+                    <span class="edge"></span>
+                    <span class="myfont front text">
+                        Comprobar
+                    </span>
+                </button>
 
 
-
-                </v-col>
-            </v-row>
-        </v-container>
-    </v-sheet>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
   
     
@@ -71,11 +70,11 @@ export default {
         Formato6
     },
     setup() {
-          const appStore = useAppStore()
-          return {
-              appStore
-          };
-      },
+        const appStore = useAppStore()
+        return {
+            appStore
+        };
+    },
     data() {
 
         return {
@@ -96,20 +95,25 @@ export default {
 
     methods: {
         finalizarEjercicio() {
-            this.$router.push({ name: 'Home' });
+            this.$router.push({ name: 'InfoEjercicio', params: { id: this.Ejercicio.id } });
         },
         isButtonDisabled(index) {
             console.log("deshabilidado", this.indexArray[index] != 0);
             return this.indexArray[index] != 0;
         },
-        indexColor(index) {
+        buttonClass(index) {
+            let parametros = '';
             if (this.indexArray[index] == 1) {
-                return 'correcta';
+                parametros = 'correcta';
             } else if (this.indexArray[index] == 2) {
-                return 'fallada';
+                parametros = 'fallada';
             } else {
-                return 'deep-purple-accent-3';
+                return '';
             }
+            if (this.isButtonDisabled(index)) {
+                parametros += ' mydisabled';
+            }
+            return parametros;
         },
         botoncliclado(pregunta) {
             this.preguntaSeleccionada = pregunta; // Guardar la pregunta seleccionada
@@ -146,8 +150,14 @@ export default {
                 this.indexArray[this.selectedButton] = response.correct ? 1 : 2;
                 this.coloricono = response.correct ? 'success' : 'red';
                 this.disableComponent = true;
-                correcta = response.correct;              
+                correcta = response.correct;
                 this.respuestaSelecionada = "";
+                console.log("index", this.indexArray.indexOf(0) === -1);
+                if(this.indexArray.indexOf(0) === -1){
+                    setTimeout(() => {
+                        this.finalizarEjercicio();
+                    }, 2000);
+                }
             });
 
 
@@ -169,23 +179,23 @@ export default {
     computed: {
         disabled() {
             if (this.respuestaSelecionada == "") {
-                return true;
+                return 'disabledTransparent';
             }
             else {
-                return false;
+                return '';
             }
         }
     },
 
     created() {
-            this.Ejercicio = getEjercicios(this.$route.params.id).then((res) => {
-                this.Ejercicio = res;
-                console.log("Ejercicio: ",this.Ejercicio)
-                this.botoncliclado(this.Ejercicio.preguntas[0]);
-                this.selectedButton = 0;
-                this.indexArray = Array.from(Array(this.Ejercicio.preguntas.length));
-                this.indexArray = this.indexArray.map(() => 0);
-            })
+        this.Ejercicio = getEjercicios(this.$route.params.id).then((res) => {
+            this.Ejercicio = res;
+            console.log("Ejercicio: ", this.Ejercicio)
+            this.botoncliclado(this.Ejercicio.preguntas[0]);
+            this.selectedButton = 0;
+            this.indexArray = Array.from(Array(this.Ejercicio.preguntas.length));
+            this.indexArray = this.indexArray.map(() => 0);
+        })
 
         store.$subscribe((mutation, state) => {
             console.log(state);
@@ -204,5 +214,4 @@ export default {
 .blue-btn {
     background-color: #007bff !important;
     color: white !important;
-}
-</style>
+}</style>
