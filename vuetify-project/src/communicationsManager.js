@@ -125,6 +125,21 @@ export async function getAvatar(imagen) {
   console.log(resp);
   return resp;
 }
+export async function getAnswerImage(imagen) {
+  try {
+    const response = await fetch(`${SERVER_URL}/imagenPregunta/${imagen}`, {
+      method: 'GET',
+      credentials: 'include',
+      mode: 'cors'
+    });
+    
+    const imagen = await response.json();
+    return imagen;
+  } catch (error) {
+    console.error('Error fetching image:', error);
+    return null;
+  }
+}
 export async function endSession() {
   return fetch(`${SERVER_URL}/logout`, { method: 'GET', credentials: 'include', mode: 'cors' });
 }

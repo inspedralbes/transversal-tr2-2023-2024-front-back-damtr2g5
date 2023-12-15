@@ -133,7 +133,7 @@ app.get("/imagen/:nombreArchivo", (req, res) => {
     res.sendFile(rutaImagen);
 });
 
-app.get("imagenPregunta/:nombreArchivo", (req, res) => {
+app.get("/imagenPregunta/:nombreArchivo", (req, res) => {
     const nombreArchivo = req.params.nombreArchivo;
     const rutaImagen = path.join(__dirname, "image_preguntas", nombreArchivo);
     console.log(rutaImagen);

@@ -87,7 +87,6 @@ export const useAppStore = defineStore('app', {
         
         login() {
             return new Promise((resolve, reject) => {
-              console.log("Login info: ", this.$state.loginInfo);
               login(this.$state.loginInfo).then((response) => response.json())
                 .then((data) => {
                   console.log()
@@ -95,16 +94,14 @@ export const useAppStore = defineStore('app', {
                   this.loading = false;
                   if (data.email != '') {
                     this.$state.auth = true;
-                    console.log("New auth state: ", this.$state.auth)
                     if(data.id_classroom != null) {
 
                       getAula(data.id_classroom).then((response) => {
-                        console.log("Aula nueva B): ",response)
                         this.$state.aulaInfo = this.setAulaInfo(response)
                       })
                     }
                     else {
-                      console.log("No hay aulas :'(")
+                      console.log("No hay aulas")
                     }
                     resolve(true);
                   } else {
@@ -113,7 +110,6 @@ export const useAppStore = defineStore('app', {
                     resolve(false);
                   }
                 }).catch((error) => {
-                  console.error('Error al iniciar sesión:', error);
                   this.$state.auth = false;
                   reject(error);
                 });
@@ -188,7 +184,8 @@ export const useAppStore = defineStore('app', {
                   rank: '',
                   lifetotal: '',
                   experience: '',
-                  image: ''
+                  image: '',
+                  id_classroom:''
                 };
                 this.$state.auth = false;
                 console.log("Auth after logout: ",this.$state.auth)

@@ -45,6 +45,7 @@ export default {
   data() {
     const appStore = useAppStore()
     const user = appStore.getLoginInfo;
+    
     return {
       user,
       mdiPencil,
@@ -60,9 +61,11 @@ export default {
         }
       })
       
-    }
+    },
+    
   }
 }
+
 </script>
 
 <style scoped>

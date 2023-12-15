@@ -4,12 +4,13 @@
             <div class="text-h5 font-weight-medium mb-2">
                 {{ pregunta.pregunta }}
             </div>
-            <v-slide-group v-model="model" class="pa-4" selected-class="bg-success" show-arrows>
+            <v-slide-group v-model="model" class="pa-4" selected-class="br-success" show-arrows>
                 <v-slide-group-item v-for="(respuesta, index) in pregunta.respuestas" :key="index"
                     v-slot="{ isSelected, toggle, selectedClass }">
-                    <v-card :disabled="isDisabled" color="grey-lighten-1" :class="['ma-4', selectedClass]" height="100" width="100"
-                        :image="respuesta.imagen" @click="toggle" :style="{ border: isSelected ? '5px solid green' : 'none' }">
-                        <!-- <v-icon v-if="isSelected" color="white" size="48" icon="mdi-close-circle-outline"></v-icon> -->
+                    <v-card :disabled="isDisabled" color="white lighten-1" :class="['ma-4', selectedClass]" height="100" width="100"
+                    :style="{ border: isSelected ? '5px solid green' : 'none' }">
+                    <div class="card-image" :style="{ backgroundImage: 'url(' + getImage(respuesta.imagen) + ')' }"
+                        @click="toggle"></div>
                     </v-card>
                 </v-slide-group-item>
             </v-slide-group>
@@ -19,6 +20,7 @@
 <script>
 import { useAppStore } from '@/store/app'
 import {watch, ref} from 'vue'
+import { getAnswerImage } from '@/communicationsManager';
 export default {
     name: 'Formato4',
     props: {
@@ -53,13 +55,26 @@ export default {
         };
     },
     methods: {
-        /*toggle() {
-            this.estilo.border = '2px solid green'
-        }*/
+        getImage(fileName) {
+            const image =`http://localhost:3001/imagenPregunta/${fileName}`
+            return image
+        },
+        
+        toggle() {
+            this.estilo.border = '2px solid red'
+        }
     },
     created() {       
         this.pregunta = this.preguntaSeleccionada;
     },
 };
 </script>
-<style scoped></style>
+<style scoped>
+.card-image {
+  width: 100%;
+  height: 100%;
+  background-size: contain; /* or 'contain' based on preference */
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+</style>
