@@ -1,3 +1,4 @@
+<!--FORMATO GRAFICO-->
 <template>
         <v-container>
             <div class="text-h5 font-weight-medium mb-2">
