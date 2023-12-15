@@ -47,6 +47,25 @@ function SelectUsers(callback) {
         });
     });
 }
+
+function SelectUsersByAula(id,callback) {
+    pool.getConnection((error, connection) => {
+        if (error) {
+            console.error('Error al obtener la conexión del pool:', error);
+            throw error;
+        }
+
+        connection.query('SELECT * FROM users WHERE id_classroom=?',id, (errorQuery, results, fields) => {
+            connection.release(); // Liberar la conexión al terminar la consulta
+
+            if (errorQuery) {
+                console.error('Error al ejecutar la consulta:', errorQuery);
+                throw errorQuery;
+            }
+            callback(results);
+        });
+    });
+}
 function SelectClassroomId(id,callback) {
     pool.getConnection((error, connection) => {
         if (error) {
