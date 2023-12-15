@@ -1,10 +1,10 @@
 <template>
     <v-container class="centered">
-        <v-card class="myfont platinum-bg round-border">
-            <v-card-title class="violet-bg white biggest-font pa-8">{{ this.Ejercicio.nombre }}</v-card-title>
-            <v-row>
-                <v-col style="padding-right: 0;" cols="12" md="6" lg="6">
-                    <div style="text-align: left;" class="white-bg">
+        <v-card style="overflow-y: hidden;" class="myfont platinum-bg round-border">
+            <v-card-title class="violet-bg white biggest-font pa-8" style="overflow: auto; text-overflow: clip;">{{ this.Ejercicio.nombre }}</v-card-title>
+            <v-row style="justify-content: center;">
+                <v-col style="padding-right: 0; padding-bottom: 0;" cols="12" sm="6" md="6" lg="6">
+                    <div style="text-align: left;" class="white-bg fill-height">
                         <div class="bigger-font ml-6 pt-2">Informació</div>
                         <v-divider></v-divider>
                         <div style="margin-left: 3em;" class="mt-4 pb-4">
@@ -19,13 +19,13 @@
                         </div>
                     </div>
                 </v-col>
-                <v-col class="pr-6 pb-10" cols="16" md="6" lg="6">
-                    <div class="mt-3" style="height: 70%;">
-                        <v-progress-circular width="15" style="height: 100%; width: 100%;" :model-value="(expTotal - expRestante)/expTotal *100" :color="barColor">
+                <v-col class="mb-3" cols="8" sm="6" md="6" lg="6">
+                    <div class="pt-4 pb-4" >
+                        <v-progress-circular size="200" width="15" :model-value="(expTotal - expRestante)/expTotal *100" :color="barColor">
                             <div class="display-1">{{ expTotal - expRestante }}/{{ expTotal }} exp</div>
                         </v-progress-circular>
                     </div>
-                    <button class="custom-btn mt-3" @click="empezarEjercicio">
+                    <button class="custom-btn" style="width: 80%;" @click="empezarEjercicio">
                         <span class="shadow"></span>
                         <span class="edge"></span>
                         <span class="front text">
