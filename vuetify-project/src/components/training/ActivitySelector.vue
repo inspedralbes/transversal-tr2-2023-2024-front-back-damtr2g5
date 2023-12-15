@@ -14,7 +14,7 @@
               <v-card class="pb-3 platinum-bg" style="border-radius: 20px;" flat>
                 <v-img :src="item.raw.img"></v-img>
 
-                <v-list-item style="background-color: #69306D; color: white;" class="mb-4" :subtitle="item.raw.tipo">
+                <v-list-item class="violet-bg white mb-4" :subtitle="item.raw.tipo">
                   <template v-slot:title>
                     <div class="big-font mb-2 mt-2">{{ item.raw.nombre }}</div>
                   </template>

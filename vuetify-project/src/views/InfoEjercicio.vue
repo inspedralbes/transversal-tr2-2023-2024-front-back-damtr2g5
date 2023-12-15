@@ -1,20 +1,46 @@
 <template>
-    <v-container style="display: flex;justify-content: center;  text-align: center; align-items: center;">
-        <v-card style="position: ;">
-        <v-btn>{{this.Ejercicio.nombre }}</v-btn>
-            <v-card-title>Numero de preguntes: {{ this.cantidadEjerciciosH.length }}</v-card-title>
-            <v-card-title>Tematica: {{ this.tema }}</v-card-title>
-            <v-card-title>Realitzat: {{ estado }}</v-card-title>
-            <v-card-title>Preguntes contestades: {{ this.cantidadEjercicios.length }} / {{ this.cantidadEjerciciosH.length }}</v-card-title>            
-            <v-card-title>EXP: {{ this.exp }} xp</v-card-title>
-        <v-btn @click="empezarEjercicio">Començar</v-btn>
-    </v-card>
+    <v-container class="centered">
+        <v-card class="myfont platinum-bg round-border">
+            <v-card-title class="violet-bg white biggest-font pa-8">{{ this.Ejercicio.nombre }}</v-card-title>
+            <v-row>
+                <v-col style="padding-right: 0;" cols="12" md="6" lg="6">
+                    <div style="text-align: left;" class="white-bg">
+                        <div class="bigger-font ml-6 pt-2">Informació</div>
+                        <v-divider></v-divider>
+                        <div style="margin-left: 3em;" class="mt-4 pb-4">
+                            <ul>
+                                <li>Tematica: {{ this.tema }} </li>
+                                <li>Tipus: {{ this.tipo }} </li>
+                                <li>{{ this.cantidadEjerciciosH.length }} preguntes</li>
+                                <li>{{ this.cantidadEjercicios.length }} / {{ this.cantidadEjerciciosH.length }} contestades
+                                </li>
+                                <li>{{ this.expTotal }} punts d'exp.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </v-col>
+                <v-col class="pr-6 pb-8" cols="16" md="6" lg="6">
+                    <div style="height: 70%;">
+                        <v-progress-circular style="height: 100%; width: 100%;" :model-value="(expTotal - expRestante)/expTotal *100" class="violet">
+                            <div class="display-1">{{ expTotal - expRestante }} exp</div>
+                        </v-progress-circular>
+                    </div>
+                    <button class="custom-btn" @click="empezarEjercicio">
+                        <span class="shadow"></span>
+                        <span class="edge"></span>
+                        <span class="front text">
+                            Jugar
+                        </span>
+                    </button>
+                </v-col>
+            </v-row>
+
+
+        </v-card>
+
     </v-container>
-
 </template>
-<style>
-
-</style>
+<style></style>
     
 <script>
 import { GetResueltas, getEjercicios, getExpEjer } from '@/communicationsManager';
@@ -23,47 +49,50 @@ import { useAppStore } from '@/store/app';
 export default {
     name: 'InfoEjercicio',
     setup() {
-          const appStore = useAppStore()
-          return {
-              appStore
-          };
-      },
+        const appStore = useAppStore()
+        return {
+            appStore
+        };
+    },
     data() {
         return {
-            estado:"No",
+            estado: false,
             ejercicioId: null,
             cantidadEjerciciosH: 0,
-            cantidadEjercicios:0,
-            tema: "Básico",
-            exp:0,
+            cantidadEjercicios: 0,
+            tema: "???",
+            tipo: "???",
+            expTotal: 0,
+            expRestante: 0,
             Ejercicio: {}
         };
     },
 
     methods: {
         empezarEjercicio() {
-            
-            this.$router.push({ name: 'Ejercicio', params: { id: this.Ejercicio.id }});
+
+            this.$router.push({ name: 'Ejercicio', params: { id: this.Ejercicio.id } });
         }
 
     },
 
     created() {
-        
+
         // Para guardar el parámetro 'id' de la ruta en 'ejercicioId'
-        
-        getEjercicios(this.$route.params.id).then((res)=> {
+
+        getEjercicios(this.$route.params.id).then((res) => {
             this.Ejercicio = res
-            console.log(this.Ejercicio.preguntas)
+            console.log("Ejercicio", this.Ejercicio)
             this.appStore.setEjercicio(this.Ejercicio)
             let userid = this.appStore.getLoginInfo
-            
+
             this.cantidadEjerciciosH = res.preguntas;
-            
+            this.tipo = res.tipo;
+
             res.preguntas.forEach(element => {
-                
+
                 //Se calcula la máxima experiencia que se puede conseguir en el ejercicio
-                this.exp = this.exp + element.experiencia;
+                this.expTotal = this.expTotal + element.experiencia;
             })
             let dato = {
                 "userId": parseInt(userid.id),
@@ -73,19 +102,19 @@ export default {
             GetResueltas(dato).then((res) => {
                 this.cantidadEjercicios = res.filter(element => element.correcta == true);
                 if (res.length > 0) {
-                console.log("Preguntas respondidas: ",res)
-                this.estado = "Si"
-            }
+                    console.log("Preguntas respondidas: ", res)
+                    this.estado = true
+                }
             });
             //Calcular experiencia de intentos anteriores (se mostrará la experiencia restante por conseguir)
             getExpEjer(dato).then((res) => {
-                this.exp = this.exp - res.xp
+                this.expRestante = this.expTotal - res.xp
             })
 
-            
+
         })
-        
-       
+
+
     },
 
 

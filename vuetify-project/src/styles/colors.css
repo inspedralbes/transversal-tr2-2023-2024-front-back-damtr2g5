@@ -7,9 +7,15 @@
     color: white !important;
     background-color: #F44336 !important;
 }
+
+.violet-bg {
+    background-color: #69306D !important;
+}
+
 .white-bg {
     background-color: #FFFFFF !important;
 }
+
 .oxford-blue-bg {
     background-color: #102542 !important;
 }
@@ -44,6 +50,10 @@
 
 .cream-bg {
     background-color: #E5E8B6 !important;
+}
+
+.violet {
+    color: #69306D !important;
 }
 
 .white {

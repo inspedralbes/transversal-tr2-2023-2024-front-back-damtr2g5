@@ -83,6 +83,7 @@ app.get('/getEjercicio/:id', (req, res) => {
             var ejercicio = {
                 "id": document.id,
                 "nombre": document.nombre,
+                "tipo": document.tipo,
                 "preguntas": []
             }
             for (var i = 0; i < preguntas.length; i++) {
