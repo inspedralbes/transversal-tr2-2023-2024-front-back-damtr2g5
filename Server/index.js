@@ -553,7 +553,7 @@ app.get('/consultarUsuaris', async (req, res) => {
 //GET USUARIO POR ID
 app.get('/consultarUsuariPerId/:id', async (req, res) => {
     try {
-        console.log(req.params.id);        
+        //console.log(req.params.id);        
         const usuari = await new Promise((resolve, reject) => {
             mysqlConnection.SelectUserById(req.params.id, (usuari) => {
                 resolve(usuari[0]);
@@ -585,7 +585,7 @@ app.get('/consultarUsuariPerId/:id', async (req, res) => {
 //Quitar alumno de un aula por su id
 app.get('/quitarAlumnoAula/:id', async (req, res) => {
     try {
-        console.log(req.params.id);        
+        //console.log(req.params.id);        
         const resposta = await new Promise((resolve, reject) => {
             mysqlConnection.RemoveUserFromClassroom(req.params.id, (callback) => {
                 resolve(callback);
