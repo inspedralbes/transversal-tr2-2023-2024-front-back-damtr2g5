@@ -582,6 +582,24 @@ app.get('/consultarUsuariPerId/:id', async (req, res) => {
     }
 });
 
+//Quitar alumno de un aula por su id
+app.get('/quitarAlumnoAula/:id', async (req, res) => {
+    try {
+        console.log(req.params.id);        
+        const resposta = await new Promise((resolve, reject) => {
+            mysqlConnection.RemoveUserFromClassroom(req.params.id, (callback) => {
+                resolve(callback);
+            });
+        });
+
+
+        res.json(resposta);
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: 'Hubo un error al procesar la solicitud' });
+    }
+});
+
 
 //idPregunta: 1, respuesta: "1111"
 app.post('/pregunta', async (req, res) => {

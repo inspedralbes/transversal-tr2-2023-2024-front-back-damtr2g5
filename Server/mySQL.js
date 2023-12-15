@@ -292,6 +292,7 @@ module.exports = {
     SelectClassrooms,
     SelectAccesCode, 
     SelectProfessors,
+    RemoveUserFromClassroom,
     UpdateImage
     // Puedes añadir más funciones según tus necesidades...
 };
