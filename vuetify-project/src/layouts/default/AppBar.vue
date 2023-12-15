@@ -63,6 +63,9 @@ export default {
     pruebas
   },
   data() {
+    const appStore = useAppStore()
+    const user = appStore.getLoginInfo;
+    
     return {
       rules: [
         value => {
@@ -100,6 +103,7 @@ export default {
     },
   }
 }
+
 </script>
 
 <style scoped>

@@ -1,5 +1,27 @@
 export const SERVER_URL = "http://localhost:3001"
 
+export async function joinAula(aula) {
+  return fetch(`${SERVER_URL}/joinAula`, 
+  {method: 'POST',
+  credentials: 'include', mode: 'cors',
+   headers: {
+    'Content-Type':  'application/json' ,
+  },
+  body: JSON.stringify(aula)});
+  
+}
+
+export async function getAula(aulaId) {
+  const response = await fetch(`${SERVER_URL}/getAula/${aulaId}`, { method: 'GET', credentials: 'include', mode: 'cors' });
+  const aula = await response.json();
+  return aula
+}
+
+export async function getAulaById(aulaId) {
+  const response = await fetch(`${SERVER_URL}/getAulaById/${aulaId}`, { method: 'GET', credentials: 'include', mode: 'cors' });
+  const aula = await response.json();
+  return aula
+}
 export async function getEjercicios(id) {
   const response = await fetch(`${SERVER_URL}/getEjercicio/${id}`, { method: 'GET', credentials: 'include', mode: 'cors' });
   const ejercicios = await response.json();
@@ -102,6 +124,21 @@ export async function getAvatar(imagen) {
   const resp= fetch(`${SERVER_URL}/imagen/${imagen}`, { method: 'GET', credentials: 'include', mode: 'cors' });
   console.log(resp);
   return resp;
+}
+export async function getAnswerImage(imagen) {
+  try {
+    const response = await fetch(`${SERVER_URL}/imagenPregunta/${imagen}`, {
+      method: 'GET',
+      credentials: 'include',
+      mode: 'cors'
+    });
+    
+    const imagen = await response.json();
+    return imagen;
+  } catch (error) {
+    console.error('Error fetching image:', error);
+    return null;
+  }
 }
 export async function endSession() {
   return fetch(`${SERVER_URL}/logout`, { method: 'GET', credentials: 'include', mode: 'cors' });

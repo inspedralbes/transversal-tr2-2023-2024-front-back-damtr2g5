@@ -1,6 +1,6 @@
 // Utilities
 import { defineStore } from 'pinia'
-import {login, getLogin, endSession,getAvatar, loginGoogle} from '@/communicationsManager';
+import {login, getLogin, endSession,getAvatar, loginGoogle, getAula} from '@/communicationsManager';
 
 export const useAppStore = defineStore('app', {
     state: () => ({
@@ -15,8 +15,12 @@ export const useAppStore = defineStore('app', {
             rank: '',
             lifetotal: '',
             experience: '',
-            image: ''
+            image: '',
+            id_classroom:'',
+            access_code:''
         },
+        aulaInfo: null
+        ,
         respuesta: '',
         tema: null,
         ejercicio: null
@@ -37,11 +41,17 @@ export const useAppStore = defineStore('app', {
         isAuthenticated() {
             return this.auth;
         },
+        getAulaInfo() {
+          return this.aulaInfo;
+        },
         getLoginInfo() {
             return this.loginInfo;
         }
     },
     actions: {
+      setAulaInfo(aula) {
+        this.aulaInfo = aula
+      },
         setRoom(room) {
             this.room = room;
         },
@@ -77,14 +87,22 @@ export const useAppStore = defineStore('app', {
         
         login() {
             return new Promise((resolve, reject) => {
-              console.log("Login info: ", this.$state.loginInfo);
               login(this.$state.loginInfo).then((response) => response.json())
                 .then((data) => {
+                  console.log()
                   this.$state.loginInfo = data;
                   this.loading = false;
                   if (data.email != '') {
                     this.$state.auth = true;
-                    console.log("New auth state: ", this.$state.auth)
+                    if(data.id_classroom != null) {
+
+                      getAula(data.id_classroom).then((response) => {
+                        this.$state.aulaInfo = this.setAulaInfo(response)
+                      })
+                    }
+                    else {
+                      console.log("No hay aulas")
+                    }
                     resolve(true);
                   } else {
                     this.$state.auth = false;
@@ -92,26 +110,32 @@ export const useAppStore = defineStore('app', {
                     resolve(false);
                   }
                 }).catch((error) => {
-                  console.error('Error al iniciar sesión:', error);
                   this.$state.auth = false;
                   reject(error);
                 });
             });
           },
           loginGoogle() {
+            console.log("ACCEDER")
             return new Promise((resolve, reject) => {
               console.log("Login info: ", this.$state.loginInfo);
               loginGoogle(this.$state.loginInfo).then((response) => response.json())
                 .then((data) => {
+                  console.log("Data received: ",data)
                   this.$state.loginInfo = data;
                   this.loading = false;
                   if (data.email != '') {
                     this.$state.auth = true;
                     console.log("New auth state: ", this.$state.auth)
+                    if(data.id_classroom != null) {
+                      getAula(data.id_classroom).then((response) => {
+                        this.$state.aulaInfo = this.setAulaInfo(response)
+                      })
+                    }
                     resolve(true);
                   } else {
                     this.$state.auth = false;
-                    console.log(data)
+                    console.log("Not mails:", data)
                     resolve(false);
                   }
                 }).catch((error) => {
@@ -130,7 +154,11 @@ export const useAppStore = defineStore('app', {
                   this.loading = false;
                   if (data.email != '') {
                     this.$state.auth = true;
-                    
+                    if(data.id_classroom != null) {
+                      getAula(data.id_classroom).then((response) => {
+                        this.$state.aulaInfo = this.setAulaInfo(response)
+                      })
+                    }
                     console.log("New auth state getLogin: ", this.$state.auth)
                     resolve(true)
                   } else {
@@ -156,7 +184,8 @@ export const useAppStore = defineStore('app', {
                   rank: '',
                   lifetotal: '',
                   experience: '',
-                  image: ''
+                  image: '',
+                  id_classroom:''
                 };
                 this.$state.auth = false;
                 console.log("Auth after logout: ",this.$state.auth)
