@@ -51,6 +51,7 @@ export default {
             min: -10,
             max: 10,
             ticks: {
+              autoSkip: false,
               stepSize: 1
             }
           },
@@ -60,6 +61,7 @@ export default {
             min: -10,
             max: 10,
             ticks: {
+              autoSkip: false,
               stepSize: 1
             }
           }

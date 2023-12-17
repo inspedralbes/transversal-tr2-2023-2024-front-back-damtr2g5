@@ -1,11 +1,15 @@
 <!--FORMATO GRAFICO-->
 <template>
-        <v-container>
-            <div class="big-font font-weight-medium mb-2">
-                {{ pregunta.pregunta }}
-            </div>
-            <ScatterLineChart :isClickDisabled.sync="isDisabled" />
-        </v-container>
+    <v-container style="padding-left: 0; padding-right: 0;">
+        <div class="big-font font-weight-medium mb-2">
+            {{ pregunta.pregunta }}
+        </div>
+        <v-row justify="center">
+            <v-col style="padding-left: 0; padding-right: 0;" cols="12" lg="5" md="5" sm="8">
+                <ScatterLineChart :isClickDisabled.sync="isDisabled" />
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script>
@@ -39,11 +43,11 @@ export default {
             selectedAnswer: null
         };
     },
-    created() {    
-  
-        this.pregunta = this.preguntaSeleccionada;      
+    created() {
+
+        this.pregunta = this.preguntaSeleccionada;
     },
-   
+
 };
 </script>
 
