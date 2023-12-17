@@ -27,8 +27,8 @@
                     <component class="myfont" :isDisabled.sync="disableComponent" :key="key" :is="componentSelecionat"
                         v-if="componentSelecionat" :preguntaSeleccionada="preguntaSeleccionada" />
                 </v-col>
-
-                <button v-if="indexArray.indexOf(0) !== -1" v-bind:class="'custom-btn ' + disabled" style="width: 30%;"
+                <v-col cols="12">
+                <button v-if="indexArray.indexOf(0) !== -1" v-bind:class="'custom-btn ' + disabled" style="width: 50%;"
                     @click="comprobar(Ejercicio.preguntas[selectedButton].id)">
                     <span class="shadow"></span>
                     <span class="edge"></span>
@@ -36,6 +36,7 @@
                         Comprobar
                     </span>
                 </button>
+            </v-col>
 
 
             </v-col>
