@@ -21,8 +21,8 @@ const server = http.createServer(app);
 const port = 3001;
 const SERVER_URL = "http://localhost";
 
-const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, updateCollection, getActivities, getPreguntaRandom } = require("./mongoDB.js");
-const { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion, generarPassword,obtenerFechaYHoraActual } = require("./utils.js");
+const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, findRegisteredBattles, updateCollection, getActivities, getPreguntaRandom} = require("./mongoDB.js");
+const { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion, generarPassword } = require("./utils.js");
 const { connect } = require('http2');
 const { Console } = require('console');
 const { initializeSocket, filterRooms, getIo } = require("./socket.js");
@@ -115,6 +115,38 @@ app.get('/getEjercicio/:id', (req, res) => {
 
 });
 
+app.get('/totalExperiencia', async (req, res) => {
+    let xp = 0
+    let user = req.session.user
+    console.log("Usuario: ",user)
+    
+    try {
+        let questionsResults = await findRegisteredResults(parseInt(user.id));
+        let questionsBattles = await findRegisteredBattles(user.email);
+        console.log("Resultados Battles: ",questionsBattles);  
+        console.log("Resultados Results: ",questionsResults);
+        questionsResults = questionsResults.concat(questionsBattles)
+        const results = questionsResults.filter(element => element.correcta === true);
+        console.log("Resultados Totales: ",results);
+
+        const promises = results.map(async visual => {
+            const idPregunta = visual.idPregunta || visual.pregunta
+            const document = await getPregunta(idPregunta);
+            xp += document.experiencia;
+        });
+
+
+        await Promise.all(promises);
+        const experiencia = xp
+        mysqlConnection.getLevelData(experiencia, (nivelDatos) => {
+            const datos = {experiencia:experiencia, nivel:nivelDatos.currentLevel.lvl, vida:nivelDatos.currentLevel.health, experienciaRestante:nivelDatos.nextLevelRequiredXP}
+            res.json(datos);
+        })
+        
+    } catch (error) {
+        console.error(error);
+    }
+})
 app.get('/getCategorias', async (req, res) => {
     categorias = await getCategorias();
     res.json(categorias)
