@@ -1,7 +1,9 @@
 <template>
-    <v-container>
+    <v-container class="centered">
+        <v-row>
         <RoomCreator />
         <RoomSeeker />
+    </v-row>
     </v-container>
 </template>
 
