@@ -1,6 +1,6 @@
 let rooms = [
     //Test rooms
-    /*{
+    {
         private: true,
         name: 'Partida 1',
         mode: 'PvP',
@@ -83,7 +83,7 @@ let rooms = [
         mode: 'PvP',
         players: 1,
         owner: 'Sara Navarro',
-    }*/
+    }
 ];
 
 module.exports = {
