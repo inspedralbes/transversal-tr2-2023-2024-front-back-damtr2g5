@@ -132,12 +132,7 @@ app.get("/imagen/:nombreArchivo", (req, res) => {
     const fileName = req.params.nombreArchivo;
     const filePath = path.join(__dirname, 'avatars', fileName);
 
-    res.download(filePath, (err) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send('Error al descargar el archivo.');
-        }
-    });
+    res.sendFile(filePath);
 });
 
 const multer = require('multer');
