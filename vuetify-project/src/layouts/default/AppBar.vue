@@ -1,4 +1,5 @@
 <template>
+  <boton-atras/>
   <v-container fluid style="padding: 0;">
     <v-row class="d-flex justify-end w-full mt-3 mr-3">
       <v-menu min-width="200px" rounded>
@@ -23,8 +24,8 @@
                 {{ user.email }}
               </p>
               <v-divider class="my-3"></v-divider>
-              <v-btn rounded variant="text">
-                Editar compte
+              <v-btn @click="perfil()" rounded variant="text">
+                Veure compte
               </v-btn>
               <v-divider class="my-3"></v-divider>
               <v-btn @click="logout()" rounded variant="text">
@@ -47,7 +48,7 @@
         <pruebas @botones="precionado"/>
       </div>
       <v-card-actions class="mx-auto text-center">
-        <v-btn color="primary" @click="dialogL = false">Cancelar</v-btn>
+        <v-btn color="primary" @click="dialogL = false">Tancar</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -58,10 +59,12 @@ import { useAppStore } from '@/store/app';
 import { mdiPencil } from '@mdi/js'
 import pruebas from '@/components/recortarimagen.vue'
 import VuePictureCropper from 'vue-picture-cropper'
+import BotonAtras from '@/components/interior/BotonAtras.vue';
 export default {
   components: {
     VuePictureCropper,
-    pruebas
+    pruebas,
+    BotonAtras
   },
   data() {
     const appStore = useAppStore()
@@ -96,6 +99,9 @@ export default {
         }
       })
 
+    },
+    perfil(){
+      this.$router.push({ name: "Perfil" });
     },
     precionado() {
       // Realizar acciones necesarias cuando el modal se cierra

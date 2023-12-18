@@ -161,6 +161,55 @@ function SelectProfessors(callback) {
         });
     });
 }
+function SelectProfTotal(idAula,idProf, callback) {
+    pool.getConnection((error, connection) => {
+        if (error) {
+            console.error('Error al obtener la conexión del pool:', error);
+            throw error;
+        }
+
+        // Consulta para contar el total de usuarios en la clase con id_classroom = id
+        const query1 = `SELECT COUNT(*) as total FROM users U WHERE U.id_classroom = ${idAula}`;
+
+        // Consulta para obtener todos los profesores
+        const query2 = `SELECT * FROM professors WHERE id = ${idProf}`;
+
+        Promise.all([
+            new Promise((resolve, reject) => {
+                connection.query(query1, (errorQuery1, results1) => {
+                    if (errorQuery1) {
+                        reject(errorQuery1);
+                    } else {
+                        resolve(results1);
+                    }
+                });
+            }),
+            new Promise((resolve, reject) => {
+                connection.query(query2, (errorQuery2, results2) => {
+                    if (errorQuery2) {
+                        reject(errorQuery2);
+                    } else {
+                        resolve(results2);
+                    }
+                });
+            })
+        ])
+        .then(([results1, results2]) => {
+            connection.release(); // Liberar la conexión al terminar las consultas
+            const combinedResults = {
+                totalUsers: results1[0].total,
+                professors: results2
+            };
+            callback(combinedResults);
+        })
+        .catch((error) => {
+            connection.release(); // Liberar la conexión en caso de error
+            console.error('Error al ejecutar una o ambas consultas:', error);
+            throw error;
+        });
+    });
+}
+
 function SelectEmails(callback) {
     pool.getConnection((error, connection) => {
         if (error) {
@@ -345,7 +394,7 @@ module.exports = {
     UpdateUser,
     selectLevel,
     SelectAccesCode, 
-    SelectProfessors,
+    SelectProfessors,SelectProfTotal,
     RemoveUserFromClassroom,   
     UpdateImage,
     SelectClassroom,
