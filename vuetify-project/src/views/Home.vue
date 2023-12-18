@@ -1,4 +1,5 @@
 <template>
+  <v-app class="no-background">
   <v-row>
     <v-col cols="12" sm="12" md="6" lg="6" style="align-self: center;">
       <Noticias style="text-align: center;"/>
@@ -8,6 +9,7 @@
     </v-col>
     
   </v-row>
+</v-app>
 </template>
 <script setup>
   import Noticias from '@/components/login/Noticias.vue'

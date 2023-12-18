@@ -1,5 +1,6 @@
 <template>
-    <v-container class="centered">
+    <v-app class="no-background">
+    <v-container class="fill-height" style="justify-content: center; text-align: center;">
         <v-card style="overflow-y: hidden;" class="myfont platinum-bg round-border">
             <v-card-title class="violet-bg white biggest-font pa-8" style="overflow: auto; text-overflow: clip;">{{ this.Ejercicio.nombre }}</v-card-title>
             <v-row style="justify-content: center;">
@@ -39,6 +40,7 @@
         </v-card>
 
     </v-container>
+</v-app>
 </template>
 <style></style>
     
