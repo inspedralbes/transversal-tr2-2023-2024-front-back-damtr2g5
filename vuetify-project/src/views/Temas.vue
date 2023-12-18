@@ -1,14 +1,13 @@
 <template>
-  <v-app>
-      <v-container>
-          <v-row>
-              
-              <v-col>
-                  <ThemeSelector />
-              </v-col>
-          </v-row>
-      </v-container>
-  </v-app>
+    <v-app class="no-background" >
+        <v-container class="fill-height" >
+            <v-row >
+                <v-col>
+                    <ThemeSelector />
+                </v-col>
+            </v-row>
+        </v-container>
+    </v-app>
 </template>
 
 <script setup>

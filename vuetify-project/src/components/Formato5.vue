@@ -1,13 +1,13 @@
 <!--FORMATO ORDENAR-->
 <template>
     <div class="mt-15 ml-15 mr-15">
-        <div class="text-h5 font-weight-medium mb-2">
+        <div class="big-font font-weight-medium mb-2">
             {{ pregunta.pregunta }}
         </div>
         <v-container>
             <v-row class="justify-center">
                 <v-col v-for="(valor, i) in respuesta" :key="i" cols="auto">
-                    <v-card :disabled="isDisabled" v-if="valor" class="mx-auto carta" width="60" height="60" color="#ffc8dd"
+                    <v-card :disabled="isDisabled" v-if="valor" class="mx-auto carta" width="60" height="60" color="#F87060"
                         @click="moverCarta(i, 'respuesta', 'posibles')">
                         <v-card-item>
                             <v-card-title>{{ valor }}</v-card-title>
@@ -22,7 +22,7 @@
         <v-container>
             <v-row class="justify-center">
                 <v-col v-for="(valor, i) in posibles" :key="i" cols="auto">
-                    <v-card :disabled="isDisabled" v-if="valor" class="mx-auto" width="60" height="60" color="#219ebc"
+                    <v-card :disabled="isDisabled" v-if="valor" class="mx-auto" width="60" height="60" color="#102542"
                         @click="moverCarta(i, 'posibles', 'respuesta')">
                         <v-card-item>
                             <v-card-title>{{ valor }}</v-card-title>

@@ -1,32 +1,35 @@
 <!--FORMATO UNIR-->
 <template >
     <div class="mt-15 ml-15 mr-15">
-        <div class="text-h5 font-weight-medium mb-2">
+        <div class="big-font font-weight-medium mb-2">
             {{ state.pregunta.pregunta }}
         </div>
 
-        <div class="mt-15 ml-15 mr-15 d-flex flex-row">
-            <v-container>
-                <v-row v-for="(card, index) in state.pregunta.respuestas[0]" :key="'first-row-' + index">
-                    <v-col cols="auto">
-                        <v-card :style="{ backgroundColor: getColor(0, index) }" @click="selectCard(0, index)">
+        <div class="d-flex flex-row">
+
+                <v-row >
+                    <v-col  cols="6" sm="6" md="5" lg="4" order="1">
+                        <v-card variant="outlined" class="mt-4" v-for="(card, index) in state.pregunta.respuestas[0]" :key="'first-row-' + index" 
+                        :style="{ backgroundColor: getColor(0, index) }" @click="selectCard(0, index)">
                             <v-card-title>{{ card }}</v-card-title>
                         </v-card>
                     </v-col>
-                </v-row>
-            </v-container>
-            <v-container>
-                <v-row v-for="(card, index) in state.pregunta.respuestas[1]" :key="'second-row-' + index">
-                    <v-col cols="auto">
-                        <v-card :style="{ backgroundColor: getColor(1, index) }" @click="selectCard(1, index)">
-                            <v-card-title>{{ card }}</v-card-title>
+                    <v-col cols="auto" sm="auto" md="2" lg="4" order="3" order-md="2"></v-col>
+                    <v-col  cols="6" sm="6" md="5" lg="4" order="2" order-md="3">
+                        <v-card variant="tonal" class="mt-4 oxford-blue card2" v-for="(card, index) in state.pregunta.respuestas[1]" :key="'second-row-' + index"
+                         :style="{ backgroundColor: getColor(1, index) }" @click="selectCard(1, index)"> 
+                         <v-card-title>{{ card }}</v-card-title>
                         </v-card>
                     </v-col>
                 </v-row>
-            </v-container>
         </div>
     </div>
 </template>
+<style>
+.card2{
+    border: thin solid currentColor;
+}
+</style>
 <script>
 import { useAppStore } from '@/store/app'
 import { reactive, ref, watch } from 'vue';
@@ -58,10 +61,10 @@ export default {
             pairsFound: 0,
             matchedPairs: [],
             seleccion: ref([
-                { valor1: '', valor2: '', color: 'red' },
-                { valor1: '', valor2: '', color: 'blue' },
-                { valor1: '', valor2: '', color: 'green' },
-                { valor1: '', valor2: '', color: 'purple' },
+                { valor1: '', valor2: '', color: '#F87060' },
+                { valor1: '', valor2: '', color: '#F7ACCF' },
+                { valor1: '', valor2: '', color: '#53D8FB' },
+                { valor1: '', valor2: '', color: '#E5E8B6' },
 
             ]),
             pregunta: {
