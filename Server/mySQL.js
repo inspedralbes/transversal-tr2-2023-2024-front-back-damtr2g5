@@ -123,6 +123,42 @@ function SelectUserById(id,callback) {
     });
 }
 
+function getLevelData(exp, callback) {
+    pool.getConnection((error, connection) => {
+        if (error) {
+            console.error('Error al obtener la conexión del pool:', error);
+            throw error;
+        }
+
+        connection.query('SELECT * FROM Levelsxp WHERE requiredxp < ? ORDER BY lvl DESC LIMIT 1', exp, (errorQuery, results, fields) => {
+            if (errorQuery) {
+                connection.release(); // Release the connection in case of an error
+                console.error('Error al ejecutar la consulta:', errorQuery);
+                throw errorQuery;
+            }
+            
+            const currentLevelData = results[0];
+            console.log("CURRENT LEVEL: ", currentLevelData);
+            connection.query('SELECT requiredxp FROM Levelsxp WHERE lvl = ?', currentLevelData.lvl + 1, (errorNextLevel, nextLevelResult, nextLevelFields) => {
+                connection.release(); // Release the connection after both queries
+
+                if (errorNextLevel) {
+                    console.error('Error al obtener el siguiente nivel:', errorNextLevel);
+                    throw errorNextLevel;
+                }
+
+                const nextLevelRequiredXP = (nextLevelResult && nextLevelResult.length > 0) ? nextLevelResult[0].requiredxp - exp : null;
+
+                const levelData = {
+                    currentLevel: currentLevelData,
+                    nextLevelRequiredXP: nextLevelRequiredXP
+                };
+
+                callback(levelData); 
+            });
+        });
+    });
+}
 function SelectClassrooms(id,callback) {
     pool.getConnection((error, connection) => {
         if (error) {
@@ -350,6 +386,7 @@ module.exports = {
     UpdateImage,
     SelectClassroom,
     UpdateUserClassroom,
-    SelectClassroomId
+    SelectClassroomId,
+    getLevelData
     // Puedes añadir más funciones según tus necesidades...
 };

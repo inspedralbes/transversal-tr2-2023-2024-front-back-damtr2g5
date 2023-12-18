@@ -1,6 +1,6 @@
 const user = "a22osczapmar";
 const password = "Nitrome7.";
-module.exports = { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection, findRegisteredResults, getCategorias, getActivities, getPreguntaRandom };
+module.exports = { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection, findRegisteredResults, getCategorias, getActivities, getPreguntaRandom, findRegisteredBattles };
 const { MongoClient } = require("mongodb");
 
 // Replace the following with your Atlas connection string                                                                                                                                        
@@ -65,7 +65,41 @@ async function getCategorias() {
         return null; 
     }
 }
+async function findRegisteredBattles(email) {
+    try {
+        await client.connect();
+        const db = client.db(dbName);
+        const col = db.collection("Battles");
 
+        // Find battles where the player participated
+        const battles = await col.find({
+            $or: [
+                { "equipo1.email": email },
+                { "equipo2.email": email }
+            ]
+        }).toArray();
+
+        // Extract the player's answers from the battles
+        const answers = battles.flatMap(battle => {
+            const team1Player = battle.equipo1.find(player => player.email === email);
+            const team2Player = battle.equipo2.find(player => player.email === email);
+
+            if (team1Player) {
+                return team1Player.preguntas;
+            } else if (team2Player) {
+                return team2Player.preguntas;
+            } else {
+                return [];
+            }
+        });
+
+        console.log("Answers found:", answers);
+        return answers;
+    } catch (err) {
+        console.log(err.stack);
+        return null;
+    }
+}
 async function findRegisteredResult(id_user, id_activity, id_pregunta) {
     try {
         await client.connect();

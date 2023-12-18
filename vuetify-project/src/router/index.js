@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { getLogin } from '@/communicationsManager.js';
 import { useAppStore } from '../store/app.js'
 
+
 const requireAuth = (to, from, next) => {
   const store = useAppStore();
   console.log("Autenticado: ", store.isAuthenticated)
@@ -47,6 +48,17 @@ const routes = [
     name: 'Login',
     component: () => import(/* webpackChunkName: "home" */ '@/views/PantallaLogin.vue'),
     beforeEnter: checkAuth
+  },
+  {
+    path: '/error',
+    component: () => import('@/layouts/default/Default.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Error',
+        component: () => import(/* webpackChunkName: "home" */ '@/views/Error.vue'),
+      },
+    ],
   },
   {
     path: '/home',
