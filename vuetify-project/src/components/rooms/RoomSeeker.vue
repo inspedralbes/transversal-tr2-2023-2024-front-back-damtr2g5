@@ -1,10 +1,13 @@
 <template>
-    <v-container>
-        <v-data-table-server v-model:items-per-page="itemsPerPage" :search="search" :headers="headers"
-            :items-length="totalItems" :items="serverItems" :loading="loading" item-value="name"
-            @update:options="loadItems">
+    <v-container class="myfont">
+        <v-data-table-server id="partidas" class="round-border pa-4 platinum-bg" 
+        style="padding-left: 0px !important; padding-right: 0px !important;" 
+        v-model:items-per-page="itemsPerPage" :search="search" :headers="headers"
+            :items-length="totalItems" :items="serverItems" :loading="loading" item-value="name" 
+            :items-per-page-text="'Partides per pàgina'"
+            @update:options="loadItems" >
             <template v-slot:header.private="{ header }">
-                <v-icon :icon="`${mdiLock}`"></v-icon>
+                <v-icon size="35" :icon="`${mdiLock}`"></v-icon>
             </template>
             <template v-slot:item.private="{ item }">
                 <v-icon :icon="`${item.private ? mdiLock : ''}`"></v-icon>
@@ -13,20 +16,20 @@
                 <tr>
                     <td></td>
                     <td>
-                        <v-text-field v-model="name" hide-details placeholder="Buscar partida..." class="ma-2"
+                        <v-text-field style="border-radius: 20px;" variant="outlined" rounded v-model="name" hide-details placeholder="Buscar partida..." class="ma-2 mt-10 white-bg"
                             density="compact"></v-text-field>
                     </td>
                 </tr>
             </template>
             <template v-slot:item.actions="{ item }">
-                <v-btn @click="isPrivate(item)">
-                    Conectar
+                <v-btn  class=" myfont oxford-blue-bg bitter-sweet" @click="isPrivate(item)">
+                    Connectar
                 </v-btn>
-                <v-dialog v-model="dialog" max-width="400">
+                <v-dialog class="myfont" v-model="dialog" max-width="400">
                     <v-alert v-model="wrongPassword" type="error" closable close-label="Close Alert" title="Contrasenya incorrecta">
                         </v-alert>
                     <v-card>
-                        <v-card-title class="text-h5 bg-grey-lighten-3">
+                        <v-card-title class="big-font bg-grey-lighten-3">
                             Contrasenya
                         </v-card-title>
                         <v-text-field v-model="codigo" label="Contrasenya" class="ma-4 mb-0"></v-text-field>
@@ -52,7 +55,15 @@
         </v-data-table-server>
     </v-container>
 </template>
+<style>
+.v-data-table__thead{
+    font-size: 2em;
+}
+#partidas tbody tr:nth-child(even){background-color: #CDD7D6;}
+#partidas tbody tr:nth-child(odd){background-color: white;}
 
+#partidas tbody tr:hover {background-color: #F87060;}
+</style>
 <script>
 import { getRooms } from '@/communicationsManager.js';
 import { useAppStore } from '@/store/app';
@@ -68,7 +79,7 @@ export default {
             mdiLock,
             itemsPerPage: 5,
             headers: [
-                { title: 'Private', key: 'private', width: '3%' },
+                { title: 'Private', key: 'private', width: '3%', align: 'center' },
                 {
                     title: 'Partida',
                     align: 'start',
@@ -79,7 +90,7 @@ export default {
                 { title: 'Mode', key: 'mode', align: 'end', sortable: false },
                 { title: 'Jugadors', key: 'players', align: 'end' },
                 { title: 'Propietari', key: 'owner', align: 'end' },
-                { title: 'Actions', key: 'actions', sortable: false, align: 'center' },
+                { title: 'Accions', key: 'actions', sortable: false, align: 'center' },
             ],
             serverItems: [],
             loading: true,
@@ -174,7 +185,3 @@ export default {
     // Other component options (e.g., props, watch, etc.) go here
 };
 </script>
-
-<style scoped>
-/* Your component's styles go here */
-</style>
