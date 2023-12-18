@@ -1,6 +1,7 @@
 <template>
-    <v-container class="centered">
-        <v-row>
+    <v-container class="full-height" style="display: flex; align-items: center;">
+        <v-row style="width: 100%;">
+            
         <RoomCreator />
         <RoomSeeker />
     </v-row>
