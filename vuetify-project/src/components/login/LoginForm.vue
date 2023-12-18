@@ -74,7 +74,7 @@
                         <v-window-item :value="4">
                             <v-container>
                                 <v-card-text>
-                                    {{ this.errorMessage }}
+                                    <span style="font-size: xx-large;">{{ this.errorMessage }}</span>
                                 </v-card-text>
                             </v-container>
                         </v-window-item>
@@ -233,6 +233,9 @@ export default {
             } else {
                 this.step=4
                 this.errorMessage = response.message
+                const cambio = setTimeout(() => {
+                    this.step = 1
+                }, 2000); 
                 
             }
             this.emailD = ''

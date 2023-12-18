@@ -23,7 +23,8 @@ export const useAppStore = defineStore('app', {
         ,
         respuesta: '',
         tema: null,
-        ejercicio: null
+        ejercicio: null,
+        size:0
     }),
     getters: {
         getRoom() {

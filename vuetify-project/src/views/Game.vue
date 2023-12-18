@@ -53,7 +53,7 @@
 
 <script>
 
-import { getPreguntaRandom, comprobarRespuesta } from '../communicationsManager';
+import { getPreguntaRandom, comprobarRespuesta, PostBatallas } from '../communicationsManager';
 import { useAppStore } from '../store/app';
 import { socket, state } from "@/socket.js";
 const store = useAppStore();
@@ -83,6 +83,7 @@ export default {
             finishDialog: false,
             yourTeam: null,
             endMessage: '',
+            respondidas:0,
             team1hp: 0,
             team2hp: 0,
             team1maxhp: 0,

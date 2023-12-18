@@ -61,6 +61,18 @@ const routes = [
     ],
   },
   {
+    path: '/perfil',
+    component: () => import('@/layouts/default/Default.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Perfil',
+        component: () => import(/* webpackChunkName: "home" */ '@/components/perfil/BasicInfoComponent.vue'),
+        beforeEnter: requireAuth
+      },
+    ],
+  },
+  {
     path: '/home/entrenamiento',
     component: () => import('@/layouts/default/Default.vue'),
     beforeEnter: requireAuth,

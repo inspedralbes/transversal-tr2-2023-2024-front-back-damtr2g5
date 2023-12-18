@@ -79,6 +79,7 @@ export default {
             if (this.room.owner == this.store.getLoginInfo.email) {
                 return this.team1.length == 0 || this.team2.length == 0;
             }
+            this.store.size = this.team1.length + this.team2.length
             return true;
         }
     },

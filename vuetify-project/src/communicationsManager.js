@@ -52,7 +52,7 @@ export async function getExpEjer(datos) {
   console.log("Experiencia:", experiencia)
   return experiencia;
 }
-export async function comprobarRespuesta(respuesta,id) {
+export async function comprobarRespuesta(respuesta, id) {
   console.log("respuesta" + respuesta + "id" + id);
   const response = await fetch(`${SERVER_URL}/comprobarPregunta/${id}`,
     {
@@ -67,50 +67,58 @@ export async function comprobarRespuesta(respuesta,id) {
 
 }
 export async function GetResueltas(datos) {
-  console.log("DATOS: "+datos);
+  console.log("DATOS: " + datos);
   const response = await fetch(`${SERVER_URL}/getResueltas`,
-    { method: 'POST',headers: {
-      'Content-Type': 'application/json',
-    }, body:JSON.stringify(datos), mode: 'cors' });
-    const resueltas = await response.json();
-    return resueltas;
+    {
+      method: 'POST', headers: {
+        'Content-Type': 'application/json',
+      }, body: JSON.stringify(datos), mode: 'cors'
+    });
+  const resueltas = await response.json();
+  return resueltas;
 }
 
 export async function loginGoogle(usuario) {
 
-  return fetch(`${SERVER_URL}/loginGoogle`, 
-  {method: 'POST',
-  credentials: 'include', mode: 'cors',
-   headers: {
-    'Content-Type':  'application/json' ,
-  },
-  body: JSON.stringify(usuario)});
-  
+  return fetch(`${SERVER_URL}/loginGoogle`,
+    {
+      method: 'POST',
+      credentials: 'include', mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(usuario)
+    });
+
 }
 export async function login(usuario) {
 
-  return fetch(`${SERVER_URL}/login`, 
-  {method: 'POST',
-  credentials: 'include', mode: 'cors',
-   headers: {
-    'Content-Type':  'application/json' ,
-  },
-  body: JSON.stringify(usuario)});
-  
+  return fetch(`${SERVER_URL}/login`,
+    {
+      method: 'POST',
+      credentials: 'include', mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(usuario)
+    });
+
 }
 
 export async function registrarUsuari(infoUsuario) {
-  const response = await fetch(`${SERVER_URL}/registrarUsuari`, 
-  {method: 'POST',
-  credentials: 'include', mode: 'cors',
-   headers: {
-    'Content-Type':  'application/json' ,
-  },
-  body: JSON.stringify(infoUsuario)});
+  const response = await fetch(`${SERVER_URL}/registrarUsuari`,
+    {
+      method: 'POST',
+      credentials: 'include', mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(infoUsuario)
+    });
   if (response.status === 200) {
     console.log('Registration successful!');
     const messages = await response.text()
-    return { success: true, message: messages};
+    return { success: true, message: messages };
   } else {
     const messages = await response.text()
     return { success: false, message: messages };
@@ -121,7 +129,7 @@ export async function getLogin() {
   return fetch(`${SERVER_URL}/getLogin`, { method: 'GET', credentials: 'include', mode: 'cors' });
 }
 export async function getAvatar(imagen) {
-  const resp= fetch(`${SERVER_URL}/imagen/${imagen}`, { method: 'GET', credentials: 'include', mode: 'cors' });
+  const resp = fetch(`${SERVER_URL}/imagen/${imagen}`, { method: 'GET', credentials: 'include', mode: 'cors' });
   console.log(resp);
   return resp;
 }
@@ -144,22 +152,37 @@ export async function endSession() {
   return fetch(`${SERVER_URL}/logout`, { method: 'GET', credentials: 'include', mode: 'cors' });
 }
 
-export async function getCategorias(){
+export async function getCategorias() {
   const response = await fetch(`${SERVER_URL}/getCategorias`);
   const categorias = await response.json();
   return categorias;
 }
 
-export async function getEjerciciosByCat(nombre){
+export async function getEjerciciosByCat(nombre) {
   const response = await fetch(`${SERVER_URL}/getActivities/${nombre}`,
-  {method: 'GET',
-  credentials: 'include', mode: 'cors'})
+    {
+      method: 'GET',
+      credentials: 'include', mode: 'cors'
+    })
   const actividades = await response.json();
   return actividades;
 }
 
-export async function getPreguntaRandom(){
+export async function getPreguntaRandom() {
   const response = await fetch(`${SERVER_URL}/getPreguntaRandom`);
   const pregunta = await response.json();
   return pregunta;
+}
+export async function PostBatallas(datos) {
+  const response = await fetch(`${SERVER_URL}/guardarbatalla`,
+    {
+      method: 'POST',
+      credentials: 'include',
+      mode: 'cors',
+      body: datos,
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+
 }

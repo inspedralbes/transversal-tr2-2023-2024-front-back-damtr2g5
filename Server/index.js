@@ -22,7 +22,7 @@ const port = 3001;
 const SERVER_URL = "http://localhost";
 
 const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, updateCollection, getActivities, getPreguntaRandom } = require("./mongoDB.js");
-const { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion, generarPassword } = require("./utils.js");
+const { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion, generarPassword,obtenerFechaYHoraActual } = require("./utils.js");
 const { connect } = require('http2');
 const { Console } = require('console');
 const { initializeSocket, filterRooms, getIo } = require("./socket.js");
@@ -151,7 +151,7 @@ app.post('/descargar', upload.single('file'), (req, res) => {
     const uniqueFileName = uuidv4() + path.extname(fileName); // Añade la extensión original
 
     // Ruta de destino para guardar el archivo
-    const uploadPath = path.join(__dirname, 'avatars', uniqueFileName);
+    const uploadPath = path.join(__dirname, 'avatars', uniqueFileName+".jpg");
     // Mover el archivo a la ubicación deseada
     fs.rename(uploadedFile.path, uploadPath, (err) => {
         if (err) {
@@ -248,6 +248,15 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+app.post('/guardadobatalla',(req,res)=>{
+    let batalla = req.body //nombre - ganador - tamaño - exp
+    try{
+    insertInCollection({ "battle": batalla.name, "winners": batalla.winner, "matchsize": batalla.size, "xp": batalla.xp, time:obtenerFechaYHoraActual()}, 'Battles')
+    res.json({Estado:'Todo bien'})
+    }catch(err){
+        res.status(500).json({ Estado: err.message });
+    }
+})
 
 
 
@@ -449,8 +458,7 @@ app.post('/registrarUsuari', (req, res) => {
             mysqlConnection.InsertUser([usuariDades.name, usuariDades.surname, usuariDades.email, usuariDades.contrasena], ((result) => { res.send(result) }));
         } else {
             // Mail en uso
-            res.status(403).send();
-            throw new Error("Mail en uso");
+            res.status(123).send("Mail en uso");
         }
     })
 });
