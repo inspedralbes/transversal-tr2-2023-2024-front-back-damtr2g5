@@ -1,5 +1,5 @@
 <template>
-    <v-list class="scrollable-container" max-height="30em" density="compact" bg-color="rgb(255,255,255,0)">
+    <v-list class="scrollable-container" max-height="100%" density="compact" bg-color="rgb(255,255,255,0)">
 
         <v-list-item style="background-color: white; margin-bottom: 0.5em;" elevation="4" v-for="(item, i) in items"
             :key="i" :value="item" :base-color="teamColor" color="green">

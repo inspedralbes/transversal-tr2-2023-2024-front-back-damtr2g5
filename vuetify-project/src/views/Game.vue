@@ -1,58 +1,86 @@
 <template>
     <v-dialog transition="dialog-top-transition" persistent width="500" v-model="finishDialog">
-        <v-sheet style="text-align: center; padding: 2em;">
+        <v-sheet class="myfont" style="text-align: center; padding: 2em;">
             <h1>{{ endMessage }}</h1>
-            <v-btn color="primary" @click="finalizarEjercicio()">Tornar al menu</v-btn>
+            <v-btn variant="plain outlined" class="myfont oxford-blue-bg bitter-sweet" @click="finalizarEjercicio()">Tornar
+                al menu</v-btn>
         </v-sheet>
     </v-dialog>
     <v-container>
-    <h2 style="color: red;">Team 1</h2>
-    <v-progress-linear
-      v-model="team1hpPercent"
-      color="red"
-      height="25"
-    >
-      <strong>{{ Math.ceil(team1hpPercent) }}%</strong>
-    </v-progress-linear>
-    <h2 style="color: blue;">Team 2</h2>
-    <v-progress-linear
-      v-model="team2hpPercent"
-        color="blue"
-      height="25"
-    >
+        <v-row justify="center">
+            <v-col style="justify-content: center; " cols="12" sm="12" md="12" lg="6">
+                <v-card flat class="no-background" style="width: 100%;">
+                    <img :src="actualGif" alt="stage" style="width: 100%;">
+                    <v-overlay class="mydisabled" :scrim="false" v-model="hpOverlay" contained persistent>
+                        <v-row>
+                            <v-col>
+                                <h2 style="color: #F87060;" class="sombra-texto">Team 1</h2>
+                                <v-progress-linear class="custom-border" bg-opacity="0.5" v-model="team1hpPercent" color="#F87060" height="25">
+                                    <strong>{{ Math.ceil(team1hpPercent) }}</strong>
+                                </v-progress-linear>
+                            </v-col>
+                            <v-col style="text-align: right;">
+                                <h2 style="color: #102542;" class="sombra-texto">Team 2</h2>
+                                <v-progress-linear class="custom-border2" bg-opacity="0.5" reverse v-model="team2hpPercent" color="#102542" height="25">
+                                    <strong class="white">{{ Math.ceil(team2hpPercent) }}</strong>
+                                </v-progress-linear>
+                            </v-col>
+                        </v-row>
+                    </v-overlay>
 
-        <strong>{{ Math.ceil(team2hpPercent) }}%</strong>
-    </v-progress-linear>
-</v-container>
-    <v-sheet class="d-flex align-center justify-center flex-wrap text-center mx-auto px-4" elevation="4" height="auto"
-        rounded max-width="800" width="100%">
-        <v-container>
+                </v-card>
+            </v-col>
 
-            <v-row style="position: relative;" justify="center">
-                <v-overlay v-model="overlay" :scrim="false" contained class="align-center justify-center">
-                    <v-icon class="stamp" :color="coloricono" :icon="icono"
-                        style="width: 1em; height: 1em; font-size: 10em;"></v-icon>
-                </v-overlay>
-                <v-col>
-                    <component :isDisabled.sync="disableComponent" :key="key" :is="componentSelecionat"
+        </v-row>
+    </v-container>
+
+    <v-container class="centered">
+        <v-row class="centered">
+            <v-col class="white-bg round-border" cols="12" lg="8" md="10" sm="11">
+
+                <v-col style="position: relative;">
+                    <v-overlay v-model="overlay" :scrim="false" contained class="align-center justify-center">
+                        <v-icon class="stamp" :color="coloricono" :icon="icono"
+                            style="width: 1em; height: 1em; font-size: 10em;"></v-icon>
+                    </v-overlay>
+                    <component class="myfont" :isDisabled.sync="disableComponent" :key="key" :is="componentSelecionat"
                         v-if="componentSelecionat" :preguntaSeleccionada="preguntaSeleccionada" />
                 </v-col>
-            </v-row>
-            <v-row>
-                <v-col>
-                    <v-btn :disabled="disabled" @click="comprobar(preguntaSeleccionada.id)" elevation="6"
-                        border="lg opacity-12" rounded="lg" class="blue-btn mb-4"
-                        :style="{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto', display: 'block' }">{{
-                            buttonText }}</v-btn>
+                <v-col class="mt-4" cols="12">
+                    <button v-bind:class="'custom-btn ' + disabled" style="width: 50%;"
+                        @click="comprobar(preguntaSeleccionada.id)">
+                        <span class="shadow"></span>
+                        <span class="edge"></span>
+                        <span class="myfont front text">
+                            {{ buttonText }}
+                        </span>
+                    </button>
                 </v-col>
 
-            </v-row>
-        </v-container>
-    </v-sheet>
+
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
-
+<style>
+.sombra-texto{
+    text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;
+}
+.custom-border2 {
+    border: 1px solid #102542;
+}
+.custom-border {
+    border: 1px solid #F87060;
+}
+.v-overlay__content{
+    width: 100%;
+    height: 100%;
+}
+</style>
 <script>
-
+import idleGif from '../assets/gifs/idle.gif';
+import purplePunch from '../assets/gifs/purplePunch.gif';
+import redPunch from '../assets/gifs/redPunch.gif';
 import { getPreguntaRandom, comprobarRespuesta } from '../communicationsManager';
 import { useAppStore } from '../store/app';
 import { socket, state } from "@/socket.js";
@@ -80,6 +108,9 @@ export default {
     data() {
 
         return {
+            absolute: false,
+            hpOverlay: true,
+            actualGif: idleGif,
             finishDialog: false,
             yourTeam: null,
             endMessage: '',
@@ -200,10 +231,10 @@ export default {
         },
         disabled() {
             if (this.respuestaSelecionada == "" && this.comprobado == false) {
-                return true;
+                return 'disabledTransparent';
             }
             else {
-                return false;
+                return '';
             }
         }
     },
@@ -211,19 +242,30 @@ export default {
     created() {
         this.nuevaPregunta();
         store.getRoom.users.forEach(user => {
-                if(user.email == store.getLoginInfo.email){
-                    this.yourTeam = user.team;
-                }
-            });
+            if (user.email == store.getLoginInfo.email) {
+                this.yourTeam = user.team;
+            }
+        });
 
         this.team1hp = store.$state.room.teams.team1[0].hp;
-            this.team2hp = store.$state.room.teams.team2[0].hp;
-            this.team1maxhp = store.$state.room.teams.team1[0].maxHp;
-            this.team2maxhp = store.$state.room.teams.team2[0].maxHp;
+        this.team2hp = store.$state.room.teams.team2[0].hp;
+        this.team1maxhp = store.$state.room.teams.team1[0].maxHp;
+        this.team2maxhp = store.$state.room.teams.team2[0].maxHp;
 
         store.$subscribe((mutation, state) => {
             console.log("state changed", state);
             this.respuestaSelecionada = state.respuesta;
+            if (this.team1hp != state.room.teams.team1[0].hp) {
+                this.actualGif = purplePunch;
+                setTimeout(() => {
+                    this.actualGif = idleGif;
+                }, 1600);
+            } else if (this.team2hp != state.room.teams.team2[0].hp) {
+                this.actualGif = redPunch;
+                setTimeout(() => {
+                    this.actualGif = idleGif;
+                }, 1600);
+            }
             this.team1hp = state.room.teams.team1[0].hp;
             this.team2hp = state.room.teams.team2[0].hp;
             this.team1maxhp = state.room.teams.team1[0].maxHp;
@@ -246,9 +288,9 @@ export default {
         })
         socket.on('gameFinished', (data) => {
             console.log("gameFinished", data);
-            if(data.winner == this.yourTeam){
+            if (data.winner == this.yourTeam) {
                 this.endMessage = "Has guanyat!";
-            }else{
+            } else {
                 this.endMessage = "Has perdut...";
             }
             this.finishDialog = true;

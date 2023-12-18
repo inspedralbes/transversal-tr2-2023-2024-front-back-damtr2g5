@@ -1,54 +1,58 @@
 <template>
     <v-dialog width="500" persistent v-model="dialog">
-        <v-card height="100" style="text-align: center;">
-            <v-card-title>Escull el teu team</v-card-title>
+        <v-card class="myfont round-border" height="100" style="text-align: center;">
+            <v-card-title class="big-font">Escull el teu team</v-card-title>
             <v-row :no-gutters="true">
                 <v-col cols="6">
-                    <v-btn color="red" @click="joinTeam(1)">Team 1</v-btn>
+                    <v-btn color="#F87060" @click="joinTeam(1)">Team 1</v-btn>
                 </v-col>
                 <v-col cols="6">
-                    <v-btn color="blue" @click="joinTeam(2)">Team 2</v-btn>
+                    <v-btn color="#102542" @click="joinTeam(2)">Team 2</v-btn>
                 </v-col>
             </v-row>
         </v-card>
     </v-dialog>
-    <v-dialog transition="dialog-top-transition" persistent width="200" v-model="countdownDialog">
-        <v-sheet style="text-align: center; padding: 2em;">
+    <v-dialog transition="dialog-top-transition" persistent width="auto" v-model="countdownDialog">
+        <v-sheet class="myfont bigger-font" style="text-align: center; padding: 2em;">
             <h1>{{ countdown }}</h1>
             Iniciant partida...
         </v-sheet>
     </v-dialog>
-    <v-container>
-
-        <v-row>
-            <v-col cols="4">
-                <v-card color="red">
-                    <v-card-title>Team 1</v-card-title>
+    <v-container class="fill-height">
+        <v-row class="myfont" style="margin-top: 70px; height: 100%;">
+            <v-col style="padding-right: 0;" cols="6" sm="6" md="4" lg="4" order="1">
+                <v-card color="#F87060">
+                    <v-card-title class="big-font mt-3">Team 1</v-card-title>
                     <v-card-text>
-                        <UserList team-color="red" :items="team1" />
+                        <UserList team-color="#F87060" :items="team1" />
                     </v-card-text>
                 </v-card>
             </v-col>
-            <v-col cols="4" style="text-align: center;">
-                <v-card style="margin-bottom: 3em;">
-                    <v-card-title style="margin-bottom: 1em;">
+            <v-col align-self="center" cols="12" sm="12" md="4" lg="4" order-md="2" order-lg="2" order="3" style="text-align: center;">
+                <v-card style="margin-bottom: 3em;" class="round-border">
+                    <v-card-title style="margin-bottom: 1em;" class="mt-8">
                         <h1>{{ room.name }}</h1>
                     </v-card-title>
                     <v-card-text>
                         <h2>Numero de jugadors: {{ team1.length + team2.length }}</h2>
                     </v-card-text>
                 </v-card>
-                <v-btn :disabled="startDisabled" @click="handleClick()" :text="buttonText"></v-btn>
+                <button @click="handleClick()" v-bind:class="'custom-btn ' + startDisabled" style="width: 100%;" text tile>
+                    <span class="shadow"></span>
+                    <span class="edge"></span>
+                    <span class="front text">
+                        <span class="myfont big-font">{{ buttonText }}</span>
+                    </span>
+                </button>
             </v-col>
-            <v-col cols="4">
-                <v-card color="blue">
-                    <v-card-title>Team 2</v-card-title>
+            <v-col style="padding-left: 0px;" cols="6" sm="6" md="4" lg="4" order-md="3" order-lg="3" order="2">
+                <v-card color="#102542">
+                    <v-card-title class="big-font mt-3">Team 2</v-card-title>
                     <v-card-text>
-                        <UserList team-color="blue" :items="team2" />
+                        <UserList team-color="#102542" :items="team2" />
                     </v-card-text>
                 </v-card>
             </v-col>
-
         </v-row>
     </v-container>
 </template>
@@ -77,9 +81,12 @@ export default {
     computed: {
         startDisabled() {
             if (this.room.owner == this.store.getLoginInfo.email) {
-                return this.team1.length == 0 || this.team2.length == 0;
+                if(this.team1.length == 0 || this.team2.length == 0){
+                    return 'disabledTransparent';
+                }
+                return '';
             }
-            return true;
+            return 'disabledTransparent';
         }
     },
     methods: {
