@@ -79,7 +79,7 @@ const routes = [
       {
         path: '',
         name: 'Perfil',
-        component: () => import(/* webpackChunkName: "home" */ '@/components/perfil/BasicInfoComponent.vue'),
+        component: () => import(/* webpackChunkName: "home" */ '@/views/Perfil.vue'),
         beforeEnter: requireAuth
       },
     ],
