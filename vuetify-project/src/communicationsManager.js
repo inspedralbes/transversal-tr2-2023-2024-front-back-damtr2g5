@@ -187,6 +187,19 @@ export async function getBatallas() {
   const pregunta = await response.json();
   return pregunta;
 }
+export async function historial(datos) {
+  const response = await fetch(`${SERVER_URL}/historial`, {
+    method: 'POST',
+    credentials: 'include',
+    mode: 'cors',body:JSON.stringify(datos),
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  })
+
+  const pregunta = await response.json();
+  return pregunta;
+}
 export async function PostBatallas(datos) {
   const response = await fetch(`${SERVER_URL}/guardarbatalla`,
     {
