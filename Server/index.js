@@ -8,6 +8,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const mysqlConnection = require('./mySQL.js');
 const { v4: uuidv4 } = require('uuid');
+const { spawn } = require('child_process');
 const corsOptions = {
     origin: ["http://localhost:3000", "http://mathproject.dam.inspedralbes.cat"],
     credentials: true,
@@ -796,6 +797,20 @@ app.post('/historial', async (req, res) => {
     } catch (error) {
         console.error(error);
     }
+});
+
+app.get("/getpreguntarandom2/:nombre", (req, res) => {
+    const nombre_func = parseInt(req.params.nombre);
+    var process = spawn('py',["./ejercicios.py", nombre_func]);
+    process.stdout.on('data', (data) => {
+        console.log(`Resultado de ${nombre_func}: ${data.toString()}`);
+        res.json(JSON.stringify(data.toString()));
+    });
+
+    process.stderr.on('data', (data) => {
+        console.error(`Error: ${data.toString()}`);
+        res.json({data: "nok"});
+    });
 });
 //idPregunta: 1, respuesta: "1111"
 app.post('/pregunta', async (req, res) => {
