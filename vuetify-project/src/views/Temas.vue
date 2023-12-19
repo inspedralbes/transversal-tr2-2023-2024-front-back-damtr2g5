@@ -1,4 +1,5 @@
 <template>
+    <BackButton :to="'/'"/>
     <v-app class="no-background" >
         <v-container class="fill-height" >
             <v-row >
@@ -11,5 +12,6 @@
 </template>
 
 <script setup>
+import BackButton from '@/components/fab/BackButton.vue';
 import ThemeSelector from '@/components/training/ThemeSelector.vue'
 </script>

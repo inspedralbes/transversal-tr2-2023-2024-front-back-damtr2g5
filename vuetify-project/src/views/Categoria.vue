@@ -1,5 +1,6 @@
 <template>
-  <v-app class="no-background">
+    <BackButton :to="'/home/entrenamiento'"/>
+  <v-app class="no-background pt-12">
       <v-container>
           <v-row justify="center">
               <v-col cols="12" sm="8" md="12" lg="10" xl="12">
@@ -11,5 +12,6 @@
 </template>
 
 <script setup>
+import BackButton from '@/components/fab/BackButton.vue';
 import ActivitySelector from '@/components/training/ActivitySelector.vue'
 </script>

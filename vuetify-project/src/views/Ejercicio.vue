@@ -1,5 +1,8 @@
 <template>
-    <v-container>
+    <BackButton :to="'/home/entrenamiento/'
+    +this.$route.params.categoria+'/ejercicio/'
+    +this.$route.params.id" />
+    <v-container>     
         <v-row class="myfont centered">
             <div class="violet-bg white biggest-font round-border pt-4 pl-6 pr-6 mb-12" style="margin-top: 70px;">{{
                 Ejercicio.nombre }}</div>
@@ -46,7 +49,6 @@
   
     
 <script>
-
 import { getEjercicios, comprobarRespuesta } from '../communicationsManager';
 import { useAppStore } from '../store/app'
 const store = useAppStore();
@@ -57,19 +59,21 @@ import Formato3 from '../components/Formato3.vue';
 import Formato4 from '../components/Formato4.vue';
 import Formato5 from '../components/Formato5.vue';
 import Formato6 from '../components/Formato6.vue';
+import BackButton from '@/components/fab/BackButton.vue';
 
 
 //import { socket, state } from './socket';
 export default {
     name: 'Ejercicio',
     components: {
-        Formato1,
-        Formato2,
-        Formato3,
-        Formato4,
-        Formato5,
-        Formato6
-    },
+    Formato1,
+    Formato2,
+    Formato3,
+    Formato4,
+    Formato5,
+    Formato6,
+    BackButton
+},
     setup() {
         const appStore = useAppStore()
         return {
@@ -191,7 +195,6 @@ export default {
     created() {
         this.Ejercicio = getEjercicios(this.$route.params.id).then((res) => {
             this.Ejercicio = res;
-            console.log("Ejercicio: ", this.Ejercicio)
             this.botoncliclado(this.Ejercicio.preguntas[0]);
             this.selectedButton = 0;
             this.indexArray = Array.from(Array(this.Ejercicio.preguntas.length));

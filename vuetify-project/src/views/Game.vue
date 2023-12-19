@@ -14,14 +14,14 @@
                     <v-overlay class="mydisabled" :scrim="false" v-model="hpOverlay" contained persistent>
                         <v-row>
                             <v-col>
-                                <h2 style="color: #F87060;" class="sombra-texto">Team 1</h2>
-                                <v-progress-linear class="custom-border" bg-opacity="0.5" v-model="team1hpPercent" color="#F87060" height="25">
+                                <h2 style="color: #102542;" class="sombra-texto">Team 1</h2>
+                                <v-progress-linear class="custom-border" bg-opacity="0.5" v-model="team1hpPercent" color="#102542" height="25">
                                     <strong>{{ Math.ceil(team1hpPercent) }}</strong>
                                 </v-progress-linear>
                             </v-col>
                             <v-col style="text-align: right;">
-                                <h2 style="color: #102542;" class="sombra-texto">Team 2</h2>
-                                <v-progress-linear class="custom-border2" bg-opacity="0.5" reverse v-model="team2hpPercent" color="#102542" height="25">
+                                <h2 style="color: #F87060;" class="sombra-texto">Team 2</h2>
+                                <v-progress-linear class="custom-border2" bg-opacity="0.5" reverse v-model="team2hpPercent" color="#F87060" height="25">
                                     <strong class="white">{{ Math.ceil(team2hpPercent) }}</strong>
                                 </v-progress-linear>
                             </v-col>
@@ -66,10 +66,10 @@
 .sombra-texto{
     text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;
 }
-.custom-border2 {
+.custom-border {
     border: 1px solid #102542;
 }
-.custom-border {
+.custom-border2 {
     border: 1px solid #F87060;
 }
 .v-overlay__content{
@@ -257,12 +257,12 @@ export default {
             console.log("state changed", state);
             this.respuestaSelecionada = state.respuesta;
             if (this.team1hp != state.room.teams.team1[0].hp) {
-                this.actualGif = purplePunch;
+                this.actualGif = redPunch;
                 setTimeout(() => {
                     this.actualGif = idleGif;
                 }, 1600);
             } else if (this.team2hp != state.room.teams.team2[0].hp) {
-                this.actualGif = redPunch;
+                this.actualGif = purplePunch;
                 setTimeout(() => {
                     this.actualGif = idleGif;
                 }, 1600);

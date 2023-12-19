@@ -1,4 +1,5 @@
 <template>
+  <v-container>
   <v-expansion-panels class="myfont">
     <v-alert v-model="alert" class="mb-3" density="compact" type="warning" title="Ja has creat una partida!"
           text="Sembla que ja has creat una partida, i només es pot crear una a la vegada. Prova de tancar totes les finestres o torna a entrar a l'anterior partida."></v-alert>
@@ -24,6 +25,7 @@
     </v-expansion-panel>
 
   </v-expansion-panels>
+</v-container>
 </template>
 
 <script>
