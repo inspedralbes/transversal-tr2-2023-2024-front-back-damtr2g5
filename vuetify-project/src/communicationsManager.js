@@ -24,6 +24,7 @@ export async function getAulaById(aulaId) {
   const aula = await response.json();
   return aula
 }
+
 export async function getEjercicios(id) {
   const response = await fetch(`${SERVER_URL}/getEjercicio/${id}`, { method: 'GET', credentials: 'include', mode: 'cors' });
   const ejercicios = await response.json();
@@ -187,6 +188,21 @@ export async function getBatallas() {
   const pregunta = await response.json();
   return pregunta;
 }
+
+export async function historial() {
+  const response = await fetch(`${SERVER_URL}/historial`, {
+    method: 'POST',
+    credentials: 'include',
+    mode: 'cors',
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  })
+
+  const pregunta = await response.json();
+  return pregunta;
+}
+
 export async function PostBatallas(datos) {
   const response = await fetch(`${SERVER_URL}/guardarbatalla`,
     {

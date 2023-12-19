@@ -118,16 +118,16 @@ app.get('/getEjercicio/:id', (req, res) => {
 app.get('/totalExperiencia', async (req, res) => {
     let xp = 0
     let user = req.session.user
-    console.log("Usuario: ",user)
-    
+    console.log("Usuario: ", user)
+
     try {
         let questionsResults = await findRegisteredResults(parseInt(user.id));
         let questionsBattles = await findRegisteredBattles(user.email);
-        console.log("Resultados Battles: ",questionsBattles);  
-        console.log("Resultados Results: ",questionsResults);
+        console.log("Resultados Battles: ", questionsBattles);
+        console.log("Resultados Results: ", questionsResults);
         questionsResults = questionsResults.concat(questionsBattles)
         const results = questionsResults.filter(element => element.correcta === true);
-        console.log("Resultados Totales: ",results);
+        console.log("Resultados Totales: ", results);
 
         const promises = results.map(async visual => {
             const idPregunta = visual.idPregunta || visual.pregunta
@@ -139,10 +139,10 @@ app.get('/totalExperiencia', async (req, res) => {
         await Promise.all(promises);
         const experiencia = xp
         mysqlConnection.getLevelData(experiencia, (nivelDatos) => {
-            const datos = {experiencia:experiencia, nivel:nivelDatos.currentLevel.lvl, vida:nivelDatos.currentLevel.health, experienciaRestante:nivelDatos.nextLevelRequiredXP}
+            const datos = { experiencia: experiencia, nivel: nivelDatos.currentLevel.lvl, vida: nivelDatos.currentLevel.health, experienciaRestante: nivelDatos.nextLevelRequiredXP }
             res.json(datos);
         })
-        
+
     } catch (error) {
         console.error(error);
     }
@@ -574,7 +574,7 @@ app.get('/getAulaById/:id', (req, res) => {
     const id = parseInt(req.params.id)
     console.log("Código de Acceso en Server: ", id)
     mysqlConnection.SelectClassroomId(id, (results) => {
-        console.log("Resultados en Server: ", results[0].name)
+        console.log("Resultados en Server: ", results)
         if (results.length > 0) {
             res.json(results);
         } else {
@@ -701,22 +701,22 @@ app.get('/quitarAlumnoAula/:id', async (req, res) => {
 
 //Restablecer constraseña
 app.post('/restablecerConstrasenya', async (req, res) => {
-    try {     
+    try {
         //console.log(req.body);
-        if(req.session.user.contrasena == req.body.contrasenyaAntigua){
-            const resposta = await new Promise((resolve, reject) => {               
-                mysqlConnection.UpdatePassword([req.body.contrasenyaNueva,req.session.user.id], (callback) => {
+        if (req.session.user.contrasena == req.body.contrasenyaAntigua) {
+            const resposta = await new Promise((resolve, reject) => {
+                mysqlConnection.UpdatePassword([req.body.contrasenyaNueva, req.session.user.id], (callback) => {
                     resolve(callback);
                 });
             });
-            req.session.user.contrasena=req.body.contrasenyaNueva;
+            req.session.user.contrasena = req.body.contrasenyaNueva;
             console.log("login contrasenya cambiada", req.session.user);
             res.json(resposta); // Envía la respuesta si la comparación de contraseñas es correcta   funcio
 
-        }else{
+        } else {
             res.status(500).json({ error: 'La contraseña antigua no coincide' });
         }
-      
+
     } catch (error) {
         console.error("Error:", error);
         res.status(500).json({ error: 'Hubo un error al procesar la solicitud' });
@@ -732,6 +732,70 @@ app.post('/datosPerfil', (req, res) => {
     mysqlConnection.SelectProfTotal(id_classroom, id_prof, (successMessage) => {
         res.json(successMessage);
     })
+});
+app.post('/historial', async (req, res) => {
+    try {
+        let result3 = []//await getBatallas();
+        let result4 = []//await GetResueltas({ ejercicioid: null });
+        let historial = [];
+        await findRegisteredBattles(req.session.user.email).then((result) => {
+            result3 = result
+        })
+        let idUsuario = req.session.user.id
+        let idEjercicio = req.body.ejercicioid
+        if (idEjercicio == null) {
+            result4 = await findRegisteredResults(idUsuario);
+        } else {
+            result4 = await findRegisteredResults(idUsuario, idEjercicio);
+        }
+        let batalla = result3
+
+        Promise.all(result4.map(async (ejercicio) => {
+            let resultado = null
+            let result = await getDocument(ejercicio.idEjercicio).then((document) => {
+                resultado = document.nombre
+            });
+            let resultadoEjercicio = '';
+            if (ejercicio.correcta) {
+                resultadoEjercicio = 'bé';
+            } else {
+                resultadoEjercicio = 'malament';
+            }
+            historial.push("Has resolt " + resultadoEjercicio + " l'activitat " + ejercicio.idPregunta + " de l'exercici " + resultado + " &el& " + ejercicio.time);
+        })).then(() => {
+            historial.sort((a, b) => {
+                const tiempoA = new Date(a.match(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}/));
+                const tiempoB = new Date(b.match(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}/));
+                return tiempoB - tiempoA;
+            });
+        }).then(() => {
+        // Ordenar el historial por fecha en orden descendente
+        batalla.forEach(element => {
+            let resultadoBatalla = ''
+            if (element.ganador === 1) {
+                // Verificar si el email está en el equipo1
+                const equipo1 = element.equipo1.find(member => member.email === req.session.user.email);
+                resultadoBatalla = equipo1 ? "guanyat" : "perdut";
+            } else if (element.ganador === 2) {
+                // Verificar si el email está en el equipo2
+                const equipo2 = element.equipo2.find(member => member.email === req.session.user.email);
+                resultadoBatalla = equipo2 ? "guanyat" : "perdut";
+            }
+            historial.push("Has " + resultadoBatalla + " la batalla " + element.battle + " &el& " + element.time)
+        });
+    }).then(() => {
+        let history = historial.map((element)=>{
+            recorte = element.split(" &el& ");
+            return {
+                "historial": recorte[0],
+                "hora": recorte[1]
+            }
+        })
+        res.send(history);
+    })
+    } catch (error) {
+        console.error(error);
+    }
 });
 //idPregunta: 1, respuesta: "1111"
 app.post('/pregunta', async (req, res) => {
