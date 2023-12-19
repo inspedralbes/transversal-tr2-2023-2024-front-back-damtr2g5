@@ -691,12 +691,15 @@ app.get('/quitarAlumnoAula/:id', async (req, res) => {
 //Restablecer constraseña
 app.post('/restablecerConstrasenya', async (req, res) => {
     try {     
-        if(req.session.user.contrasena == req.body.contrasenaAntiga){
+        //console.log(req.body);
+        if(req.session.user.contrasena == req.body.contrasenyaAntigua){
             const resposta = await new Promise((resolve, reject) => {               
-                mysqlConnection.UpdatePassword([req.body.contrasenaNova,req.session.user.id], (callback) => {
+                mysqlConnection.UpdatePassword([req.body.contrasenyaNueva,req.session.user.id], (callback) => {
                     resolve(callback);
                 });
             });
+            req.session.user.contrasena=req.body.contrasenyaNueva;
+            console.log("login contrasenya cambiada", req.session.user);
             res.json(resposta); // Envía la respuesta si la comparación de contraseñas es correcta   funcio
 
         }else{
