@@ -1,5 +1,4 @@
 <template>
-  <boton-atras/>
   <v-container fluid style="padding: 0;">
     <v-row class="d-flex justify-end w-full mt-3 mr-3">
       <v-menu min-width="200px" rounded>
@@ -59,12 +58,10 @@ import { useAppStore } from '@/store/app';
 import { mdiPencil } from '@mdi/js'
 import pruebas from '@/components/recortarimagen.vue'
 import VuePictureCropper from 'vue-picture-cropper'
-import BotonAtras from '@/components/interior/BotonAtras.vue';
 export default {
   components: {
     VuePictureCropper,
-    pruebas,
-    BotonAtras
+    pruebas
   },
   data() {
     const appStore = useAppStore()
