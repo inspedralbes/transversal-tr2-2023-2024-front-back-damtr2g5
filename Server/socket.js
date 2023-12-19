@@ -118,6 +118,11 @@ function initializeSocket(server, cors) {
                 }
                 removedFrom = rooms.removeUser(socket.request.session.id);
                 console.log("removedFrom", removedFrom);
+                if(socket.request.session.id === room.ownerId && room.started === false){
+                    rooms.removeRoom(room.id);
+                    io.to(room.id).emit("roomDeleted", room);
+                }
+                
             });
         });
 
