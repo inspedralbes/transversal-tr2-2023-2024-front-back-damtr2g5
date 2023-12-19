@@ -20,7 +20,7 @@
       <v-infinite-scroll height="300">
         <template v-for="(item, index) in historial" :key="item">
           <div :class="['px-2', index % 2 === 0 ? 'bg-grey-lighten-2' : '']">
-            {{ item }}
+            {{ item.historial }} el {{ item.hora }}
           </div>
         </template>
         <template v-slot:loading>
@@ -50,7 +50,7 @@
 
 <script>
 import { useAppStore } from '@/store/app';
-import { historial } from '@/communicationsManager'
+import { historial,GetDatosPerfil,getAulaById } from '@/communicationsManager'
 export default {
   data() {
     return {
@@ -58,14 +58,19 @@ export default {
       clase: '',
       total: '',
       prof: '',
-      batalla: '',
-      ejercicio: '',
-      mensajeB: '',
-      mensajeE: '',
       historial: []
     };
   }, async mounted() {
-      this.historial = await historial({ id: this.user.id_classroom, ejercicioid: null})
+    try{
+      const res = await getAulaById(this.user.id_classroom);
+      const res2 = await GetDatosPerfil({ idA: res[0].id, idP: res[0].professor_id });
+      this.clase = res[0].name;
+      this.total = res2.totalUsers
+      this.prof = res2.professors[0].name
+    }catch(error){
+      console.log(error);
+    }
+      this.historial = await historial()
   }, methods: {
     load({ done }) {
       setTimeout(() => {

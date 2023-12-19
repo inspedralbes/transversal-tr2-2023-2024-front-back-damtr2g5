@@ -574,7 +574,7 @@ app.get('/getAulaById/:id', (req, res) => {
     const id = parseInt(req.params.id)
     console.log("Código de Acceso en Server: ", id)
     mysqlConnection.SelectClassroomId(id, (results) => {
-        console.log("Resultados en Server: ", results[0].name)
+        console.log("Resultados en Server: ", results)
         if (results.length > 0) {
             res.json(results);
         } else {
@@ -733,60 +733,43 @@ app.post('/datosPerfil', (req, res) => {
         res.json(successMessage);
     })
 });
-app.post('/historial',async (req, res) => {
+app.post('/historial', async (req, res) => {
     try {
-        let result = ""//await getAulaById(this.user.id_classroom);
-        let result2 = ""//await GetDatosPerfil({ idA: res[0].id, idP: res[0].professor_id });
-        let result3 = ""//await getBatallas();
-        let result4 = ""//await GetResueltas({ ejercicioid: null });
+        let result3 = []//await getBatallas();
+        let result4 = []//await GetResueltas({ ejercicioid: null });
         let historial = [];
-        const id = parseInt(req.body.id)
-        await mysqlConnection.SelectClassroomId(id, (results) => {
-            console.log("Resultados en Server: ", results[0].name)
-            if (results.length > 0) {
-                result = results;
-            } else {
-                console.log("BOOM");
-            }
-        });
-        mysqlConnection.SelectProfTotal(result[0].id, result[0].professor_id, (successMessage) => {
-            result2 = successMessage;
-        })
-        findRegisteredBattles(req.session.user.email).then((result) => {
+        await findRegisteredBattles(req.session.user.email).then((result) => {
             result3 = result
         })
         let idUsuario = req.session.user.id
         let idEjercicio = req.body.ejercicioid
         if (idEjercicio == null) {
-            result4 = findRegisteredResults(idUsuario);
-            console.log(idUsuario, " sin ejercicio");
+            result4 = await findRegisteredResults(idUsuario);
         } else {
-            result4 = findRegisteredResults(idUsuario, idEjercicio);
-            console.log(idUsuario, idEjercicio);
+            result4 = await findRegisteredResults(idUsuario, idEjercicio);
         }
-        let clase = result[0].name;
-        let total = result2.totalUsers
-        let prof = result2.professors[0].name
         let batalla = result3
 
         Promise.all(result4.map(async (ejercicio) => {
-            const res = await getEjercicios(ejercicio.idEjercicio);
+            let resultado = null
+            let result = await getDocument(ejercicio.idEjercicio).then((document) => {
+                resultado = document.nombre
+            });
             let resultadoEjercicio = '';
-            if (result.correcta) {
+            if (ejercicio.correcta) {
                 resultadoEjercicio = 'bé';
             } else {
                 resultadoEjercicio = 'malament';
             }
-            historial.push("Has resolt " + resultadoEjercicio + " l'activitat " + ejercicio.idPregunta + " de l'exercici " + result.nombre + " el " + ejercicio.time);
-        }))
-            .then(() => {
-                // Ordenar el historial por fecha en orden descendente
-                historial.sort((a, b) => {
-                    const tiempoA = new Date(a.match(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}/)[0]);
-                    const tiempoB = new Date(b.match(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}/)[0]);
-                    return tiempoB - tiempoA;
-                });
-            })
+            historial.push("Has resolt " + resultadoEjercicio + " l'activitat " + ejercicio.idPregunta + " de l'exercici " + resultado + " &el& " + ejercicio.time);
+        })).then(() => {
+            historial.sort((a, b) => {
+                const tiempoA = new Date(a.match(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}/));
+                const tiempoB = new Date(b.match(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}/));
+                return tiempoB - tiempoA;
+            });
+        }).then(() => {
+        // Ordenar el historial por fecha en orden descendente
         batalla.forEach(element => {
             let resultadoBatalla = ''
             if (element.ganador === 1) {
@@ -798,9 +781,18 @@ app.post('/historial',async (req, res) => {
                 const equipo2 = element.equipo2.find(member => member.email === req.session.user.email);
                 resultadoBatalla = equipo2 ? "guanyat" : "perdut";
             }
-            historial.push("Has " + resultadoBatalla + " la batalla " + element.battle + " el " + element.time)
+            historial.push("Has " + resultadoBatalla + " la batalla " + element.battle + " &el& " + element.time)
         });
-        res.send(historial);
+    }).then(() => {
+        let history = historial.map((element)=>{
+            recorte = element.split(" &el& ");
+            return {
+                "historial": recorte[0],
+                "hora": recorte[1]
+            }
+        })
+        res.send(history);
+    })
     } catch (error) {
         console.error(error);
     }
