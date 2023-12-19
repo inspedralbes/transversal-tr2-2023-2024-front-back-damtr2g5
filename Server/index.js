@@ -688,6 +688,30 @@ app.get('/quitarAlumnoAula/:id', async (req, res) => {
     }
 });
 
+//Restablecer constraseña
+app.post('/restablecerConstrasenya', async (req, res) => {
+    try {     
+        //console.log(req.body);
+        if(req.session.user.contrasena == req.body.contrasenyaAntigua){
+            const resposta = await new Promise((resolve, reject) => {               
+                mysqlConnection.UpdatePassword([req.body.contrasenyaNueva,req.session.user.id], (callback) => {
+                    resolve(callback);
+                });
+            });
+            req.session.user.contrasena=req.body.contrasenyaNueva;
+            console.log("login contrasenya cambiada", req.session.user);
+            res.json(resposta); // Envía la respuesta si la comparación de contraseñas es correcta   funcio
+
+        }else{
+            res.status(500).json({ error: 'La contraseña antigua no coincide' });
+        }
+      
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: 'Hubo un error al procesar la solicitud' });
+    }
+});
+
 
 //idPregunta: 1, respuesta: "1111"
 app.post('/pregunta', async (req, res) => {
