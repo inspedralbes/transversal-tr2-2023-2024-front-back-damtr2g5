@@ -82,11 +82,15 @@ function checkQuestion(question, respuesta) {
             break;
 
         case "Unir valores":
-            const respuestaString = respuesta.map(arr => arr.join(',')).sort().join(';');
-            const correctaString = question.correcta.map(arr => arr.join(',')).sort().join(';');
-            if (respuestaString === correctaString) {
-                correcto = true;
-            }
+            //Comprobar que cada par de valores de respuesta corresponde a un par de valores de correcta
+            correcto = respuesta.every((par) => {
+                return question.correcta.some((par2) => {
+                    return (
+                        (par[0] === par2[0] && par[1] === par2[1]) ||
+                        (par[0] === par2[1] && par[1] === par2[0])
+                    );
+                });
+            });
             break;
 
         default:
