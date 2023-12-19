@@ -14,17 +14,17 @@
       </v-col>
       <v-col style="text-align: end;" cols="12">
         <v-btn variant="plain outlined" class="mt-10 myfont oxford-blue-bg bitter-sweet" v-if="codigoNuevo == ''"
-          @click="dialog = true">Unirte a una clase</v-btn>
+          @click="dialog = true">Unir-te a una aula</v-btn>
         <v-btn v-else class=" myfont oxford-blue-bg bitter-sweet" @click="dialog = true">{{ codigoNuevo }}</v-btn>
       </v-col>
     </v-row>
   </v-container>
-  <v-dialog v-model="dialog" max-width="400">
+  <v-dialog class="myfont" v-model="dialog" max-width="400">
     <v-card>
-      <v-card-title class="text-h5 bg-grey-lighten-3">
-        Codigo de Clase
+      <v-card-title class="big-font bg-grey-lighten-3">
+        Codi d'aula
       </v-card-title>
-      <v-text-field v-model="this.codigo" label="Codigo de clase" class="ma-4 mb-0"></v-text-field>
+      <v-text-field variant="outlined" v-model="this.codigo" label="Codi d'aula" class="ma-4 mb-0"></v-text-field>
       <div class="error-container ma-4 mb-0" v-if="error.error">
         <v-icon color="red darken-4" start>$alert</v-icon>
         <div class="error-message red--text">{{ error.message }}</div>
@@ -32,11 +32,11 @@
       <v-divider></v-divider>
       
       <v-card-actions>
-        <v-btn variant="text" @click="dialog = false">
+        <v-btn class="platinum-bg oxford-blue" variant="text" @click="dialog = false">
           Cancelar
         </v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="deep-purple" variant="tonal" @click="toggleClassroom(this.codigo)">
+        <v-btn class="oxford-blue-bg bitter-sweet" variant="tonal" @click="toggleClassroom(this.codigo)">
           Aceptar
         </v-btn>
       </v-card-actions>
@@ -104,7 +104,7 @@ export default {
             this.dialog = false
             
           } else {
-            this.error = {error: true,message: "Aula no existeix"}
+            this.error = {error: true,message: "Aquesta aula no existeix"}
           }
 
         })

@@ -12,19 +12,19 @@
         </template>
         <v-card>
           <v-card-text>
-            <div class="mx-auto text-center">
+            <div class="mx-auto text-center myfont">
               <v-badge :icon="`${mdiPencil}`" class="av" location="bottom end" offset-x="15" offset-y="7" @click="dialogL = true">
                 <v-avatar color="brown" size="100" @click="dialogL = true">
                   <v-img :src="user.image" alt="John"></v-img>
                 </v-avatar>
               </v-badge>
-              <h3>{{ user.name }}</h3>
+              <h2 class="mt-2">{{ user.name }}</h2>
               <p class="text-caption mt-1">
                 {{ user.email }}
               </p>
               <v-divider class="my-3"></v-divider>
               <v-btn @click="perfil()" rounded variant="text">
-                Veure compte
+                Perfil
               </v-btn>
               <v-divider class="my-3"></v-divider>
               <v-btn @click="logout()" rounded variant="text">

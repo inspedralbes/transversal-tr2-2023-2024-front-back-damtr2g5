@@ -1,4 +1,8 @@
 <template>
+    <div class="background-container blurred">
+        <img src="@/assets/Muay_Thai_Fight.jpeg" alt="Background Image" class="background-image">
+    </div>
+    <v-app>
     <v-dialog transition="dialog-top-transition" persistent width="500" v-model="finishDialog">
         <v-sheet class="myfont" style="text-align: center; padding: 2em;">
             <h1>{{ endMessage }}</h1>
@@ -16,7 +20,7 @@
                             <v-col>
                                 <h2 style="color: #102542;" class="sombra-texto">Team 1</h2>
                                 <v-progress-linear class="custom-border" bg-opacity="0.5" v-model="team1hpPercent" color="#102542" height="25">
-                                    <strong>{{ Math.ceil(team1hpPercent) }}</strong>
+                                    <strong class="white">{{ Math.ceil(team1hpPercent) }}</strong>
                                 </v-progress-linear>
                             </v-col>
                             <v-col style="text-align: right;">
@@ -61,6 +65,7 @@
             </v-col>
         </v-row>
     </v-container>
+</v-app>
 </template>
 <style>
 .sombra-texto{

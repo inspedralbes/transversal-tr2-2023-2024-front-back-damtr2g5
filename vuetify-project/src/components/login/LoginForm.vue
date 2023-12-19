@@ -28,9 +28,9 @@
             <p class="mt-3 black-olive"> Encara no t'has registrat? <a href="#" class="lavender-pink" @click.stop.prevent="dialog = true,step=1"> Registra't </a></p>
             <v-dialog v-model="dialog" class="w-50 myfont">
                 <v-card class="mx-auto" max-width="800" width="500">
-                    <v-card-title class="text-h6  justify-space-between">
+                    <v-card-title class="myfont big-font justify-space-between">
                         {{ currentTitle }}
-                        <v-avatar class="text-h6 bitter-sweet-bg" style="color: white;" size="20" v-text="step"></v-avatar>
+                        <v-avatar class="text-h6 bitter-sweet-bg mb-3" style="color: white;" size="20" v-text="step"></v-avatar>
                     </v-card-title>
 
                     <v-window v-model="step">

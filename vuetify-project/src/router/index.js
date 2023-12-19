@@ -151,27 +151,15 @@ const routes = [
   },
   {
     path: '/room',
-    component: () => import('@/layouts/default/Default.vue'),
+    name: 'Room',
+    component: () => import(/* webpackChunkName: "home" */ '@/views/Room.vue'),
     beforeEnter: requireAuth,
-    children: [
-      {
-        path: '',
-        name: 'Room',
-        component: () => import(/* webpackChunkName: "home" */ '@/views/Room.vue'),
-      },
-    ],
   },
   {
     path: '/game/:room',
-    component: () => import('@/layouts/default/Default.vue'),
+    name: 'Game',
+    component: () => import(/* webpackChunkName: "home" */ '@/views/Game.vue'),
     beforeEnter: requireAuth,
-    children: [
-      {
-        path: '',
-        name: 'Game',
-        component: () => import(/* webpackChunkName: "home" */ '@/views/Game.vue'),
-      },
-    ],
   }
 
 

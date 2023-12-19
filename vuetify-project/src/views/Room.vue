@@ -1,4 +1,8 @@
 <template>
+    <div class="background-container blurred">
+        <img src="@/assets/Muay_Thai_Fight.jpeg" alt="Background Image" class="background-image">
+    </div>
+    <v-app>
     <v-dialog width="500" persistent v-model="dialog">
         <v-card class="myfont round-border" height="100" style="text-align: center;">
             <v-card-title class="big-font">Escull el teu team</v-card-title>
@@ -56,6 +60,7 @@
             </v-col>
         </v-row>
     </v-container>
+</v-app>
 </template>
 
 <script>

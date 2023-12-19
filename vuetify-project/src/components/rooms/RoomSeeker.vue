@@ -47,8 +47,13 @@
                         
                     </v-card>
                 </v-dialog>
-                <v-dialog  max-width="400">
-
+                <v-dialog v-model="notJoinedDialog" max-width="500">
+                    <v-alert type="error" closable close-label="Close Alert" title="No pots connectar a la partida">
+                        </v-alert>
+                </v-dialog>
+                <v-dialog v-model="alreadyJoinedDialog" max-width="500">
+                    <v-alert type="warning" closable close-label="Close Alert" title="Ja estàs connectat a la partida">
+                        </v-alert>
                 </v-dialog>
             </template>
 
@@ -73,6 +78,8 @@ export default {
     name: 'RoomSeeker',
     data() {
         return {
+            alreadyJoinedDialog: false,
+            notJoinedDialog: false,
             store: useAppStore(),
             wrongPassword: false,
             dialog: false,
@@ -110,13 +117,11 @@ export default {
             //TODO: Go to room
         });
         socket.on('alreadyJoined', (room) => {
-            console.log("alreadyJoined", room);
-            this.store.setRoom(room);
-            this.$router.push({ name: 'Room', params: { room: room.name } });
+            this.alreadyJoinedDialog = true;
             this.wrongPassword = false;
         });
         socket.on('roomNotJoined', (room) => {
-            console.log("roomNotJoined", room);
+            this.notJoinedDialog = true;
         });
         socket.on('wrongPassword', (room) => {
             this.wrongPassword = true;
@@ -146,9 +151,7 @@ export default {
         },
         loadItems({ page, itemsPerPage, sortBy }) {
             this.loading = true;
-            console.log(sortBy);
             getRooms(page, itemsPerPage, sortBy, this.name).then((response) => {
-                console.log(response);
                 this.serverItems = response.rooms;
                 this.totalItems = response.totalRooms;
                 this.loading = false;
