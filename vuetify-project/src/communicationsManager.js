@@ -1,14 +1,16 @@
 export const SERVER_URL = "http://localhost:3001"
 
 export async function joinAula(aula) {
-  return fetch(`${SERVER_URL}/joinAula`, 
-  {method: 'POST',
-  credentials: 'include', mode: 'cors',
-   headers: {
-    'Content-Type':  'application/json' ,
-  },
-  body: JSON.stringify(aula)});
-  
+  return fetch(`${SERVER_URL}/joinAula`,
+    {
+      method: 'POST',
+      credentials: 'include', mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(aula)
+    });
+
 }
 
 export async function getAula(aulaId) {
@@ -66,13 +68,12 @@ export async function comprobarRespuesta(respuesta, id) {
   return correcto;
 
 }
-export async function GetResueltas(datos) {
-  console.log("DATOS: " + datos);
+export async function GetResueltas(dato) {
   const response = await fetch(`${SERVER_URL}/getResueltas`,
     {
       method: 'POST', headers: {
         'Content-Type': 'application/json',
-      }, body: JSON.stringify(datos), mode: 'cors'
+      }, body:JSON.stringify(dato), mode: 'cors', credentials: 'include'
     });
   const resueltas = await response.json();
   return resueltas;
@@ -140,7 +141,7 @@ export async function getAnswerImage(imagen) {
       credentials: 'include',
       mode: 'cors'
     });
-    
+
     const imagen = await response.json();
     return imagen;
   } catch (error) {
@@ -173,6 +174,19 @@ export async function getPreguntaRandom() {
   const pregunta = await response.json();
   return pregunta;
 }
+export async function getBatallas() {
+  const response = await fetch(`${SERVER_URL}/getbatalla`, {
+    method: 'GET',
+    credentials: 'include',
+    mode: 'cors',
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  })
+
+  const pregunta = await response.json();
+  return pregunta;
+}
 export async function PostBatallas(datos) {
   const response = await fetch(`${SERVER_URL}/guardarbatalla`,
     {
@@ -185,4 +199,14 @@ export async function PostBatallas(datos) {
       }
     })
 
+}
+export async function GetDatosPerfil(datos) {
+  const response = await fetch(`${SERVER_URL}/datosPerfil`,
+    {
+      method: 'POST', headers: {
+        'Content-Type': 'application/json',
+      }, body: JSON.stringify(datos), mode: 'cors'
+    });
+  const resueltas = await response.json();
+  return resueltas;
 }

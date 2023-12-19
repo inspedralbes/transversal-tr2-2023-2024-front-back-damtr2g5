@@ -17,7 +17,8 @@ export const useAppStore = defineStore('app', {
             experience: '',
             image: '',
             id_classroom:'',
-            access_code:''
+            access_code:'',
+            exp:''
         },
         aulaInfo: null
         ,

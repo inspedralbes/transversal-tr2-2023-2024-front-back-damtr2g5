@@ -21,8 +21,8 @@ const server = http.createServer(app);
 const port = 3001;
 const SERVER_URL = "http://localhost";
 
-const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, findRegisteredBattles, updateCollection, getActivities, getPreguntaRandom} = require("./mongoDB.js");
-const { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion, generarPassword } = require("./utils.js");
+const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, updateCollection, findRegisteredBattles, getActivities, getPreguntaRandom } = require("./mongoDB.js");
+const { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion, generarPassword, obtenerFechaYHoraActual } = require("./utils.js");
 const { connect } = require('http2');
 const { Console } = require('console');
 const { initializeSocket, filterRooms, getIo } = require("./socket.js");
@@ -77,9 +77,9 @@ app.get('/getRooms', (req, res) => {
 });
 app.get('/getEjercicio/:id', (req, res) => {
     let id = parseInt(req.params.id)
-    console.log("Inside Call:", id)
+    //console.log("Inside Call:", id)
     getDocument(id).then((document) => {
-        console.log("Inside Call:", document)
+        //console.log("Inside Call:", document)
         getPreguntas(document.preguntas).then((preguntas) => {
             var ejercicio = {
                 "id": document.id,
@@ -104,7 +104,7 @@ app.get('/getEjercicio/:id', (req, res) => {
 
                 ejercicio.preguntas.push(preguntas[i]);
             }
-            //console.log(ejercicio.preguntas);
+            //console.log(ejercicio);
 
             res.json(ejercicio);
         });
@@ -183,7 +183,7 @@ app.post('/descargar', upload.single('file'), (req, res) => {
     const uniqueFileName = uuidv4() + path.extname(fileName); // Añade la extensión original
 
     // Ruta de destino para guardar el archivo
-    const uploadPath = path.join(__dirname, 'avatars', uniqueFileName+".jpg");
+    const uploadPath = path.join(__dirname, 'avatars', uniqueFileName + ".jpg");
     // Mover el archivo a la ubicación deseada
     fs.rename(uploadedFile.path, uploadPath, (err) => {
         if (err) {
@@ -191,9 +191,9 @@ app.post('/descargar', upload.single('file'), (req, res) => {
             return res.status(500).send('Error al subir el archivo.');
         }
 
-        mysqlConnection.UpdateImage([uniqueFileName, req.session.user.id], (successMessage) => { console.log(successMessage); })
-        req.session.user.image = "http://localhost:3001/imagen/" + uniqueFileName;
-        res.status(200).json({ imagen: "http://localhost:3001/imagen/" + uniqueFileName });
+        mysqlConnection.UpdateImage([uniqueFileName + '.jpg', req.session.user.id], (successMessage) => { console.log(successMessage); })
+        req.session.user.image = "http://localhost:3001/imagen/" + uniqueFileName + ".jpg";
+        res.status(200).json({ imagen: "http://localhost:3001/imagen/" + uniqueFileName + ".jpg" });
     });
 });
 
@@ -205,17 +205,22 @@ app.get("/imagenPregunta/:nombreArchivo", (req, res) => {
 })
 
 //Coger ejercicios respondidos
-app.post('/getResueltas', (req, res) => {
-    let idUsuario = req.body.userId
+app.post('/getResueltas', async (req, res) => {
+    let idUsuario = req.session.user.id
     let idEjercicio = req.body.ejercicioid
-    console.log(idUsuario, idEjercicio);
-    findRegisteredResults(idUsuario, idEjercicio).then((result) => {
-        res.json(result)
-    })
+    let result;
+    if (idEjercicio == null) {
+        result = await findRegisteredResults(idUsuario);
+        console.log(idUsuario, " sin ejercicio");
+    } else {
+        result = await findRegisteredResults(idUsuario, idEjercicio);
+        console.log(idUsuario, idEjercicio);
+    }
+    res.json(result);
 })
 app.post('/getExpEjer', async (req, res) => {
     try {
-        let idUsuario = req.body.userId;
+        let idUsuario = req.session.user.id
         let idEjercicio = req.body.ejercicioid;
         let xp = 0;
         let result;
@@ -244,6 +249,11 @@ app.post('/getExpEjer', async (req, res) => {
     }
 });
 
+app.get('/getbatalla', async (req, res) => {
+    findRegisteredBattles(req.session.user.email).then((result) => {
+        res.json(result)
+    })
+})
 //Comprobar si pregunta respondida es correcta o no
 app.post('/comprobarPregunta/:id', async (req, res) => {
     try {
@@ -267,12 +277,13 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
                         {
                             "$set": {
                                 "correcta": correcto,
-                                "respuesta": req.body.respuesta
+                                "respuesta": req.body.respuesta,
+                                "time": obtenerFechaYHoraActual()
                             }
                         }, 'result')
                 }
             } else {
-                insertInCollection({ "idUsuario": idUser, "idPregunta": preguntaid, "idEjercicio": req.body.ejercicioid, "respuesta": req.body.respuesta, "correcta": correcto }, 'result')
+                insertInCollection({ "idUsuario": idUser, "idPregunta": preguntaid, "idEjercicio": req.body.ejercicioid, "respuesta": req.body.respuesta, "correcta": correcto, "time": obtenerFechaYHoraActual() }, 'result')
             }
         })
         res.json({ "correct": correcto });
@@ -280,12 +291,12 @@ app.post('/comprobarPregunta/:id', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-app.post('/guardadobatalla',(req,res)=>{
+app.post('/guardadobatalla', (req, res) => {
     let batalla = req.body //nombre - ganador - tamaño - exp
-    try{
-    insertInCollection({ "battle": batalla.name, "winners": batalla.winner, "matchsize": batalla.size, "xp": batalla.xp, time:obtenerFechaYHoraActual()}, 'Battles')
-    res.json({Estado:'Todo bien'})
-    }catch(err){
+    try {
+        insertInCollection({ "battle": batalla.name, "winners": batalla.winner, "matchsize": batalla.size, "xp": batalla.xp, time: obtenerFechaYHoraActual() }, 'Battles')
+        res.json({ Estado: 'Todo bien' })
+    } catch (err) {
         res.status(500).json({ Estado: err.message });
     }
 })
@@ -559,47 +570,47 @@ app.get('/getAulas', (req, res) => {
 
 });
 
-app.get('/getAulaById/:id', (req,res) =>{
+app.get('/getAulaById/:id', (req, res) => {
     const id = parseInt(req.params.id)
-    console.log("Código de Acceso en Server: ",id)
+    console.log("Código de Acceso en Server: ", id)
     mysqlConnection.SelectClassroomId(id, (results) => {
-        console.log("Resultados en Server: ",results)
+        console.log("Resultados en Server: ", results[0].name)
         if (results.length > 0) {
-            res.json(results); 
+            res.json(results);
         } else {
-            res.json(null); 
+            res.json(null);
         }
     });
 })
 
-app.get('/getAula/:classroom', (req,res) =>{
+app.get('/getAula/:classroom', (req, res) => {
     const classroomId = req.params.classroom.toUpperCase()
-    console.log("Código de Acceso en Server: ",classroomId)
+    console.log("Código de Acceso en Server: ", classroomId)
     mysqlConnection.SelectClassroom(classroomId, (results) => {
-        console.log("Resultados en Server: ",results)
+        console.log("Resultados en Server: ", results)
         if (results.length > 0) {
-            res.json(results); 
+            res.json(results);
         } else {
-            res.json(null); 
+            res.json(null);
         }
     });
 })
 
 //JOIN AULA
-app.post('/joinAula',  (req, res) => {
-    console.log("Body content: ",req.body)
-    const aula  = req.body;
+app.post('/joinAula', (req, res) => {
+    console.log("Body content: ", req.body)
+    const aula = req.body;
     const id_classroom = aula.id;
     console.log("ID CLASS: ", id_classroom)
     const id = req.session.user.id;
     console.log("Id del usuario: " + req.session.user.id);
-     mysqlConnection.UpdateUserClassroom([id_classroom,id], (successMessage) => {
-                console.log("Operación completada:", successMessage);
-                req.session.user.id_classroom = id_classroom;
-                req.session.user.classroom_code = aula.access_code;
-                res.status(200).send("Registro exitoso");
-            })
-    });
+    mysqlConnection.UpdateUserClassroom([id_classroom, id], (successMessage) => {
+        console.log("Operación completada:", successMessage);
+        req.session.user.id_classroom = id_classroom;
+        req.session.user.classroom_code = aula.access_code;
+        res.status(200).send("Registro exitoso");
+    })
+});
 
 
 //GET USUARIOS
@@ -646,8 +657,8 @@ app.get('/consultarUsuariPerId/:id', async (req, res) => {
             mysqlConnection.SelectUserById(req.params.id, (usuari) => {
                 resolve(usuari[0]);
             });
-        });      
-        
+        });
+
 
         let usuariEnviar = {
             id: usuari.id,
@@ -712,7 +723,16 @@ app.post('/restablecerConstrasenya', async (req, res) => {
     }
 });
 
-
+//Get Datos perfil
+app.post('/datosPerfil', (req, res) => {
+    console.log("Body content: ", req.body)
+    const aula = req.body;
+    const id_classroom = aula.idA;
+    const id_prof = aula.idP;
+    mysqlConnection.SelectProfTotal(id_classroom, id_prof, (successMessage) => {
+        res.json(successMessage);
+    })
+});
 //idPregunta: 1, respuesta: "1111"
 app.post('/pregunta', async (req, res) => {
     var pregunta = await getPregunta(req.body.idPregunta);

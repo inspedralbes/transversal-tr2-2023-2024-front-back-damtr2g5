@@ -23,8 +23,8 @@
                 {{ user.email }}
               </p>
               <v-divider class="my-3"></v-divider>
-              <v-btn rounded variant="text">
-                Editar compte
+              <v-btn @click="perfil()" rounded variant="text">
+                Veure compte
               </v-btn>
               <v-divider class="my-3"></v-divider>
               <v-btn @click="logout()" rounded variant="text">
@@ -47,7 +47,7 @@
         <pruebas @botones="precionado"/>
       </div>
       <v-card-actions class="mx-auto text-center">
-        <v-btn color="primary" @click="dialogL = false">Cancelar</v-btn>
+        <v-btn color="primary" @click="dialogL = false">Tancar</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -96,6 +96,9 @@ export default {
         }
       })
 
+    },
+    perfil(){
+      this.$router.push({ name: "Perfil" });
     },
     precionado() {
       // Realizar acciones necesarias cuando el modal se cierra

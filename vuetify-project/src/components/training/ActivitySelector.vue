@@ -84,7 +84,7 @@ export default {
       categoria: null,
       selectedButton: null,
       ejercicioSeleccionado: null,
-      ejercicios: []
+      ejercicios: [],
     };
   },
 

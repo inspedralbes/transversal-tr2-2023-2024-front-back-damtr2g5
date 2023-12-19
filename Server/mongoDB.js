@@ -1,6 +1,6 @@
 const user = "a22osczapmar";
 const password = "Nitrome7.";
-module.exports = { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection, findRegisteredResults, getCategorias, getActivities, getPreguntaRandom, findRegisteredBattles };
+module.exports = { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection, findRegisteredResults, getCategorias, getActivities,findRegisteredBattles, getPreguntaRandom };
 const { MongoClient } = require("mongodb");
 
 // Replace the following with your Atlas connection string                                                                                                                                        
@@ -20,10 +20,10 @@ async function getDocument(id) {
         const db = client.db(dbName);
         const col = db.collection("activity");
         // Find and return the document
-        const filter = {"id": id};
-        console.log("Inside Mongo Method:", id)
+        const filter = { "id": id };
+        //console.log("Inside Mongo Method:", id)
         const document = await col.findOne(filter);
-        console.log("Inside Mongo Method:", document)
+        //console.log("Inside Mongo Method:", document)
         return document;
     } catch (err) {
         console.log(err.stack);
@@ -32,22 +32,22 @@ async function getDocument(id) {
 
 async function getActivities(theme) {
     try {
-        console.log("Tema a Buscar en Mongo: ",theme)
+        console.log("Tema a Buscar en Mongo: ", theme)
         await client.connect();
         const db = client.db(dbName);
         const colA = db.collection("activity");
         const colT = db.collection('theme');
-        const filter = { "nombre": theme};
+        const filter = { "nombre": theme };
         const idTema = await colT.findOne(filter)
-        console.log("ID TEMA: ",idTema)
-        const resultadoEncontrado = await colA.find({"id_tema":parseInt(idTema.id)}).toArray();
-        
-        console.log("Resultado Encontrado: ",resultadoEncontrado); 
+        console.log("ID TEMA: ", idTema)
+        const resultadoEncontrado = await colA.find({ "id_tema": parseInt(idTema.id) }).toArray();
 
-        return resultadoEncontrado; 
+        console.log("Resultado Encontrado: ", resultadoEncontrado);
+
+        return resultadoEncontrado;
     } catch (err) {
         console.log(err.stack);
-        return null; 
+        return null;
     }
 }
 async function getCategorias() {
@@ -56,13 +56,13 @@ async function getCategorias() {
         const db = client.db(dbName);
         const col = db.collection("theme");
         const resultadoEncontrado = await col.find({}).toArray();
-        
-        console.log(resultadoEncontrado); 
 
-        return resultadoEncontrado; 
+        console.log(resultadoEncontrado);
+
+        return resultadoEncontrado;
     } catch (err) {
         console.log(err.stack);
-        return null; 
+        return null;
     }
 }
 async function findRegisteredBattles(email) {
@@ -123,7 +123,7 @@ async function findRegisteredResult(id_user, id_activity, id_pregunta) {
         return null;
     }
 }
-
+//Historial
 async function findRegisteredResults(id_user, id_ejercicio) {
     try {
         await client.connect();
@@ -154,7 +154,25 @@ async function findRegisteredResults(id_user, id_ejercicio) {
         return null;
     }
 }
+async function findRegisteredBattles(email_user) {
+    try {
+        await client.connect();
+        const db = client.db(dbName);
+        const col = db.collection("Battles");
+        let resultadoEncontrado = await col.find({ $or: [{ "equipo1.email": email_user }, { "equipo2.email": email_user }] }).toArray(function (err, resultado) {
+            if (err) {
+                console.error('Error al realizar la consulta:', err);
+                return;
+            }
+            console.log('Resultado:', resultado)
+        });
 
+        return resultadoEncontrado;
+    } catch (err) {
+        console.log(err.stack);
+        return null;
+    }
+}
 async function insertInCollection(data, collection) {
     try {
         await client.connect();
@@ -219,6 +237,24 @@ async function getPreguntaRandom() {
 
         const question = await col.aggregate([{ $sample: { size: 1 } }]).toArray();
         //console.log(question)
+        return question;
+    } catch (err) {
+        console.log(err.stack)
+    }
+}
+async function eliminar(id) {
+    try {
+        await client.connect();
+        const db = client.db(dbName);
+        const miColeccion = db.collection('result');
+
+        miColeccion.deleteMany({ idUsuario: id })
+          .then((result) => {
+            console.log(`${result.deletedCount} documentos eliminados`);
+          })
+          .catch((error) => {
+            console.error('Error al eliminar documentos:', error);
+          });
         return question;
     } catch (err) {
         console.log(err.stack)
