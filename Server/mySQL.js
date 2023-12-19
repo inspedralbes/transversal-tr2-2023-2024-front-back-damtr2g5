@@ -294,6 +294,26 @@ function UpdateUser(valores, callback) {
         });
     });
 }
+
+//Funcion para cambiar el password de professor por uno nuevo
+function UpdatePassword(valores, callback) {
+    pool.getConnection((error, connection) => {
+        if (error) {
+            console.error('Error al obtener la conexión del pool:', error);
+            throw error;
+        }
+
+        connection.query('UPDATE professors SET contrasena = ? WHERE id = ?',valores, (errorQuery, results, fields) => {
+            connection.release(); // Liberar la conexión al terminar la consulta
+
+            if (errorQuery) {
+                console.error('Error al ejecutar la consulta:', errorQuery);
+                throw errorQuery;
+            }
+            callback(results);
+        });
+    });
+}
 function UpdateImage(valores, callback) {
     pool.getConnection((error, connection) => {
         if (error) {
@@ -379,6 +399,7 @@ module.exports = {
     InsertUser,
     InsertAula,
     UpdateUser,
+    UpdatePassword,
     selectLevel,
     SelectAccesCode, 
     SelectProfessors,
