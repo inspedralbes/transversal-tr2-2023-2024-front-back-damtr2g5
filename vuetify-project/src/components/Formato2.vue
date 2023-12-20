@@ -8,14 +8,14 @@
         <div class="d-flex flex-row">
 
                 <v-row >
-                    <v-col  cols="6" sm="6" md="5" lg="4" order="1">
+                    <v-col  cols="6" sm="6" md="5" lg="5" order="1">
                         <v-card variant="outlined" class="mt-4" v-for="(card, index) in state.pregunta.respuestas[0]" :key="'first-row-' + index" 
                         :style="{ backgroundColor: getColor(0, index) }" @click="selectCard(0, index)">
                             <v-card-title>{{ card }}</v-card-title>
                         </v-card>
                     </v-col>
-                    <v-col cols="auto" sm="auto" md="2" lg="4" order="3" order-md="2"></v-col>
-                    <v-col  cols="6" sm="6" md="5" lg="4" order="2" order-md="3">
+                    <v-col cols="auto" sm="auto" md="2" lg="2" order="3" order-md="2"></v-col>
+                    <v-col  cols="6" sm="6" md="5" lg="5" order="2" order-md="3">
                         <v-card variant="tonal" class="mt-4 oxford-blue card2" v-for="(card, index) in state.pregunta.respuestas[1]" :key="'second-row-' + index"
                          :style="{ backgroundColor: getColor(1, index) }" @click="selectCard(1, index)"> 
                          <v-card-title>{{ card }}</v-card-title>

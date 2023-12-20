@@ -165,7 +165,7 @@ def CrearFSeleccionarNumOper(question):
     resultadoFalso1 = resultado + random.randint(1, 7)
     resultadoFalso2 = eval(operacion.replace("(", " ").replace(")", " "))
     resultadoFalso3 = resultado - random.randint(1, 7)
-    lista = [resultado, resultadoFalso1, resultadoFalso2, resultadoFalso3]
+    lista = [{"respuesta":resultado}, {"respuesta":resultadoFalso1}, {"respuesta":resultadoFalso2}, {"respuesta":resultadoFalso3}]
     random.shuffle(lista)
     question["respuestas"] = lista
     question["correcta"] = resultado
@@ -197,7 +197,7 @@ def CrearFSeleccionarEcuaciones(question):
 
     resultadoFalso1 = round(resultado + random.randint(1, 6), 2)
     resultadoFalso3 = round(resultado - random.randint(1, 6), 2)
-    lista = [resultado, resultadoFalso1, resultadoFalso2, resultadoFalso3]
+    lista = [{"respuesta":resultado}, {"respuesta":resultadoFalso1}, {"respuesta":resultadoFalso2}, {"respuesta":resultadoFalso3}]
     random.shuffle(lista)
     question["respuestas"] = lista
     question["correcta"] = resultado

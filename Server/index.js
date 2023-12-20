@@ -817,7 +817,7 @@ app.get("/getpreguntarandom2/:num", (req, res) => {
     pythonProcess.on('close', (code) => {
         if (code === 0) {
             try {
-                const parsedResult = JSON.parse(result[0]); 
+                const parsedResult = JSON.parse(result[0]);
                 res.json(parsedResult);
             } catch (error) {
                 console.error('Error al analizar el resultado JSON:', error);

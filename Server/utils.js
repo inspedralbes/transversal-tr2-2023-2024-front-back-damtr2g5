@@ -38,7 +38,8 @@ function shuffleArray(array) {
 }
 function checkQuestion(question, respuesta) {
     let correcto = false;
-
+console.log(question.formato);
+console.log(question.correcta);
     switch (question.formato) {
         case "Seleccionar":
         case "Imagen":
@@ -57,7 +58,7 @@ function checkQuestion(question, respuesta) {
             break;
 
         case "Respuesta":
-            respuesta = respuesta.replace(/\s/g, "").toLowerCase();
+            respuesta = respuesta.toString().replace(/\s/g, "").toLowerCase();
             if (question.correcta.includes(respuesta)) {
                 correcto = true;
             }

@@ -175,6 +175,21 @@ export async function getPreguntaRandom() {
   const pregunta = await response.json();
   return pregunta;
 }
+
+export async function getPreguntaBatalla(id) {  
+  const response = await fetch(`${SERVER_URL}/getpreguntarandom2/${id}`, {
+    method: 'GET',
+    credentials: 'include',
+    mode: 'cors',
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  })
+
+  const pregunta = await response.json();
+  return pregunta;
+}
+
 export async function getBatallas() {
   const response = await fetch(`${SERVER_URL}/getbatalla`, {
     method: 'GET',
