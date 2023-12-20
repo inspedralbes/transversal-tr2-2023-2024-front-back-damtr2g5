@@ -19,7 +19,7 @@ const corsOptions = {
 };
 const app = express();
 const server = http.createServer(app);
-const port = 3902;
+const port = 3450;
 const SERVER_URL = "http://math-thai.dam.inspedralbes.cat" //"http://localhost" ;
 
 const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, updateCollection, findRegisteredBattles, getActivities, getPreguntaRandom } = require("./mongoDB.js");
