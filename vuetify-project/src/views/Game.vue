@@ -119,6 +119,7 @@ export default {
             finishDialog: false,
             yourTeam: null,
             endMessage: '',
+            pidiendoPregunta: false,
             respondidas:0,
             team1hp: 0,
             team2hp: 0,
@@ -181,7 +182,7 @@ export default {
         comprobar() {
             if (this.comprobado) {
                 this.overlay = false;
-                
+                this.pidiendoPregunta = true;
                 this.nuevaPregunta();
             } else {
                 socket.emit('checkAnswer', { answer: this.respuestaSelecionada, question: this.preguntaSeleccionada, room: store.getRoom });
@@ -226,6 +227,7 @@ export default {
                 this.disableComponent = false;
                 this.comprobado = false;
                 this.buttonText = 'Comprobar';
+                this.pidiendoPregunta = false;
             })
         }
     },
@@ -237,10 +239,10 @@ export default {
             return (this.team2hp / this.team2maxhp) * 100;
         },
         disabled() {
-            if (this.respuestaSelecionada == "" && this.comprobado == false) {
+            if(this.pidiendoPregunta){
                 return 'disabledTransparent';
             }
-            else if (this.comprobado == true && this.disableComponent == true) {
+            else if (this.respuestaSelecionada == "" && this.comprobado == false) {
                 return 'disabledTransparent';
             }
             else {
