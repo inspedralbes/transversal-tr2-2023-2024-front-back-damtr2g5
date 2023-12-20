@@ -69,6 +69,13 @@ export async function comprobarRespuesta(respuesta, id) {
   return correcto;
 
 }
+
+export async function updateExperienciaUsuario() {
+  const response = await fetch(`${SERVER_URL}/totalExperiencia`,
+  { method: 'GET', credentials: 'include', mode: 'cors' });
+  const datos = await response.json();
+  return datos;
+}
 export async function GetResueltas(dato) {
   const response = await fetch(`${SERVER_URL}/getResueltas`,
     {
@@ -176,11 +183,12 @@ export async function getPreguntaRandom() {
   return pregunta;
 }
 
-export async function getPreguntaBatalla(id) {  
-  const response = await fetch(`${SERVER_URL}/getpreguntarandom2/${id}`, {
-    method: 'GET',
+export async function getPreguntaBatalla(ids) {  
+  const response = await fetch(`${SERVER_URL}/getpreguntarandom2`, {
+    method: 'POST',
     credentials: 'include',
     mode: 'cors',
+    mode: 'cors',body:JSON.stringify(ids),
     headers: {
       'Content-Type': 'application/json',
     }

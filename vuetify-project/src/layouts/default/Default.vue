@@ -10,4 +10,21 @@
 <script setup>
   import DefaultBar from './AppBar.vue'
   import DefaultView from './View.vue'
+  import {useAppStore} from '@/store/app'
+  import {updateExperienciaUsuario} from '@/communicationsManager' 
+  import { onMounted } from 'vue';
+
+  const store = useAppStore()
+
+  function calculateExp() {
+    updateExperienciaUsuario().then(message => {
+      console.log("Datos de experiencia: ",message)
+message
+
+    })
+  } 
+  onMounted(() => {
+    calculateExp();
+  });
+  
 </script>

@@ -113,7 +113,6 @@ app.get('/getEjercicio/:id', (req, res) => {
 
 
 });
-
 app.get('/totalExperiencia', async (req, res) => {
     let xp = 0
     let user = req.session.user
@@ -138,8 +137,12 @@ app.get('/totalExperiencia', async (req, res) => {
         await Promise.all(promises);
         const experiencia = xp
         mysqlConnection.getLevelData(experiencia, (nivelDatos) => {
-            const datos = { experiencia: experiencia, nivel: nivelDatos.currentLevel.lvl, vida: nivelDatos.currentLevel.health, experienciaRestante: nivelDatos.nextLevelRequiredXP }
-            res.json(datos);
+            console.log("User ID:", user.id)
+            mysqlConnection.updateLevelData(user.id, nivelDatos.currentLevel.lvl, (successMessage) => {
+                const datos = { experiencia: experiencia, nivel: nivelDatos.currentLevel.lvl, vida: nivelDatos.currentLevel.health, experienciaRestante: nivelDatos.nextLevelRequiredXP }
+                res.json(datos);
+            })
+            
         })
 
     } catch (error) {
@@ -803,10 +806,11 @@ app.post('/historial', async (req, res) => {
     }
 });
 
-app.get("/getpreguntarandom2/:num", (req, res) => {
-    const functionName = parseInt(req.params.num);
-
-    const pythonProcess = spawn('python', ['ejercicios.py', functionName]);
+app.post("/getpreguntarandom2", (req, res) => {
+    const functionName = req.body.nums;
+    const ran = Math.floor(Math.random() * functionName.length)
+    console.log(functionName[ran]);
+    const pythonProcess = spawn('python', ['ejercicios.py', functionName[ran]]);
 
     let result = [];
 
