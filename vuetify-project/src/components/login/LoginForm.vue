@@ -160,6 +160,7 @@ export default {
     },
     methods: {
         callback(response) {
+            console.log(response)
             const userData = decodeCredential(response.credential)
             this.appStore.setEmail(userData.email);
             this.appStore.setPassword("")

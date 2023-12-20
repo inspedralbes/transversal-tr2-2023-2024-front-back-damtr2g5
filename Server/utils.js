@@ -21,6 +21,9 @@ function requireLogin(req, res, next) {
     }
 }
 
+
+
+
 //INCOMPLETE
 function getRemainingExp(id_activity, id_user) {
     activity = getDocument(id_activity)

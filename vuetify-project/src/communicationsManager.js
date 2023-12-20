@@ -69,6 +69,13 @@ export async function comprobarRespuesta(respuesta, id) {
   return correcto;
 
 }
+
+export async function updateExperienciaUsuario() {
+  const response = await fetch(`${SERVER_URL}/totalExperiencia`,
+  { method: 'GET', credentials: 'include', mode: 'cors' });
+  const datos = await response.json();
+  return datos;
+}
 export async function GetResueltas(dato) {
   const response = await fetch(`${SERVER_URL}/getResueltas`,
     {
