@@ -86,7 +86,7 @@
 import idleGif from '../assets/gifs/idle.gif';
 import purplePunch from '../assets/gifs/purplePunch.gif';
 import redPunch from '../assets/gifs/redPunch.gif';
-import { getPreguntaRandom, comprobarRespuesta, PostBatallas } from '../communicationsManager';
+import { getPreguntaRandom, comprobarRespuesta, PostBatallas,getPreguntaBatalla } from '../communicationsManager';
 import { useAppStore } from '../store/app';
 import { socket, state } from "@/socket.js";
 const store = useAppStore();
@@ -119,6 +119,7 @@ export default {
             finishDialog: false,
             yourTeam: null,
             endMessage: '',
+            pidiendoPregunta: false,
             respondidas:0,
             team1hp: 0,
             team2hp: 0,
@@ -180,10 +181,8 @@ export default {
         },
         comprobar() {
             if (this.comprobado) {
-                this.disableComponent = false;
                 this.overlay = false;
-                this.comprobado = false;
-                this.buttonText = 'Comprobar';
+                this.pidiendoPregunta = true;
                 this.nuevaPregunta();
             } else {
                 socket.emit('checkAnswer', { answer: this.respuestaSelecionada, question: this.preguntaSeleccionada, room: store.getRoom });
@@ -202,7 +201,7 @@ export default {
 
         },
         nuevaPregunta() {
-            getPreguntaRandom().then(response => {
+            getPreguntaBatalla(1).then(response => {
                 this.preguntaSeleccionada = response;
                 this.key += 1;
                 switch (this.preguntaSeleccionada.formato) {
@@ -225,6 +224,10 @@ export default {
                         this.componentSelecionat = Formato6;
                         break;
                 }
+                this.disableComponent = false;
+                this.comprobado = false;
+                this.buttonText = 'Comprobar';
+                this.pidiendoPregunta = false;
             })
         }
     },
@@ -236,7 +239,10 @@ export default {
             return (this.team2hp / this.team2maxhp) * 100;
         },
         disabled() {
-            if (this.respuestaSelecionada == "" && this.comprobado == false) {
+            if(this.pidiendoPregunta){
+                return 'disabledTransparent';
+            }
+            else if (this.respuestaSelecionada == "" && this.comprobado == false) {
                 return 'disabledTransparent';
             }
             else {

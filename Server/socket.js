@@ -182,8 +182,8 @@ function initializeSocket(server, cors) {
                 .then((pregunta) => {
                     answer = data.answer;
                     let room = data.room;
-                    console.log("to check", pregunta.correcta, answer);
-                    correcto = checkQuestion(pregunta, answer);
+                    console.log("to check", data.question, answer);
+                    correcto = checkQuestion(data.question, answer);
                     io.to(socket.request.session.id).emit("answerChecked", { "correct": correcto });
                     if (correcto) {
                         team = rooms.getRoom(room.id).users.find((u) => u.id === socket.request.session.id).team;
