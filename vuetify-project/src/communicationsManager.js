@@ -176,11 +176,12 @@ export async function getPreguntaRandom() {
   return pregunta;
 }
 
-export async function getPreguntaBatalla(id) {  
-  const response = await fetch(`${SERVER_URL}/getpreguntarandom2/${id}`, {
-    method: 'GET',
+export async function getPreguntaBatalla(ids) {  
+  const response = await fetch(`${SERVER_URL}/getpreguntarandom2`, {
+    method: 'POST',
     credentials: 'include',
     mode: 'cors',
+    mode: 'cors',body:JSON.stringify(ids),
     headers: {
       'Content-Type': 'application/json',
     }
