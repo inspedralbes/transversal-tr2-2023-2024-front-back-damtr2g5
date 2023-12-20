@@ -3,7 +3,7 @@ const http = require('http')
 const bodyParser = require('body-parser');
 const cors = require("cors");
 const fs = require('fs');
-const client = require('https');
+require('dotenv').config();
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const mysqlConnection = require('./mySQL.js');
@@ -19,8 +19,8 @@ const corsOptions = {
 };
 const app = express();
 const server = http.createServer(app);
-const port = 3450;
-const SERVER_URL = "http://math-thai.dam.inspedralbes.cat" //"http://localhost" ;
+const port = process.env.PORT || 3450;
+const SERVER_URL = process.env.SERVER || "http://math-thai.dam.inspedralbes.cat" //"http://localhost" ;
 
 const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, updateCollection, findRegisteredBattles, getActivities, getPreguntaRandom } = require("./mongoDB.js");
 const { requireLogin, shuffleArray, checkQuestion, generarPassword, obtenerFechaYHoraActual } = require("./utils.js");

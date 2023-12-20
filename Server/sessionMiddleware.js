@@ -1,4 +1,5 @@
 const session = require('express-session');
+require('dotenv').config();
 const sessionMiddleware = session({
     secret: 'mySecretKey',
     resave: true,
@@ -7,7 +8,7 @@ const sessionMiddleware = session({
     cookie: {
         secure: false,
         httpOnly: true,
-        domain: "math-thai.dam.inspedralbes.cat", //"localhost"
+        domain: process.env.DOMAIN || "math-thai.dam.inspedralbes.cat", //"localhost"
         path: "/",
         maxAge: 3600000,
         sameSite: 'lax'
