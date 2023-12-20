@@ -255,10 +255,12 @@ def CrearFUnirvaloresUnidades(question):
     for i in respuesta1:
         respuesta2.append(convertor(valor2, i))
     respuesta1 = [str(valor1) + lista[0], str(valor3)+lista[0], str(valor4) + lista[0], str(valor6) + lista[0]]
-    question["respuestas"] = [respuesta1, respuesta2]
     correctas = []
     for i in range(len(respuesta1)):
-        correctas.append([respuesta1[i], respuesta2[i]])
+        correctas.append([respuesta1[i], respuesta2[i]])    
+    random.shuffle(respuesta1)
+    random.shuffle(respuesta2)
+    question["respuestas"] = [respuesta1, respuesta2]
     question["correcta"] = correctas
     question["formato"] = cursor["formato"]
     question["idTema"] = cursor["idTema"]
@@ -287,10 +289,13 @@ def CrearFUnirvaloresEstadistica(question):
     else:
         mediana = datos_ordenados[longitud // 2]
     respuesta2 = [frecuencia_absoluta, frecuencia_relativa,round(media,2), mediana]
-    question["respuestas"] = [respuesta1, respuesta2]
     correctas = []
     for i in range(len(respuesta1)):
         correctas.append([respuesta1[i], respuesta2[i]])
+    
+    random.shuffle(respuesta1)
+    random.shuffle(respuesta2)
+    question["respuestas"] = [respuesta1, respuesta2]
     question["correcta"] = correctas
     question["formato"] = cursor["formato"]
     question["idTema"] = cursor["idTema"]

@@ -803,10 +803,11 @@ app.post('/historial', async (req, res) => {
     }
 });
 
-app.get("/getpreguntarandom2/:num", (req, res) => {
-    const functionName = parseInt(req.params.num);
-
-    const pythonProcess = spawn('python', ['ejercicios.py', functionName]);
+app.post("/getpreguntarandom2", (req, res) => {
+    const functionName = req.body.nums;
+    const ran = Math.floor(Math.random() * functionName.length)
+    console.log(functionName[ran]);
+    const pythonProcess = spawn('python', ['ejercicios.py', functionName[ran]]);
 
     let result = [];
 
