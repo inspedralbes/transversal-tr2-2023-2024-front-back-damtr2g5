@@ -8,6 +8,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const mysqlConnection = require('./mySQL.js');
 const { v4: uuidv4 } = require('uuid');
+const { spawn } = require('child_process');
 const corsOptions = {
     origin: ["http://localhost:3000", "http://math-thai.dam.inspedralbes.cat"],
     credentials: true,
@@ -767,34 +768,66 @@ app.post('/historial', async (req, res) => {
                 return tiempoB - tiempoA;
             });
         }).then(() => {
-        // Ordenar el historial por fecha en orden descendente
-        batalla.forEach(element => {
-            let resultadoBatalla = ''
-            if (element.ganador === 1) {
-                // Verificar si el email está en el equipo1
-                const equipo1 = element.equipo1.find(member => member.email === req.session.user.email);
-                resultadoBatalla = equipo1 ? "guanyat" : "perdut";
-            } else if (element.ganador === 2) {
-                // Verificar si el email está en el equipo2
-                const equipo2 = element.equipo2.find(member => member.email === req.session.user.email);
-                resultadoBatalla = equipo2 ? "guanyat" : "perdut";
-            }
-            historial.push("Has " + resultadoBatalla + " la batalla " + element.battle + " &el& " + element.time)
-        });
-    }).then(() => {
-        let history = historial.map((element)=>{
-            recorte = element.split(" &el& ");
-            return {
-                "historial": recorte[0],
-                "hora": recorte[1]
-            }
+            // Ordenar el historial por fecha en orden descendente
+            batalla.forEach(element => {
+                let resultadoBatalla = ''
+                if (element.ganador === 1) {
+                    // Verificar si el email está en el equipo1
+                    const equipo1 = element.equipo1.find(member => member.email === req.session.user.email);
+                    resultadoBatalla = equipo1 ? "guanyat" : "perdut";
+                } else if (element.ganador === 2) {
+                    // Verificar si el email está en el equipo2
+                    const equipo2 = element.equipo2.find(member => member.email === req.session.user.email);
+                    resultadoBatalla = equipo2 ? "guanyat" : "perdut";
+                }
+                historial.push("Has " + resultadoBatalla + " la batalla " + element.battle + " &el& " + element.time)
+            });
+        }).then(() => {
+            let history = historial.map((element) => {
+                recorte = element.split(" &el& ");
+                return {
+                    "historial": recorte[0],
+                    "hora": recorte[1]
+                }
+            })
+            res.send(history);
         })
-        res.send(history);
-    })
     } catch (error) {
         console.error(error);
     }
 });
+
+app.get("/getpreguntarandom2/:num", (req, res) => {
+    const functionName = parseInt(req.params.num);
+
+    const pythonProcess = spawn('python', ['ejercicios.py', functionName]);
+
+    let result = [];
+
+    pythonProcess.stdout.on('data', (data) => {
+        result.push(data.toString())
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+        console.error(`Error al ejecutar el script de Python: ${data.toString()}`);
+    });
+
+    pythonProcess.on('close', (code) => {
+        if (code === 0) {
+            try {
+                const parsedResult = JSON.parse(result[0]); 
+                res.json(parsedResult);
+            } catch (error) {
+                console.error('Error al analizar el resultado JSON:', error);
+                res.status(500).send('Error interno del servidor');
+            }
+        } else {
+            console.error(`La ejecución de Python terminó con código de salida ${code}`);
+            res.status(500).send('Error interno del servidor');
+        }
+    });
+});
+
 //idPregunta: 1, respuesta: "1111"
 app.post('/pregunta', async (req, res) => {
     var pregunta = await getPregunta(req.body.idPregunta);
