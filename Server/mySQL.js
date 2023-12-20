@@ -123,13 +123,39 @@ function SelectUserById(id,callback) {
     });
 }
 
+function updateLevelData(id,newlvl,callback) {
+    pool.getConnection((error, connection) => {
+        if (error) {
+            console.error('Error al obtener la conexión del pool:', error);
+            throw error;
+        }
+        console.log("Update Function")
+        connection.query(`SELECT id FROM Levelsxp WHERE lvl=?`, newlvl, (errorQuery, result, fields) => {
+            console.log("Mid Update Quey")
+            if (errorQuery) {
+                console.error('Error al ejecutar la consulta:', errorQuery);
+                throw errorQuery;
+            }
+                connection.query(`UPDATE users SET lvl=? WHERE id=?`, [result[0].id,id], (errorQuery, results, fields) => {
+                    connection.release(); // Liberar la conexión al terminar la consulta
+                    console.log("Mid Update Quey")
+                    if (errorQuery) {
+                        console.error('Error al ejecutar la consulta:', errorQuery);
+                        throw errorQuery;
+                    }
+                    console.log("End Update Function")
+                    callback(results);
+                });
+    });
+    });
+}
 function getLevelData(exp, callback) {
     pool.getConnection((error, connection) => {
         if (error) {
             console.error('Error al obtener la conexión del pool:', error);
             throw error;
         }
-
+        console.log("EXP: ", exp);
         connection.query('SELECT * FROM Levelsxp WHERE requiredxp < ? ORDER BY lvl DESC LIMIT 1', exp, (errorQuery, results, fields) => {
             if (errorQuery) {
                 connection.release(); // Release the connection in case of an error
@@ -148,7 +174,7 @@ function getLevelData(exp, callback) {
                 }
 
                 const nextLevelRequiredXP = (nextLevelResult && nextLevelResult.length > 0) ? nextLevelResult[0].requiredxp - exp : null;
-
+                console.log("NEXT LEVEL: ", nextLevelRequiredXP);
                 const levelData = {
                     currentLevel: currentLevelData,
                     nextLevelRequiredXP: nextLevelRequiredXP
@@ -457,6 +483,7 @@ module.exports = {
     SelectClassroom,
     UpdateUserClassroom,
     SelectClassroomId,
-    getLevelData
+    getLevelData,
+    updateLevelData
     // Puedes añadir más funciones según tus necesidades...
 };

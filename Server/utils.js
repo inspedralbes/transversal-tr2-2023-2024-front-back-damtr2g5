@@ -1,4 +1,4 @@
-module.exports = { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion,generarPassword,obtenerFechaYHoraActual,calcularTiempoTranscurrido};
+module.exports = {comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion,generarPassword,obtenerFechaYHoraActual,calcularTiempoTranscurrido};
 function comprobarRectaLineal(punto1, punto2) {
     if (punto1.x === punto2.x) {
         // Recta vertical
@@ -19,6 +19,9 @@ function requireLogin(req, res, next) {
         res.status(401).send();
     }
 }
+
+
+
 
 //INCOMPLETE
 function getRemainingExp(id_activity, id_user) {
