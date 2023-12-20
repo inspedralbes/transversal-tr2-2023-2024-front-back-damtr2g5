@@ -1,15 +1,16 @@
-module.exports = { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion,generarPassword,obtenerFechaYHoraActual,calcularTiempoTranscurrido};
+module.exports = { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion, generarPassword, obtenerFechaYHoraActual, calcularTiempoTranscurrido };
+const { evaluate } = require("mathjs");
 function comprobarRectaLineal(punto1, punto2) {
     if (punto1.x === punto2.x) {
         // Recta vertical
-        return {"tipo": "vertical", "x": punto1.x};
+        return { "tipo": "vertical", "x": punto1.x };
     } else if (punto1.y === punto2.y) {
         // Recta horizontal
-        return {"tipo": "horizontal", "y": punto1.y};
+        return { "tipo": "horizontal", "y": punto1.y };
     } else {
         var m = (punto2.y - punto1.y) / (punto2.x - punto1.x);
         var b = punto1.y - m * punto1.x;
-        return {"tipo": "lineal", "m": m, "b": b};
+        return { "tipo": "lineal", "m": m, "b": b };
     }
 }
 function requireLogin(req, res, next) {
@@ -48,11 +49,27 @@ function checkQuestion(question, respuesta) {
             break;
 
         case "Ordenar valores":
-            if (
-                JSON.stringify(respuesta) ===
-                JSON.stringify(question.correcta)
-            ) {
-                correcto = true;
+            if (question.operacion) {
+                // Si la pregunta es una operación,por ejemplo [3, *, 7, +, 15], hay varias respuestas correctas
+                // Por lo tanto, hay que resolver la operación de question.correcta y compararla con la respuesta
+                let respuestaCorrecta = question.correcta;
+                let respuestaUsuario = respuesta;
+                // Convertir el array en un string para poder evaluarlo
+                // Ejemplo: [3, *, 7, +, 15] -> "3 * 7 + 15"
+                respuestaUsuario = respuestaUsuario.join(" ");
+
+                respuestaUsuario = evaluate(respuestaUsuario); // Resolver la operación, devuelve un número
+                if (respuestaUsuario == respuestaCorrecta) {
+                    correcto = true;
+                }
+            } else {
+                console.log("no es una operacion");
+                if (
+                    JSON.stringify(respuesta) ===
+                    JSON.stringify(question.correcta)
+                ) {
+                    correcto = true;
+                }
             }
             break;
 
@@ -103,61 +120,61 @@ function checkQuestion(question, respuesta) {
 
 //Para generar un contraseñas aleatorias(hay que pasarle el length)
 function generarPassword(length) {
-    
+
     if (
-      typeof crypto !== 'undefined' 
-      && typeof crypto.getRandomValues === 'function'
+        typeof crypto !== 'undefined'
+        && typeof crypto.getRandomValues === 'function'
     ) {
-      var tmp = new Uint8Array(Math.max((~~length)/2));
-      crypto.getRandomValues(tmp);
-      return Array.from(tmp)
-        .map(n => ('0'+n.toString(16)).substr(-2))
-        .join('')
-        .substr(0,length);
+        var tmp = new Uint8Array(Math.max((~~length) / 2));
+        crypto.getRandomValues(tmp);
+        return Array.from(tmp)
+            .map(n => ('0' + n.toString(16)).substr(-2))
+            .join('')
+            .substr(0, length);
     }
-  
-    
+
+
     var ret = "";
     while (ret.length < length) {
-      ret += Math.random().toString(16).substring(2);
+        ret += Math.random().toString(16).substring(2);
     }
-    return ret.substring(0,length);
-  }
-  function obtenerFechaYHoraActual() {
+    return ret.substring(0, length);
+}
+function obtenerFechaYHoraActual() {
     const ahora = new Date();
-    
+
     const dia = ahora.getDate().toString().padStart(2, '0');
     const mes = (ahora.getMonth() + 1).toString().padStart(2, '0'); // Los meses comienzan desde 0, por eso se suma 1
     const año = ahora.getFullYear();
-  
+
     const hora = ahora.getHours().toString().padStart(2, '0');
     const minutos = ahora.getMinutes().toString().padStart(2, '0');
     const segundos = ahora.getSeconds().toString().padStart(2, '0');
-  
+
     const fechaHoraFormateada = `${año}/${mes}/${dia} ${hora}:${minutos}:${segundos}`;
-  
+
     return fechaHoraFormateada;
-  }
-  function calcularTiempoTranscurrido(tiempoInicial, tiempoFinal) {
+}
+function calcularTiempoTranscurrido(tiempoInicial, tiempoFinal) {
     // Convertir las cadenas de tiempo en objetos Date
     const fechaInicial = new Date(tiempoInicial);
     const fechaFinal = new Date(tiempoFinal);
-  
+
     // Obtener la diferencia en milisegundos
     const diferenciaEnMilisegundos = fechaFinal - fechaInicial;
-  
+
     // Convertir la diferencia de milisegundos a días, horas, minutos y segundos
     const segundos = Math.floor(diferenciaEnMilisegundos / 1000);
     const minutos = Math.floor(segundos / 60);
     const horas = Math.floor(minutos / 60);
     const dias = Math.floor(horas / 24);
-  
+
     const tiempoTranscurrido = {
-      dias,
-      horas: horas % 24,
-      minutos: minutos % 60,
-      segundos: segundos % 60
+        dias,
+        horas: horas % 24,
+        minutos: minutos % 60,
+        segundos: segundos % 60
     };
-  
+
     return tiempoTranscurrido;
-  }
+}
