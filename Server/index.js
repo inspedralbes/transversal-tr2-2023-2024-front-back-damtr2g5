@@ -737,9 +737,15 @@ app.post('/historial', async (req, res) => {
         let result3 = []//await getBatallas();
         let result4 = []//await GetResueltas({ ejercicioid: null });
         let historial = [];
-        await findRegisteredBattles(req.session.user.email).then((result) => {
-            result3 = result
-        })
+        if (req.body.email == null) {
+            await findRegisteredBattles(req.session.user.email).then((result) => {
+                result3 = result
+            })
+        }else{
+            await findRegisteredBattles(req.body.email).then((result) => {
+                result3 = result
+            })
+        }
         let idUsuario = req.session.user.id
         let idEjercicio = req.body.ejercicioid
         if (idEjercicio == null) {
