@@ -5,9 +5,7 @@
             <v-col  cols="10" sm="6" md="12" lg="12">
                 <h2 class="bigger-font">Notícies</h2>
                 <div>
-                    Sabías que para hacer que esto se vea medio bien he perdido 2 años de vida?
-
-
+                    En aquest món hi ha 3 tipus de persones: les que saben comptar i les que no.
                 </div>
             </v-col>
         </v-row>
