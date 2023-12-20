@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 import random
 import math
+import json
 import sys
 
 client = MongoClient("mongodb+srv://a22osczapmar:Nitrome7.@cluster0.uiii7nf.mongodb.net/")
@@ -19,12 +20,12 @@ def CrearFGraficoFunciones(question):
     question["pregunta"] = cursor["pregunta"].replace("$", valor1, 1).replace("$", valor2, 1).replace("$", valor3, 1)
     question["correcta"] = {}
     question["correcta"]["tipo"] = "lineal"
-    question["correcta"]["m"] = valor1
-    question["correcta"]["b"] = valor2
+    question["correcta"]["m"] = int(valor1)
+    question["correcta"]["b"] = int(valor3)
     question["formato"] = cursor["formato"]
     question["idTema"] = cursor["idTema"]
     question["exp"] = 10
-    return question
+    return json.dumps(question)
 
 
 # Geometria
@@ -36,8 +37,9 @@ def CrearFRespuestaGeometria(question):
         opciones = ["triangulo", "cuadrado", "pentagono", "hexagono", "heptagono", "octagono", "nonagono", "decagono"]
         ran = random.randint(0, 7)
         valor1 = opciones[ran]
-        valor2 = "cuyo lado mide " + str(random.randint(1, 12)) + " unidades"
-        resultado = int(valor2) * (ran + 3)
+        num = random.randint(1, 12)
+        valor2 = "cuyo lado mide " + str(num) + " unidades"
+        resultado = int(num) * (ran + 3)
         question["pregunta"] = cursor["pregunta"].replace("&", valor1, 1).replace("$", valor2, 1).replace("#",
                                                                                                           "el perimetro",
                                                                                                           1)
@@ -136,7 +138,7 @@ def CrearFRespuestaGeometria(question):
         question["idTema"] = cursor["idTema"]
         question["correcta"] = [str(resultado), str(resultado) + " u", str(resultado) + " unidades"]
         question["exp"] = 10
-    return question
+    return json.dumps(question)
 
 
 # Numeros y operaciones
@@ -170,7 +172,7 @@ def CrearFSeleccionarNumOper(question):
     question["formato"] = cursor["formato"]
     question["idTema"] = cursor["idTema"]
     question["exp"] = 5
-    return question
+    return json.dumps(question)
 
 
 # Ecuaciones
@@ -203,11 +205,10 @@ def CrearFSeleccionarEcuaciones(question):
     question["idTema"] = cursor["idTema"]
     question["exp"] = 5
 
-    print(question)
+    return json.dumps(question)
 
 
 def convertor(unidad, valor_base):
-    cursor = collection.find({"formato": "Unir valores"})[0]
     unidades = {
         "longitud": {"base": "metros",
                      "conversiones": {"kilometros": 1000, "hectometros": 100, "decametros": 10, "metros": 1, "decimetros": 0.1, "centimetros": 0.01, "milimetros": 0.001}},
@@ -262,7 +263,7 @@ def CrearFUnirvaloresUnidades(question):
     question["formato"] = cursor["formato"]
     question["idTema"] = cursor["idTema"]
     question["exp"] = 15
-    return question
+    return json.dumps(question)
 
 # Estadistica
 def CrearFUnirvaloresEstadistica(question):
@@ -285,7 +286,7 @@ def CrearFUnirvaloresEstadistica(question):
         mediana = (datos_ordenados[longitud // 2 - 1] + datos_ordenados[longitud // 2]) / 2
     else:
         mediana = datos_ordenados[longitud // 2]
-    respuesta2 = [frecuencia_absoluta, frecuencia_relativa,media, mediana]
+    respuesta2 = [frecuencia_absoluta, frecuencia_relativa,round(media,2), mediana]
     question["respuestas"] = [respuesta1, respuesta2]
     correctas = []
     for i in range(len(respuesta1)):
@@ -294,8 +295,8 @@ def CrearFUnirvaloresEstadistica(question):
     question["formato"] = cursor["formato"]
     question["idTema"] = cursor["idTema"]
     question["exp"] = 15
-    return question
+    return json.dumps(question)
 
 
-funciones = [CrearFSeleccionarNumOper, CrearFSeleccionarEcuaciones, CrearFGraficoFunciones, CrearFUnirvaloresUnidades, CrearFRespuestaGeometria, CrearFUnirvaloresEstadistica]
-print(funciones[int(sys.argv[1])](dict()))
+funciones = [CrearFSeleccionarNumOper({}), CrearFSeleccionarEcuaciones({}), CrearFGraficoFunciones({}), CrearFUnirvaloresUnidades({}), CrearFRespuestaGeometria({}), CrearFUnirvaloresEstadistica({})]
+print(funciones[int(sys.argv[1])])
