@@ -7,7 +7,7 @@
         <v-row>
             <v-col v-for="(respuesta) in pregunta.respuestas" cols="12" md="6" sm="6" lg="3">
                 <div class="radio-button">
-                    <input @click="guardado()" :value="respuesta.respuesta" v-model="selectedAnswer" type="radio"
+                    <input :disabled="isDisabled" @click="guardado()" :value="respuesta.respuesta" v-model="selectedAnswer" type="radio"
                         class="radio-button__input " :id="respuesta.respuesta" name="radio-group">
                     <label class="radio-button__label" style="font-size: 1.3em;" :for="respuesta.respuesta">
                         <span class="radio-button__custom"></span>

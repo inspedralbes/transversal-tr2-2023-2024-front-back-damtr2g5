@@ -1,5 +1,5 @@
 <template>
-  <v-container class="fill-height" style="padding-right: 5%; padding-left: 5%;">
+  <v-container>
     <v-row>
       <v-col cols="12" v-for="n in opciones">
         <button class="custom-btn" @click="onToggle(n)">
@@ -18,7 +18,7 @@
         <v-btn v-else class=" myfont oxford-blue-bg bitter-sweet" @click="dialog = true">{{ codigoNuevo }}</v-btn>
       </v-col>
     </v-row>
-  </v-container>
+    </v-container>
   <v-dialog class="myfont" v-model="dialog" max-width="400">
     <v-card>
       <v-card-title class="big-font bg-grey-lighten-3">

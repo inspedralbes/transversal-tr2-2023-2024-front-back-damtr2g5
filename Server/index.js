@@ -9,7 +9,7 @@ const cookieParser = require('cookie-parser');
 const mysqlConnection = require('./mySQL.js');
 const { v4: uuidv4 } = require('uuid');
 const corsOptions = {
-    origin: ["http://localhost:3000", "http://mathproject.dam.inspedralbes.cat"],
+    origin: ["http://localhost:3000", "http://math-thai.dam.inspedralbes.cat"],
     credentials: true,
     methods: ['GET', 'POST', 'DELETE'],
     exposedHeaders: ['set-cookie', 'ajax-redirect'],
@@ -19,12 +19,10 @@ const corsOptions = {
 const app = express();
 const server = http.createServer(app);
 const port = 3001;
-const SERVER_URL = "http://localhost";
+const SERVER_URL = "http://localhost"//"http://math-thai.dam.inspedralbes.cat";
 
 const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, updateCollection, findRegisteredBattles, getActivities, getPreguntaRandom } = require("./mongoDB.js");
-const { comprobarRectaLineal, requireLogin, getRemainingExp, shuffleArray, checkQuestion, generarPassword, obtenerFechaYHoraActual } = require("./utils.js");
-const { connect } = require('http2');
-const { Console } = require('console');
+const { requireLogin, shuffleArray, checkQuestion, generarPassword, obtenerFechaYHoraActual } = require("./utils.js");
 const { initializeSocket, filterRooms, getIo } = require("./socket.js");
 initializeSocket(server, { cors: corsOptions });
 const sessionMiddleware = require('./sessionMiddleware.js');
@@ -192,8 +190,8 @@ app.post('/descargar', upload.single('file'), (req, res) => {
         }
 
         mysqlConnection.UpdateImage([uniqueFileName + '.jpg', req.session.user.id], (successMessage) => { console.log(successMessage); })
-        req.session.user.image = "http://localhost:3001/imagen/" + uniqueFileName + ".jpg";
-        res.status(200).json({ imagen: "http://localhost:3001/imagen/" + uniqueFileName + ".jpg" });
+        req.session.user.image = SERVER_URL+":"+port+"/imagen/" + uniqueFileName + ".jpg";
+        res.status(200).json({ imagen: SERVER_URL+":"+port+"/imagen/" + uniqueFileName + ".jpg" });
     });
 });
 
