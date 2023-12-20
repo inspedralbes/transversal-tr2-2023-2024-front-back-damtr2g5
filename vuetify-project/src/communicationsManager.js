@@ -1,4 +1,4 @@
-export const SERVER_URL = "http://localhost:3001" //"http://math-thai.dam.inspedralbes.cat:3001"
+export const SERVER_URL = "http://math-thai.dam.inspedralbes.cat:3902" //"http://localhost:3001"
 
 export async function joinAula(aula) {
   return fetch(`${SERVER_URL}/joinAula`,
