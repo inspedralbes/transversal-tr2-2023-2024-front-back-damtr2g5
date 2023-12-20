@@ -21,7 +21,7 @@ import '@/styles/buttons.css'
 
 const app = createApp(App)
 app.use(vue3GoogleLogin, {
-    clientId: '623367203604-5gso6i27u38v9n6m7spkij5cqklq8toq.apps.googleusercontent.com'
+    clientId: '623367203604-11shkn3cp83canks96p23oo7j9v23dkf.apps.googleusercontent.com'
   }) 
 registerPlugins(app)
 app.mount('#app')
