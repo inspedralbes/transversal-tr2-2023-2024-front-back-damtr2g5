@@ -1,18 +1,15 @@
-from pymongo import MongoClient
 import random
 import math
 import json
 import sys
 
-client = MongoClient("mongodb+srv://a22osczapmar:Nitrome7.@cluster0.uiii7nf.mongodb.net/")
-
-db = client['mathGameMongo']
-collection = db['BaseQuestions']
+with open('./plantillas.json', 'r') as file:
+    data = json.load(file)
 
 # Funciones
 def CrearFGraficoFunciones(question):
-    cursor = collection.find({"formato": "Grafica"})[0]
-    valor1 = str(random.randint(1, 10))
+    cursor = data[2]
+    valor1 = str(random.randint(2, 11))
     opciones = ["+", "-"]
     valor2 = opciones[random.randint(0, 1)]
     valor3 = str(random.randint(0, 10))
@@ -30,7 +27,7 @@ def CrearFGraficoFunciones(question):
 
 # Geometria
 def CrearFRespuestaGeometria(question):
-    cursor = collection.find({"formato": "Respuesta"})[0]
+    cursor = data[4]
     form = random.randint(0, 3)
     question["id"] = 5
     if form == 0:  # perimetro
@@ -143,7 +140,7 @@ def CrearFRespuestaGeometria(question):
 
 # Numeros y operaciones
 def CrearFSeleccionarNumOper(question):
-    cursor = collection.find({"formato": "Seleccionar"})[0]
+    cursor = data[0]
     valor1 = str(random.randint(1, 10))
     opciones = ["+", "-"]
     valor2 = opciones[random.randint(0, 1)]
@@ -177,7 +174,7 @@ def CrearFSeleccionarNumOper(question):
 
 # Ecuaciones
 def CrearFSeleccionarEcuaciones(question):
-    cursor = collection.find({"formato": "Seleccionar"})[1]
+    cursor = data[1]
     valor1 = str(random.randint(2, 10))
     opciones = ["+", "-"]
     valor2 = opciones[random.randint(0, len(opciones)-1)]
@@ -235,7 +232,7 @@ def convertor(unidad, valor_base):
 
 # Unidades de medida
 def CrearFUnirvaloresUnidades(question):
-    cursor = collection.find({"formato": "Unir valores"})[0]
+    cursor = data[3]
     valor1 = random.randint(1, 10)
     valor2 = random.randint(0, 2)
     valor3 = valor1 * 10
@@ -269,7 +266,7 @@ def CrearFUnirvaloresUnidades(question):
 
 # Estadistica
 def CrearFUnirvaloresEstadistica(question):
-    cursor = collection.find({"formato": "Unir valores"})[1]
+    cursor = data[5]
     datos = []
     for i in range(12):
         datos.append(random.randint(1, 10))
