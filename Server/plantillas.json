@@ -1,0 +1,48 @@
+[
+  {
+    "_id": {
+      "$oid": "65814ca1b31c3bac83414f5f"
+    },
+    "pregunta": "¿Cuál es el resultado de ($ & $) * ($ & $)?",
+    "idTema": 1,
+    "formato": "Seleccionar"
+  },
+  {
+    "_id": {
+      "$oid": "65817f73b31c3bac83414f79"
+    },
+    "pregunta": "Resuelve la ecuación: $x # $ = $",
+    "idTema": 2,
+    "formato": "Seleccionar"
+  },{
+    "_id": {
+      "$oid": "658148bbb31c3bac83414f5e"
+    },
+    "pregunta": "Representa la función y = $x $ $ en un gráfico",
+    "formato": "Grafica",
+    "idTema": 3
+  },
+  {
+    "_id": {
+      "$oid": "6581ca45a8ee98869618c63c"
+    },
+    "pregunta": "Empareja con el valor de conversión correcto",
+    "idTema": 4,
+    "formato": "Unir valores"
+  },
+  {
+    "_id": {
+      "$oid": "65814d22b31c3bac83414f60"
+    },
+    "pregunta": "Calcula # de un & $",
+    "idTema": 5,
+    "formato": "Respuesta"
+  },
+  {
+    "_id": {
+      "$oid": "6582086ba8ee98869618c646"
+    },
+    "pregunta": "Empareja como corresponde $",
+    "idTema": 6,
+    "formato": "Unir valores"
+  }]
