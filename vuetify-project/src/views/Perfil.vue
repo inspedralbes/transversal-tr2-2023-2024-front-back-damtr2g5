@@ -15,10 +15,19 @@
                             </v-col>
                             <v-col cols="12" sm="12" md="12" lg="4">
                                 <div style="margin-left: 1em; text-align: left;" class="mt-4 pb-4 big-font">
+                                    
                                     <ul>
-                                        <li>Nivell {{ user.lvl }} </li>
-                                        <li>Aqui va la vida</li>
-                                        <li>Aqui va la exp </li>
+                                        <li>Nivell {{ exp.nivel }} </li>
+                                        <li>
+                                            <v-progress-linear class="custom-border2" bg-opacity="1" color="success" height="35">
+                                                <strong>{{ exp.vida }} vida </strong>
+                                            </v-progress-linear>
+                                        </li>
+                                        <li>
+                                            <v-progress-linear class="custom-border2 mt-2"  v-model="expPercent" color="amber" height="35">
+                                                <strong>{{ exp.experiencia }} / {{ exp.experienciaRestante + exp.experiencia }} exp </strong>
+                                            </v-progress-linear>
+                                        </li>
                                     </ul>
                                 </div>
                             </v-col>
@@ -82,7 +91,8 @@ export default {
             clase: '',
             total: '',
             prof: '',
-            historial: []
+            historial: [],
+            exp: useAppStore().getExpInfo,
         };
     }, async mounted() {
         try {
@@ -104,6 +114,11 @@ export default {
                 done('ok');
             }, 3000);
         },
+    },
+    computed: {
+        expPercent() {
+            return (this.exp.experiencia / (this.exp.experiencia + this.exp.experienciaRestante)) * 100;
+        }
     },
     components: { BackButton }
 };

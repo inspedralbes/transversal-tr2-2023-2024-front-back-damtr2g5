@@ -17,10 +17,8 @@
   const store = useAppStore()
 
   function calculateExp() {
-    updateExperienciaUsuario().then(message => {
-      console.log("Datos de experiencia: ",message)
-message
-
+    updateExperienciaUsuario().then(result => {
+      store.setExpInfo(result)
     })
   } 
   onMounted(() => {

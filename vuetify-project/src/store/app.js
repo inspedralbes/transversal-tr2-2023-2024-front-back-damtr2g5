@@ -20,6 +20,12 @@ export const useAppStore = defineStore('app', {
             access_code:'',
             exp:''
         },
+        expInfo: {
+          experiencia: 0,
+          nivel: 0,
+          vida: 0,
+          experienciaRestante: 0,
+        },
         aulaInfo: null
         ,
         respuesta: '',
@@ -48,7 +54,10 @@ export const useAppStore = defineStore('app', {
         },
         getLoginInfo() {
             return this.loginInfo;
-        }
+        },
+        getExpInfo() {
+          return this.expInfo;
+        },
     },
     actions: {
       setAulaInfo(aula) {
@@ -62,6 +71,12 @@ export const useAppStore = defineStore('app', {
             this.loginInfo.contrasena = contrasena;
             this.loginInfo.surname = surname;
             this.loginInfo.email = email;
+        },
+        setExpInfo({experiencia, nivel, vida, experienciaRestante}) {
+          this.expInfo.experiencia = experiencia;
+          this.expInfo.nivel = nivel;
+          this.expInfo.vida = vida;
+          this.expInfo.experienciaRestante = experienciaRestante;
         },
         setRespuesta(answer) {
             this.respuesta = answer;

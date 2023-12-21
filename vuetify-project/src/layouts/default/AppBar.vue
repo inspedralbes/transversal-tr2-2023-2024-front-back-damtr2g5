@@ -1,6 +1,7 @@
 <template>
   <v-container fluid style="padding: 0;">
     <v-row class="d-flex justify-end w-full mt-3 mr-3">
+      <p class="myfont mr-15 mt-3 white" style="position: absolute;"> Nivell {{ nivel }}</p>
       <v-menu min-width="200px" rounded>
         <template v-slot:activator="{ props }">
           <v-btn style="z-index: 20;" position="absolute" icon v-bind="props">
@@ -78,6 +79,13 @@ export default {
       dialogL: false,
       boton: null,
     };
+  },
+  computed: {
+    nivel() {
+      const appStore = useAppStore()
+      const exp = appStore.getExpInfo;
+      return exp.nivel;
+    },
   },
   setup() {
     const store = useAppStore()
