@@ -7,26 +7,28 @@
 
         <div class="d-flex flex-row">
 
-                <v-row >
-                    <v-col  cols="6" sm="6" md="5" lg="5" order="1">
-                        <v-card :disabled="isDisabled" variant="outlined" class="mt-4" v-for="(card, index) in state.pregunta.respuestas[0]" :key="'first-row-' + index" 
+            <v-row>
+                <v-col cols="6" sm="6" md="5" lg="5" order="1">
+                    <v-card :disabled="isDisabled" variant="outlined" class="mt-4"
+                        v-for="(card, index) in state.pregunta.respuestas[0]" :key="'first-row-' + index"
                         :style="{ backgroundColor: getColor(0, index) }" @click="selectCard(0, index)">
-                            <v-card-title>{{ card }}</v-card-title>
-                        </v-card>
-                    </v-col>
-                    <v-col cols="auto" sm="auto" md="2" lg="2" order="3" order-md="2"></v-col>
-                    <v-col  cols="6" sm="6" md="5" lg="5" order="2" order-md="3">
-                        <v-card :disabled="isDisabled" variant="tonal" class="mt-4 oxford-blue card2" v-for="(card, index) in state.pregunta.respuestas[1]" :key="'second-row-' + index"
-                         :style="{ backgroundColor: getColor(1, index) }" @click="selectCard(1, index)"> 
-                         <v-card-title>{{ card }}</v-card-title>
-                        </v-card>
-                    </v-col>
-                </v-row>
+                        <v-card-title>{{ card }}</v-card-title>
+                    </v-card>
+                </v-col>
+                <v-col cols="auto" sm="auto" md="2" lg="2" order="3" order-md="2"></v-col>
+                <v-col cols="6" sm="6" md="5" lg="5" order="2" order-md="3">
+                    <v-card :disabled="isDisabled" variant="tonal" class="mt-4 oxford-blue card2"
+                        v-for="(card, index) in state.pregunta.respuestas[1]" :key="'second-row-' + index"
+                        :style="{ backgroundColor: getColor(1, index) }" @click="selectCard(1, index)">
+                        <v-card-title>{{ card }}</v-card-title>
+                    </v-card>
+                </v-col>
+            </v-row>
         </div>
     </div>
 </template>
 <style>
-.card2{
+.card2 {
     border: thin solid currentColor;
 }
 </style>
@@ -105,18 +107,20 @@ export default {
         });
 
         function selectCard(row, index) {
-            console.log(state.seleccion);
+            const cardId = `${row}-${index}`;
             const card = state.pregunta.respuestas[row][index];
-            const isSelected = state.seleccion.some(selected => selected.valor1 === card || selected.valor2 === card);
+            const isSelected = state.seleccion.some(selected => selected.id1 === cardId || selected.id2 === cardId);
             if (!isSelected) {
                 let foundEmptySlot = false
                 for (let i = 0; i < state.seleccion.length; i++) {
                     if (!state.seleccion[i].valor1 && state.seleccion[i].valor2 && row === 0) {
                         state.seleccion[i].valor1 = card;
+                        state.seleccion[i].id1 = cardId;
                         foundEmptySlot = true;
                         break;
                     } else if (state.seleccion[i].valor1 && !state.seleccion[i].valor2 && row === 1) {
                         state.seleccion[i].valor2 = card;
+                        state.seleccion[i].id2 = cardId;
                         foundEmptySlot = true;
                         break;
                     }
@@ -124,25 +128,31 @@ export default {
                 for (let i = 0; i < state.seleccion.length && !foundEmptySlot; i++) {
                     if (!state.seleccion[i].valor1 && row === 0) {
                         state.seleccion[i].valor1 = card;
+                        state.seleccion[i].id1 = cardId;
                         break;
                     } else if (!state.seleccion[i].valor2 && row === 1) {
                         state.seleccion[i].valor2 = card;
+                        state.seleccion[i].id2 = cardId;
                         break;
                     }
                 }
             } else {
                 state.seleccion.forEach(objeto => {
-                    if (objeto.valor1 === card || objeto.valor2 === card) {
+                    if (objeto.id1 === cardId) {
                         objeto.valor1 = '';
+                        objeto.id1 = '';
+                    } else if (objeto.id2 === cardId) {
                         objeto.valor2 = '';
+                        objeto.id2 = '';
                     }
                 });
-
             }
         }
+
         function getColor(row, index) {
+            const cardId = `${row}-${index}`;
             let valorEncontrado = state.seleccion
-                .filter(objeto => objeto.valor1 === state.pregunta.respuestas[row][index] || objeto.valor2 === state.pregunta.respuestas[row][index])
+                .filter(objeto => objeto.id1 === cardId || objeto.id2 === cardId)
                 .map((objetoFiltrado) => { return objetoFiltrado.color });
             return valorEncontrado[0];
         }
