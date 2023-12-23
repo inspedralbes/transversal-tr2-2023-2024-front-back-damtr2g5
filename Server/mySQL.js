@@ -155,8 +155,7 @@ function getLevelData(exp, callback) {
             console.error('Error al obtener la conexión del pool:', error);
             throw error;
         }
-        console.log("EXP: ", exp);
-        connection.query('SELECT * FROM Levelsxp WHERE requiredxp < ? ORDER BY lvl DESC LIMIT 1', exp, (errorQuery, results, fields) => {
+        connection.query('SELECT * FROM Levelsxp WHERE requiredxp <= ? ORDER BY lvl DESC LIMIT 1', exp, (errorQuery, results, fields) => {
             if (errorQuery) {
                 connection.release(); // Release the connection in case of an error
                 console.error('Error al ejecutar la consulta:', errorQuery);
@@ -164,7 +163,6 @@ function getLevelData(exp, callback) {
             }
             
             const currentLevelData = results[0];
-            console.log("CURRENT LEVEL: ", currentLevelData);
             connection.query('SELECT requiredxp FROM Levelsxp WHERE lvl = ?', currentLevelData.lvl + 1, (errorNextLevel, nextLevelResult, nextLevelFields) => {
                 connection.release(); // Release the connection after both queries
 
@@ -174,12 +172,10 @@ function getLevelData(exp, callback) {
                 }
 
                 const nextLevelRequiredXP = (nextLevelResult && nextLevelResult.length > 0) ? nextLevelResult[0].requiredxp - exp : null;
-                console.log("NEXT LEVEL: ", nextLevelRequiredXP);
                 const levelData = {
                     currentLevel: currentLevelData,
                     nextLevelRequiredXP: nextLevelRequiredXP
                 };
-
                 callback(levelData); 
             });
         });
