@@ -113,10 +113,9 @@ app.get('/getEjercicio/:id', (req, res) => {
 
 
 });
-app.get('/totalExperiencia', async (req, res) => {
+app.get('/totalExperiencia', requireLogin, async (req, res) => {
     let xp = 0
     let user = req.session.user
-    console.log("Usuario: ", user)
 
     try {
         let questionsResults = await findRegisteredResults(parseInt(user.id));
@@ -172,8 +171,7 @@ app.get("/imagen/:nombreArchivo", (req, res) => {
 const multer = require('multer');
 const upload = multer({ dest: 'avatars/' });
 
-app.post('/descargar', upload.single('file'), (req, res) => {
-    console.log(req.session.user);
+app.post('/descargar', requireLogin, upload.single('file'), (req, res) => {
     if (!req.file) {
         return res.status(400).send('Por favor, selecciona una imagen.');
     }
@@ -207,7 +205,7 @@ app.get("/imagenPregunta/:nombreArchivo", (req, res) => {
 })
 
 //Coger ejercicios respondidos
-app.post('/getResueltas', async (req, res) => {
+app.post('/getResueltas', requireLogin, async (req, res) => {
     let idUsuario = req.session.user.id
     let idEjercicio = req.body.ejercicioid
     let result;
@@ -220,7 +218,7 @@ app.post('/getResueltas', async (req, res) => {
     }
     res.json(result);
 })
-app.post('/getExpEjer', async (req, res) => {
+app.post('/getExpEjer', requireLogin, async (req, res) => {
     try {
         let idUsuario = req.session.user.id
         let idEjercicio = req.body.ejercicioid;
@@ -251,13 +249,13 @@ app.post('/getExpEjer', async (req, res) => {
     }
 });
 
-app.get('/getbatalla', async (req, res) => {
+app.get('/getbatalla', requireLogin, async (req, res) => {
     findRegisteredBattles(req.session.user.email).then((result) => {
         res.json(result)
     })
 })
 //Comprobar si pregunta respondida es correcta o no
-app.post('/comprobarPregunta/:id', async (req, res) => {
+app.post('/comprobarPregunta/:id', requireLogin, async (req, res) => {
     try {
         console.log(req.body);
         console.log(req.session);
@@ -702,7 +700,7 @@ app.get('/quitarAlumnoAula/:id', async (req, res) => {
 });
 
 //Restablecer constraseña
-app.post('/restablecerConstrasenya', async (req, res) => {
+app.post('/restablecerConstrasenya', requireLogin, async (req, res) => {
     try {
         //console.log(req.body);
         if (req.session.user.contrasena == req.body.contrasenyaAntigua) {
@@ -735,7 +733,7 @@ app.post('/datosPerfil', (req, res) => {
         res.json(successMessage);
     })
 });
-app.post('/historial', async (req, res) => {
+app.post('/historial', requireLogin, async (req, res) => {
     try {
         let result3 = []//await getBatallas();
         let result4 = []//await GetResueltas({ ejercicioid: null });
