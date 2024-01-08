@@ -750,13 +750,12 @@ app.post('/historial', requireLogin, async (req, res) => {
         }
         let idUsuario = req.session.user.id
         let idEjercicio = req.body.ejercicioid
-        if (req.body.id = !null) {
-            result4 = await findRegisteredHistory(idUsuario);
-        } else if (idEjercicio == null) {
-            result4 = await findRegisteredHistory(req.body.id);
-        }
-        else {
-            result4 = await findRegisteredHistory(idUsuario, idEjercicio);
+        if (req.body.id != null) {
+            result4 = await findRegisteredResults(req.body.id);
+        } else if(idEjercicio == null){
+            result4 = await findRegisteredResults(idUsuario);
+        }else {
+            result4 = await findRegisteredResults(idUsuario, idEjercicio);
         }
         let batalla = result3
 
