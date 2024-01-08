@@ -173,7 +173,7 @@ const upload = multer({ dest: 'avatars/' });
 
 app.post('/descargar', requireLogin, upload.single('file'), (req, res) => {
     if (!req.file) {
-        return res.status(400).send('Por favor, selecciona una imagen.');
+        return res.status(400).json({error: 'Por favor, selecciona una imagen.'});
     }
 
     const uploadedFile = req.file;
@@ -188,12 +188,12 @@ app.post('/descargar', requireLogin, upload.single('file'), (req, res) => {
     fs.rename(uploadedFile.path, uploadPath, (err) => {
         if (err) {
             console.error(err);
-            return res.status(500).send('Error al subir el archivo.');
+            return res.status(500).json({error:'Error al subir el archivo.'});
         }
 
         mysqlConnection.UpdateImage([uniqueFileName + '.jpg', req.session.user.id], (successMessage) => { console.log(successMessage); })
         req.session.user.image = SERVER_URL + ":" + port + "/imagen/" + uniqueFileName + ".jpg";
-        res.status(200).json({ imagen: SERVER_URL + ":" + port + "/imagen/" + uniqueFileName + ".jpg" });
+        res.json({ imagen: SERVER_URL + ":" + port + "/imagen/" + uniqueFileName + ".jpg" });
     });
 });
 

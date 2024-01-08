@@ -1,5 +1,15 @@
-export const SERVER_URL = "http://math-thai.dam.inspedralbes.cat:3450" //"http://localhost:3001"
+export const SERVER_URL = "http://localhost:3450"
 
+export async function descargarImagen(formData) {
+  const response = await fetch(`${SERVER_URL}/descargar`, {
+          method: 'POST',
+          mode: 'cors',
+          credentials: 'include',
+          body: formData,
+        });
+  const imagen = await response.json();
+  return imagen;
+}
 export async function joinAula(aula) {
   return fetch(`${SERVER_URL}/joinAula`,
     {

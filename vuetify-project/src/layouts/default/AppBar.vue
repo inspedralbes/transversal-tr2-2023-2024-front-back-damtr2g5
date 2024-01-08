@@ -40,22 +40,15 @@
     </v-row>
   </v-container>
   <v-dialog v-model="dialogL" width="500" height="700">
-    <v-card>
-      <v-card-title>
-        Elige una imagen
+    <v-card class="myfont round-border">
+      <v-card-title class="text-center big-font">
+        Canvia la teva imatge
       </v-card-title>
       <div class="mx-auto text-center">
-        <v-img v-if="!pic" :src="user.image"></v-img>
-        <pruebas v-if="pic" :pic.sync="pic" />
-        <section class="section">
-          <button class="select-picture">
-            <input ref="uploadInput" type="file" accept="image/jpg, image/jpeg, image/png, image/gif"
-              @change="selectFile" />
-          </button>
-        </section>
+        <pruebas/>
       </div>
-      <v-card-actions class="mx-auto text-center">
-        <v-btn color="primary" @click="closeDialog">Cancelar</v-btn>
+      <v-card-actions @click="dialogL = false" class="closable-card mt-3 text-center oxford-blue-bg bitter-sweet justify-center">
+        <texto>TANCAR</texto>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -84,7 +77,7 @@ export default {
 
       mdiPencil,
       dialogL: false,
-      picture: '',
+      boton: null
     };
   },
   computed: {
@@ -92,16 +85,6 @@ export default {
       const appStore = useAppStore()
       const exp = appStore.getExpInfo;
       return exp.nivel;
-    },
-    result() {
-      return {
-        dataURL: '',
-        blobURL: '',
-        archivo: null,
-      };
-    },
-    pic() {
-      return this.picture;
     },
   },
   setup() {
@@ -149,6 +132,12 @@ export default {
 </script>
 
 <style>
+.closable-card {
+  cursor: pointer;
+}
+.closable-card:hover {
+  background-color: #143360 !important;
+}
 #lateral .v-btn--example {
   bottom: 0;
   position: absolute;
