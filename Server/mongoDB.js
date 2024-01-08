@@ -1,6 +1,6 @@
 const user = "a22osczapmar";
 const password = "Nitrome7.";
-module.exports = { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection, findRegisteredResults, getCategorias, getActivities,findRegisteredBattles, getPreguntaRandom };
+module.exports = { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection, findRegisteredHistory, findRegisteredResults, getCategorias, getActivities,findRegisteredBattles, getPreguntaRandom };
 const { MongoClient } = require("mongodb");
 
 // Replace the following with your Atlas connection string                                                                                                                                        
@@ -240,6 +240,36 @@ async function getPreguntaRandom() {
         return question;
     } catch (err) {
         console.log(err.stack)
+    }
+}
+async function findRegisteredHistory(id_user, id_ejercicio) {
+    try {
+        await client.connect();
+        const db = client.db(dbName);
+        const col = db.collection("history");
+        let resultadoEncontrado = null
+        if (id_ejercicio == null) {
+            resultadoEncontrado = await col.find({ idUsuario: id_user }).toArray(function (err, resultado) {
+                if (err) {
+                    console.error('Error al realizar la consulta:', err);
+                    return;
+                }
+                console.log('Resultado:', resultado)
+            });
+        } else {
+            resultadoEncontrado = await col.find({ idUsuario: id_user, idEjercicio: id_ejercicio }).toArray(function (err, resultado) {
+                if (err) {
+                    console.error('Error al realizar la consulta:', err);
+                    return;
+                }
+                console.log('Resultado:', resultado)
+            });
+        }
+
+        return resultadoEncontrado;
+    } catch (err) {
+        console.log(err.stack);
+        return null;
     }
 }
 async function eliminar(id) {

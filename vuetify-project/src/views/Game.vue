@@ -129,7 +129,6 @@ export default {
             comprobado: false,
             overlay: false,
             key: 0,
-            ufs:[0,1,2,3,4,5],
             componentSelecionat: null,
             preguntaSeleccionada: null,
             respuestaSelecionada: "",
@@ -202,7 +201,7 @@ export default {
 
         },
         nuevaPregunta() {
-            getPreguntaBatalla({nums:this.ufs}).then(response => {
+            getPreguntaBatalla({nums: store.$state.room.categorias}).then(response => {
                 this.preguntaSeleccionada = response;
                 this.key += 1;
                 switch (this.preguntaSeleccionada.formato) {

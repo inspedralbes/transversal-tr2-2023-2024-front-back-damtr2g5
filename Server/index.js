@@ -22,7 +22,7 @@ const server = http.createServer(app);
 const port = process.env.PORT || 3450;
 const SERVER_URL = process.env.SERVER || "http://math-thai.dam.inspedralbes.cat" //"http://localhost" ;
 
-const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, updateCollection, findRegisteredBattles, getActivities, getPreguntaRandom } = require("./mongoDB.js");
+const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults,findRegisteredHistory, updateCollection, findRegisteredBattles, getActivities, getPreguntaRandom } = require("./mongoDB.js");
 const { requireLogin, shuffleArray, checkQuestion, generarPassword, obtenerFechaYHoraActual } = require("./utils.js");
 const { initializeSocket, filterRooms, getIo } = require("./socket.js");
 initializeSocket(server, { cors: corsOptions });
@@ -141,7 +141,7 @@ app.get('/totalExperiencia', requireLogin, async (req, res) => {
                 const datos = { experiencia: experiencia, nivel: nivelDatos.currentLevel.lvl, vida: nivelDatos.currentLevel.health, experienciaRestante: nivelDatos.nextLevelRequiredXP }
                 res.json(datos);
             })
-            
+
         })
 
     } catch (error) {
@@ -192,8 +192,8 @@ app.post('/descargar', requireLogin, upload.single('file'), (req, res) => {
         }
 
         mysqlConnection.UpdateImage([uniqueFileName + '.jpg', req.session.user.id], (successMessage) => { console.log(successMessage); })
-        req.session.user.image = SERVER_URL+":"+port+"/imagen/" + uniqueFileName + ".jpg";
-        res.status(200).json({ imagen: SERVER_URL+":"+port+"/imagen/" + uniqueFileName + ".jpg" });
+        req.session.user.image = SERVER_URL + ":" + port + "/imagen/" + uniqueFileName + ".jpg";
+        res.status(200).json({ imagen: SERVER_URL + ":" + port + "/imagen/" + uniqueFileName + ".jpg" });
     });
 });
 
@@ -286,6 +286,7 @@ app.post('/comprobarPregunta/:id', requireLogin, async (req, res) => {
                 insertInCollection({ "idUsuario": idUser, "idPregunta": preguntaid, "idEjercicio": req.body.ejercicioid, "respuesta": req.body.respuesta, "correcta": correcto, "time": obtenerFechaYHoraActual() }, 'result')
             }
         })
+        insertInCollection({ "idUsuario": idUser, "idPregunta": preguntaid, "idEjercicio": req.body.ejercicioid, "respuesta": req.body.respuesta, "correcta": correcto, "time": obtenerFechaYHoraActual() }, 'history')
         res.json({ "correct": correcto });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -742,16 +743,18 @@ app.post('/historial', requireLogin, async (req, res) => {
             await findRegisteredBattles(req.session.user.email).then((result) => {
                 result3 = result
             })
-        }else{
+        } else {
             await findRegisteredBattles(req.body.email).then((result) => {
                 result3 = result
             })
         }
         let idUsuario = req.session.user.id
         let idEjercicio = req.body.ejercicioid
-        if (idEjercicio == null) {
+        if (req.body.id != null) {
+            result4 = await findRegisteredResults(req.body.id);
+        } else if(idEjercicio == null){
             result4 = await findRegisteredResults(idUsuario);
-        } else {
+        }else {
             result4 = await findRegisteredResults(idUsuario, idEjercicio);
         }
         let batalla = result3
@@ -769,12 +772,6 @@ app.post('/historial', requireLogin, async (req, res) => {
             }
             historial.push("Has resolt " + resultadoEjercicio + " l'activitat " + ejercicio.idPregunta + " de l'exercici " + resultado + " &el& " + ejercicio.time);
         })).then(() => {
-            historial.sort((a, b) => {
-                const tiempoA = new Date(a.match(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}/));
-                const tiempoB = new Date(b.match(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}/));
-                return tiempoB - tiempoA;
-            });
-        }).then(() => {
             // Ordenar el historial por fecha en orden descendente
             batalla.forEach(element => {
                 let resultadoBatalla = ''
@@ -788,6 +785,12 @@ app.post('/historial', requireLogin, async (req, res) => {
                     resultadoBatalla = equipo2 ? "guanyat" : "perdut";
                 }
                 historial.push("Has " + resultadoBatalla + " la batalla " + element.battle + " &el& " + element.time)
+            });
+        }).then(() => {
+            historial.sort((a, b) => {
+                const tiempoA = new Date(a.match(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}/));
+                const tiempoB = new Date(b.match(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}/));
+                return tiempoB - tiempoA;
             });
         }).then(() => {
             let history = historial.map((element) => {
