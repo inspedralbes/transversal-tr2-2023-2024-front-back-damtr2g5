@@ -7,7 +7,7 @@ client = MongoClient("mongodb+srv://a22osczapmar:Nitrome7.@cluster0.uiii7nf.mong
 db = client['mathGameMongo']
 collection = db['history']
 data =  collection.find({"idUsuario": 41})
-datos={}
+datos={"dato":[]}
 '''
 for x in data:
   datos["idUsuario"] = x["idUsuario"]
@@ -17,7 +17,7 @@ for x in data:
   datos["correcta"] = x["correcta"]
 '''
 for x in data:
-    datos["data"] = x
+    datos["dato"].append(x)
 
 df = pd.DataFrame(datos)
 

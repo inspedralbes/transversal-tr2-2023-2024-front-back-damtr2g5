@@ -3,7 +3,7 @@
     "_id": {
       "$oid": "65814ca1b31c3bac83414f5f"
     },
-    "pregunta": "¿Cuál es el resultado de ($ & $) * ($ & $)?",
+    "pregunta": "¿Cuál es el resultado de &$?",
     "idTema": 1,
     "formato": "Seleccionar"
   },
