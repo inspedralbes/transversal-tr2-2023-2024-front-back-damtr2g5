@@ -769,12 +769,6 @@ app.post('/historial', requireLogin, async (req, res) => {
             }
             historial.push("Has resolt " + resultadoEjercicio + " l'activitat " + ejercicio.idPregunta + " de l'exercici " + resultado + " &el& " + ejercicio.time);
         })).then(() => {
-            historial.sort((a, b) => {
-                const tiempoA = new Date(a.match(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}/));
-                const tiempoB = new Date(b.match(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}/));
-                return tiempoB - tiempoA;
-            });
-        }).then(() => {
             // Ordenar el historial por fecha en orden descendente
             batalla.forEach(element => {
                 let resultadoBatalla = ''
@@ -788,6 +782,12 @@ app.post('/historial', requireLogin, async (req, res) => {
                     resultadoBatalla = equipo2 ? "guanyat" : "perdut";
                 }
                 historial.push("Has " + resultadoBatalla + " la batalla " + element.battle + " &el& " + element.time)
+            });
+        }).then(() => {
+            historial.sort((a, b) => {
+                const tiempoA = new Date(a.match(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}/));
+                const tiempoB = new Date(b.match(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}/));
+                return tiempoB - tiempoA;
             });
         }).then(() => {
             let history = historial.map((element) => {
