@@ -42,10 +42,13 @@
                     <v-card style="height: 100%;" class="round-border myfont">
                         <v-card-title class="bigger-font violet-bg white pt-6 pb-6">Classe</v-card-title>
                         <div class="mt-4 pb-4 big-font big-font">
-                            <ul>
+                            <ul v-if="clase">
                                 <li>{{ clase }} </li>
                                 <li>Alumnes: {{ total }} </li>
                                 <li>Kru: {{ prof }} </li>
+                            </ul>
+                            <ul v-else>
+                                <li>No pertanys a cap classe</li>
                             </ul>
                         </div>
 

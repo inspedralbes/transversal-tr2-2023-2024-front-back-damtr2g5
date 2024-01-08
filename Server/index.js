@@ -576,11 +576,15 @@ app.get('/getAulaById/:id', (req, res) => {
     console.log("Código de Acceso en Server: ", id)
     mysqlConnection.SelectClassroomId(id, (results) => {
         console.log("Resultados en Server: ", results)
+        if(!results){
+            res.json(null);
+        }else{
         if (results.length > 0) {
             res.json(results);
         } else {
             res.json(null);
         }
+    }
     });
 })
 

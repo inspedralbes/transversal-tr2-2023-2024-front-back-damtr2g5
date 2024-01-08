@@ -67,6 +67,9 @@ function SelectUsersByAula(id,callback) {
     });
 }
 function SelectClassroomId(id,callback) {
+    if(id==null){
+        callback(null);
+    }
     pool.getConnection((error, connection) => {
         if (error) {
             console.error('Error al obtener la conexión del pool:', error);
@@ -78,7 +81,6 @@ function SelectClassroomId(id,callback) {
 
             if (errorQuery) {
                 console.error('Error al ejecutar la consulta:', errorQuery);
-                throw errorQuery;
             }
             callback(results);
         });
