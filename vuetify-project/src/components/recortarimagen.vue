@@ -1,22 +1,14 @@
 <template>
   <div class="live-demo">
-    <section class="section">
-      <button class="select-picture">
-        <input ref="uploadInput" type="file" accept="image/jpg, image/jpeg, image/png, image/gif" @change="selectFile" />
-      </button>
-    </section>
 
     <!-- Crop result preview -->
 
     <!-- A Popup for cropping -->
     <!-- You can replace it with the framework's Modal component -->
-    <div class="modal-wrap" v-if="isShowModal">
+    <div class="modal-wrap">
         <div class="modal">
           <div class="modal-title">
             <div class="tools">
-              <v-btn  @click="isShowModal = false">
-                Cancelar
-              </v-btn>
               <v-btn @click="getResult(); boton=true">
                 Recortar
               </v-btn>
@@ -44,12 +36,6 @@
         </div>
     </div>
   </div>
-  
-  <section class="section" v-if="result.blobURL">
-      <div class="preview">
-        <img :src="result.blobURL" />
-      </div>
-    </section>
   <v-btn @click="mandar" v-if="boton">Guardar</v-btn>
 </template>
   
@@ -64,61 +50,31 @@ export default defineComponent({
   components: {
     VuePictureCropper,
   },
-  setup(props, { emit }) {
-    const store = useAppStore();
-    const isShowModal = ref(false);
-    const uploadInput = ref(null);
-    const pic = ref('');
-    const result = reactive({
-      dataURL: '',
-      blobURL: '',
-      archivo: null,
-    });
-    let boton = false;
-    let blobE = null;
-
-    function selectFile(e) {
-      pic.value = '';
-      result.dataURL = '';
-      result.blobURL = '';
-      result.archivo = null;
-
-      const { files } = e.target;
-      if (!files || !files.length) return;
-
-      const file = files[0];
-      result.archivo = file;
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        pic.value = String(reader.result);        
-        isShowModal.value = true;
-        if (!uploadInput.value) return;
-        uploadInput.value.value = '';
-      };
-    }
-
-    watch(() => uploadInput, () => {
-        // Emitir evento 'botones' al componente padre cuando isShowModal cambia a false
-          // Verificar si newValue no es undefined para evitar emitir al inicio
-          // Emitir el evento 'botones' con la función emit proporcionada por Vue
-          emit('botones');
-
-    });
-
-    async function getResult() {
+  props: {
+    pic: {
+      type: String,
+      default: '',
+    },
+  },
+  methods: {
+    async getResult() {
+      
       if (!cropper) return;
-
       const base64 = cropper.getDataURL();
+      console.log("base64", cropper.getDataURL());
       const blob = await cropper.getBlob();
-
+      
       if (!blob) return;
 
       result.dataURL = base64;
       result.blobURL = URL.createObjectURL(blob);
       blobE = blob;
-      isShowModal.value = false;
-    }
+    },
+  },
+  setup() {
+    const store = useAppStore();
+    let boton = false;
+    let blobE = null;
 
     async function mandar() {
       if (!result.archivo) {
@@ -151,14 +107,8 @@ export default defineComponent({
     }
 
     return {
-      uploadInput,
-      pic,
-      result,
-      isShowModal,
       store,
       boton,
-      selectFile,
-      getResult,
       mandar,
     };
   },

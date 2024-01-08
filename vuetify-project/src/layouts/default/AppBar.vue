@@ -9,12 +9,13 @@
               <v-img :src="user.image" alt="?"></v-img>
             </v-avatar>
           </v-btn>
-          
+
         </template>
         <v-card>
           <v-card-text>
             <div class="mx-auto text-center myfont">
-              <v-badge :icon="`${mdiPencil}`" class="av" location="bottom end" offset-x="15" offset-y="7" @click="dialogL = true">
+              <v-badge :icon="`${mdiPencil}`" class="av" location="bottom end" offset-x="15" offset-y="7"
+                @click="dialogL = true">
                 <v-avatar color="brown" size="100" @click="dialogL = true">
                   <v-img :src="user.image" alt="John"></v-img>
                 </v-avatar>
@@ -44,11 +45,17 @@
         Elige una imagen
       </v-card-title>
       <div class="mx-auto text-center">
-        <v-img v-if="!boton" :src="user.image"></v-img>
-        <pruebas @botones="precionado"/>
+        <v-img v-if="!pic" :src="user.image"></v-img>
+        <pruebas v-if="pic" :pic.sync="pic" />
+        <section class="section">
+          <button class="select-picture">
+            <input ref="uploadInput" type="file" accept="image/jpg, image/jpeg, image/png, image/gif"
+              @change="selectFile" />
+          </button>
+        </section>
       </div>
       <v-card-actions class="mx-auto text-center">
-        <v-btn color="primary" @click="dialogL = false">Tancar</v-btn>
+        <v-btn color="primary" @click="closeDialog">Cancelar</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -67,7 +74,7 @@ export default {
   data() {
     const appStore = useAppStore()
     const user = appStore.getLoginInfo;
-    
+
     return {
       rules: [
         value => {
@@ -77,7 +84,7 @@ export default {
 
       mdiPencil,
       dialogL: false,
-      boton: null,
+      picture: '',
     };
   },
   computed: {
@@ -85,6 +92,16 @@ export default {
       const appStore = useAppStore()
       const exp = appStore.getExpInfo;
       return exp.nivel;
+    },
+    result() {
+      return {
+        dataURL: '',
+        blobURL: '',
+        archivo: null,
+      };
+    },
+    pic() {
+      return this.picture;
     },
   },
   setup() {
@@ -96,6 +113,24 @@ export default {
   },
   methods:
   {
+    closeDialog() {
+      this.dialogL = false;
+      this.picture = '';
+    },
+    selectFile(e) {
+      this.picture = '';
+
+      const { files } = e.target;
+      if (!files || !files.length) return;
+
+      const file = files[0];
+      this.result.archivo = file;
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        this.picture = String(reader.result);
+      };
+    },
     logout() {
       this.store.logout().then((result) => {
         if (result) {
@@ -105,14 +140,9 @@ export default {
       })
 
     },
-    perfil(){
+    perfil() {
       this.$router.push({ name: "Perfil" });
-    },
-    precionado() {
-      // Realizar acciones necesarias cuando el modal se cierra
-      console.log("precionado");
-      // Puedes realizar otras acciones aquí según tu lógica
-    },
+    }
   }
 }
 
@@ -120,11 +150,12 @@ export default {
 
 <style>
 #lateral .v-btn--example {
-    bottom: 0;
-    position: absolute;
-    margin: 0 0 16px 16px;
-  }
-  .av,
+  bottom: 0;
+  position: absolute;
+  margin: 0 0 16px 16px;
+}
+
+.av,
 .av v-avatar {
   cursor: pointer;
 }
