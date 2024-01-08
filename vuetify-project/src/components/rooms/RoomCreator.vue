@@ -20,7 +20,7 @@
                 <v-select variant="solo-filled" bg-color="white" label="Tipus de partida" v-model="gameType"
                   :items="gameTypes"></v-select>
               </v-col>
-              <v-col cols="6" sm="6" md="3" lg="3">
+              <v-col cols="12" sm="12" md="6" lg="6">
 
                 <v-chip-group v-model="selectedCategorias" filter multiple mandatory>
                   <v-chip v-for="categoria in categorias" enabled>{{ categoria.nombre }}</v-chip>
