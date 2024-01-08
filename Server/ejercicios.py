@@ -3,6 +3,8 @@ import math
 import json
 import sys
 
+import re
+
 with open('./plantillas.json', 'r') as file:
     data = json.load(file)
 
@@ -137,26 +139,53 @@ def CrearFRespuestaGeometria(question):
         question["exp"] = 10
     return json.dumps(question)
 
-
+def insertar_parentesis(expresion):
+    indice, indice2 = 1,1
+    # Seleccionar una posición aleatoria para insertar un paréntesis
+    while indice%2 != 0:
+        indice = random.randint(1, len(expresion) - 1)    
+    while indice2%2 != 0:
+        indice2 = random.randint(1, len(expresion) - 1)
+    
+    if indice2 > indice:        
+        expresion_con_parentesis = expresion[:indice] +'(' + expresion[indice2:] + ')'
+    else:
+        expresion_con_parentesis = expresion[:indice2] +'(' + expresion[indice:] + ')'
+    # Insertar un paréntesis aleatorio en la posición seleccionada
+    
+    return expresion_con_parentesis
+def is_number_regex(input_str):
+    return bool(re.match(r'^\d+$', input_str))
 # Numeros y operaciones
 def CrearFSeleccionarNumOper(question):
     cursor = data[0]
     valor1 = str(random.randint(1, 10))
-    opciones = ["+", "-"]
-    valor2 = opciones[random.randint(0, 1)]
+    opciones = ["+", "-", "*"]
+    op1 = opciones[random.randint(0, len(opciones)-1)]
+    op2 = opciones[random.randint(0, len(opciones)-1)]
+    op3 = opciones[random.randint(0, len(opciones)-1)]
+    op4 = opciones[random.randint(0, len(opciones)-1)]
     valor3 = str(random.randint(1, 10))
     valor4 = str(random.randint(1, 10))
-    valor5 = opciones[random.randint(0, 1)]
     valor6 = str(random.randint(1, 10))
     question["id"] = 1
-    question["pregunta"] = cursor["pregunta"].replace("$", valor1, 1)\
-        .replace("&", valor2, 1).replace("$", valor3,1)\
-        .replace("$",valor4,1)\
-        .replace("&", valor5, 1).replace("$", valor6, 1)
-    inicio_operacion = question["pregunta"].find("(")
+    pregunta = str(valor1 + op1 + valor3 + op2 + valor4 + op3 + valor6 + op4 + valor1)
+    expresion_con_parentesis = insertar_parentesis(pregunta)    
+    question["pregunta"] = cursor["pregunta"].replace("$", expresion_con_parentesis)
+    comp = question["pregunta"].find("(")
+    print(question["pregunta"][comp-1])    
+    print(question["pregunta"][comp-1].isdigit())
+    print(question["pregunta"][comp+1])
+    print(question["pregunta"][comp-1].isdigit())
+    if is_number_regex(question["pregunta"][comp-1]):
+        question["pregunta"] = question["pregunta"].replace("(", "+(", 1)    
+    if is_number_regex(question["pregunta"][comp+1]):
+        question["pregunta"] = question["pregunta"].replace("(", "(2", 1)
+    print(question["pregunta"])
+    inicio_operacion = question["pregunta"].find("&")
     fin_operacion = question["pregunta"].find("?")
-    operacion = question["pregunta"][inicio_operacion:fin_operacion]
-
+    operacion = question["pregunta"][inicio_operacion+1:fin_operacion]
+    question["pregunta"] = cursor["pregunta"].replace(" &", " ", 1).replace("$", expresion_con_parentesis)
     # Calcular la expresión matemática utilizando eval()
     resultado = eval(operacion)
     resultadoFalso1 = resultado + random.randint(1, 7)
@@ -300,5 +329,7 @@ def CrearFUnirvaloresEstadistica(question):
     return json.dumps(question)
 
 
-funciones = [CrearFSeleccionarNumOper({}), CrearFSeleccionarEcuaciones({}), CrearFGraficoFunciones({}), CrearFUnirvaloresUnidades({}), CrearFRespuestaGeometria({}), CrearFUnirvaloresEstadistica({})]
-print(funciones[int(sys.argv[1])])
+'''funciones = [CrearFSeleccionarNumOper({}), CrearFSeleccionarEcuaciones({}), CrearFGraficoFunciones({}), CrearFUnirvaloresUnidades({}), CrearFRespuestaGeometria({}), CrearFUnirvaloresEstadistica({})]
+print(funciones[int(sys.argv[1])])'''
+
+print(CrearFSeleccionarNumOper({}))
