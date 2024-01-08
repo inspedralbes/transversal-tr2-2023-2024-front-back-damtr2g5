@@ -22,7 +22,7 @@
               </v-col>
               <v-col cols="6" sm="6" md="3" lg="3">
 
-                <v-chip-group v-model="selectedCategorias" filter multiple>
+                <v-chip-group v-model="selectedCategorias" filter multiple mandatory>
                   <v-chip v-for="categoria in categorias" enabled>{{ categoria.nombre }}</v-chip>
                 </v-chip-group>
               </v-col>
