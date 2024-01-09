@@ -7,13 +7,13 @@
         <v-container>
             <v-row class="justify-center">
                 <v-col v-for="(valor, i) in respuesta" :key="i" cols="auto">
-                    <v-card :disabled="isDisabled" v-if="valor" class="mx-auto carta" width="60" height="60" color="#F87060"
+                    <v-card style="text-align: center; display: flex; justify-content: center;" :disabled="isDisabled" v-if="valor" class="mx-auto carta" width="80" height="80" color="#F87060"
                         @click="moverCarta(i, 'respuesta', 'posibles')">
                         <v-card-item>
                             <v-card-title>{{ valor }}</v-card-title>
                         </v-card-item>
                     </v-card>
-                    <v-card v-else class="mx-auto carta" width="60" height="60">
+                    <v-card style="text-align: center; display: flex; justify-content: center;" v-else class="mx-auto carta" width="80" height="80">
 
                     </v-card>
                 </v-col>
@@ -22,13 +22,13 @@
         <v-container>
             <v-row class="justify-center">
                 <v-col v-for="(valor, i) in posibles" :key="i" cols="auto">
-                    <v-card :disabled="isDisabled" v-if="valor" class="mx-auto" width="60" height="60" color="#102542"
+                    <v-card style="text-align: center; display: flex; justify-content: center;" :disabled="isDisabled" v-if="valor" class="mx-auto" width="80" height="80" color="#102542"
                         @click="moverCarta(i, 'posibles', 'respuesta')">
                         <v-card-item>
                             <v-card-title>{{ valor }}</v-card-title>
                         </v-card-item>
                     </v-card>
-                    <v-card v-else class="mx-auto carta2" width="60" height="60" color="rgb(255,255,255)">
+                    <v-card style="text-align: center; display: flex; justify-content: center;" v-else class="mx-auto carta2" width="80" height="80" color="rgb(255,255,255)">
 
                     </v-card>
                 </v-col>
