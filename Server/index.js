@@ -118,12 +118,12 @@ app.get('/totalExperiencia', requireLogin, async (req, res) => {
     let user = req.session.user
 
     try {
-        let questionsResults = await findRegisteredResults(parseInt(user.id));
+        let questionsResults = await findRegisteredResults(parseInt(user.id))
+        questionResults = questionsResults.filter(element => element.correcta === true);
         let questionsBattles = await findRegisteredBattles(user.email);
         console.log("Resultados Battles: ", questionsBattles);
         console.log("Resultados Results: ", questionsResults);
         questionsResults = questionsResults.concat(questionsBattles)
-        const results = questionsResults.filter(element => element.correcta === true);
         console.log("Resultados Totales: ", results);
 
         const promises = results.map(async visual => {
