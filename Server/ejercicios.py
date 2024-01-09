@@ -139,23 +139,6 @@ def CrearFRespuestaGeometria(question):
         question["exp"] = 10
     return json.dumps(question)
 
-def insertar_parentesis(expresion):
-    indice, indice2 = 1,1
-    # Seleccionar una posición aleatoria para insertar un paréntesis
-    while indice%2 != 0:
-        indice = random.randint(1, len(expresion) - 1)    
-    while indice2%2 != 0:
-        indice2 = random.randint(1, len(expresion) - 1)
-    
-    if indice2 > indice:        
-        expresion_con_parentesis = expresion[:indice] +'(' + expresion[indice2:] + ')'
-    else:
-        expresion_con_parentesis = expresion[:indice2] +'(' + expresion[indice:] + ')'
-    # Insertar un paréntesis aleatorio en la posición seleccionada
-    
-    return expresion_con_parentesis
-def is_number_regex(input_str):
-    return bool(re.match(r'^\d+$', input_str))
 # Numeros y operaciones
 def CrearFSeleccionarNumOper(question):
     cursor = data[0]
@@ -169,24 +152,13 @@ def CrearFSeleccionarNumOper(question):
     valor4 = str(random.randint(1, 10))
     valor6 = str(random.randint(1, 10))
     question["id"] = 1
-    pregunta = str(valor1 + op1 + valor3 + op2 + valor4 + op3 + valor6 + op4 + valor1)
-    expresion_con_parentesis = insertar_parentesis(pregunta)    
-    question["pregunta"] = cursor["pregunta"].replace("$", expresion_con_parentesis)
-    comp = question["pregunta"].find("(")
-    print(question["pregunta"][comp-1])    
-    print(question["pregunta"][comp-1].isdigit())
-    print(question["pregunta"][comp+1])
-    print(question["pregunta"][comp-1].isdigit())
-    if is_number_regex(question["pregunta"][comp-1]):
-        question["pregunta"] = question["pregunta"].replace("(", "+(", 1)    
-    if is_number_regex(question["pregunta"][comp+1]):
-        question["pregunta"] = question["pregunta"].replace("(", "(2", 1)
-    print(question["pregunta"])
+    pregunta = str(valor1 + op1 + valor3 + op2 +"("+ valor4 + op3+ valor6 +")" + op4 + valor1)
+    question["pregunta"] = cursor["pregunta"].replace("$", pregunta)
     inicio_operacion = question["pregunta"].find("&")
     fin_operacion = question["pregunta"].find("?")
     operacion = question["pregunta"][inicio_operacion+1:fin_operacion]
-    question["pregunta"] = cursor["pregunta"].replace(" &", " ", 1).replace("$", expresion_con_parentesis)
     # Calcular la expresión matemática utilizando eval()
+    question["pregunta"] = cursor["pregunta"].replace(" &", " ", 1).replace("$", pregunta)
     resultado = eval(operacion)
     resultadoFalso1 = resultado + random.randint(1, 7)
     resultadoFalso2 = eval(operacion.replace("(", " ").replace(")", " "))
