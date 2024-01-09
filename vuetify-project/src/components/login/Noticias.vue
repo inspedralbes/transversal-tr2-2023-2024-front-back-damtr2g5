@@ -6,6 +6,7 @@
                 <h2 class="bigger-font">Notícies</h2>
                 <div>
                     En aquest món hi ha 3 tipus de persones: les que saben comptar i les que no.
+                    <a href="https://forms.gle/3VPKF74xSnnbUVhc9">Pls contesten </a>
                 </div>
             </v-col>
         </v-row>
