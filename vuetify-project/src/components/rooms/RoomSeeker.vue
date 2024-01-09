@@ -1,11 +1,9 @@
 <template>
     <v-container class="myfont">
-        <v-data-table-server id="partidas" class="round-border pa-4 platinum-bg" 
-        style="padding-left: 0px !important; padding-right: 0px !important;" 
-        v-model:items-per-page="itemsPerPage" :search="search" :headers="headers"
-            :items-length="totalItems" :items="serverItems" :loading="loading" item-value="name" 
-            :items-per-page-text="'Partides per pàgina'"
-            @update:options="loadItems" >
+        <v-data-table-server id="partidas" class="round-border pa-4 platinum-bg"
+            style="padding-left: 0px !important; padding-right: 0px !important;" v-model:items-per-page="itemsPerPage"
+            :search="search" :headers="headers" :items-length="totalItems" :items="serverItems" :loading="loading"
+            item-value="name" :items-per-page-text="'Partides per pàgina'" :key="llave" @update:options="loadItems">
             <template v-slot:header.private="{ header }">
                 <v-icon size="35" :icon="`${mdiLock}`"></v-icon>
             </template>
@@ -16,24 +14,30 @@
                 <tr>
                     <td></td>
                     <td>
-                        <v-text-field style="border-radius: 20px;" variant="outlined" rounded v-model="name" hide-details placeholder="Buscar partida..." class="ma-2 mt-10 white-bg"
-                            density="compact"></v-text-field>
+                        <v-text-field style="border-radius: 20px;" variant="outlined" rounded v-model="name" hide-details
+                            placeholder="Buscar partida..." class="ma-2 mt-10 white-bg" density="compact"></v-text-field>
+                    </td>
+                    <td style="vertical-align: bottom;">
+                        <div class="text-center">
+                        <v-btn @click="clic" class="white-bg mb-2" :disabled="loading" append-icon="$refresh" text="Recargar" variant="outlieed"></v-btn>
+                    </div>
                     </td>
                 </tr>
             </template>
             <template v-slot:item.actions="{ item }">
-                <v-btn  class=" myfont oxford-blue-bg bitter-sweet" @click="isPrivate(item)">
+                <v-btn class=" myfont oxford-blue-bg bitter-sweet" @click="isPrivate(item)">
                     Connectar
                 </v-btn>
                 <v-dialog class="myfont" v-model="dialog" max-width="400">
-                    <v-alert v-model="wrongPassword" type="error" closable close-label="Close Alert" title="Contrasenya incorrecta">
-                        </v-alert>
+                    <v-alert v-model="wrongPassword" type="error" closable close-label="Close Alert"
+                        title="Contrasenya incorrecta">
+                    </v-alert>
                     <v-card>
                         <v-card-title class="big-font bg-grey-lighten-3">
                             Contrasenya
                         </v-card-title>
                         <v-text-field v-model="codigo" label="Contrasenya" class="ma-4 mb-0"></v-text-field>
-                        
+
                         <v-divider></v-divider>
                         <v-card-actions>
                             <v-btn variant="text" @click="dialog = false; wrongPassword = false">
@@ -44,16 +48,16 @@
                                 Acceptar
                             </v-btn>
                         </v-card-actions>
-                        
+
                     </v-card>
                 </v-dialog>
                 <v-dialog v-model="notJoinedDialog" max-width="500">
                     <v-alert type="error" closable close-label="Close Alert" title="No pots connectar a la partida">
-                        </v-alert>
+                    </v-alert>
                 </v-dialog>
                 <v-dialog v-model="alreadyJoinedDialog" max-width="500">
                     <v-alert type="warning" closable close-label="Close Alert" title="Ja estàs connectat a la partida">
-                        </v-alert>
+                    </v-alert>
                 </v-dialog>
             </template>
 
@@ -61,13 +65,21 @@
     </v-container>
 </template>
 <style>
-.v-data-table__thead{
+.v-data-table__thead {
     font-size: 2em;
 }
-#partidas tbody tr:nth-child(even){background-color: #CDD7D6;}
-#partidas tbody tr:nth-child(odd){background-color: white;}
 
-#partidas tbody tr:hover {background-color: #F87060;}
+#partidas tbody tr:nth-child(even) {
+    background-color: #CDD7D6;
+}
+
+#partidas tbody tr:nth-child(odd) {
+    background-color: white;
+}
+
+#partidas tbody tr:hover {
+    background-color: #F87060;
+}
 </style>
 <script>
 import { getRooms } from '@/communicationsManager.js';
@@ -105,6 +117,7 @@ export default {
             name: '',
             codigo: '',
             search: '',
+            llave: 0,
         };
     },
     created() {
@@ -133,7 +146,7 @@ export default {
         },
     },
     methods: {
-        conectar(room){
+        conectar(room) {
             socket.connect();
             socket.emit('joinRoom', room);
         },
@@ -148,6 +161,9 @@ export default {
                 this.conectar(room);
                 //this.$router.push({ name: 'Game', params: { room: item.name } });
             }
+        },
+        clic() {
+            this.llave++
         },
         loadItems({ page, itemsPerPage, sortBy }) {
             this.loading = true;
