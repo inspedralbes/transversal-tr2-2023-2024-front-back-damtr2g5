@@ -22,7 +22,7 @@ const server = http.createServer(app);
 const port = process.env.PORT || 3450;
 const SERVER_URL = process.env.SERVER || "http://math-thai.dam.inspedralbes.cat" //"http://localhost" ;
 
-const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults,findRegisteredHistory, updateCollection, findRegisteredBattles, getActivities, getPreguntaRandom } = require("./mongoDB.js");
+const { getDocument, getCategorias, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, findRegisteredResults, findRegisteredHistory, updateCollection, findRegisteredBattles, getActivities, getPreguntaRandom } = require("./mongoDB.js");
 const { requireLogin, shuffleArray, checkQuestion, generarPassword, obtenerFechaYHoraActual } = require("./utils.js");
 const { initializeSocket, filterRooms, getIo } = require("./socket.js");
 initializeSocket(server, { cors: corsOptions });
@@ -123,22 +123,24 @@ app.get('/totalExperiencia', requireLogin, async (req, res) => {
         let questionsBattles = await findRegisteredBattles(user.email);
         console.log("Resultados Battles: ", questionsBattles);
         console.log("Resultados Results: ", questionsResults);
-        questionsResults = questionsResults.concat(questionsBattles)
-        console.log("Resultados Totales: ", results);
 
-        const promises = results.map(async visual => {
-            const idPregunta = visual.idPregunta || visual.pregunta
+        const promises = questionsResults.map(async visual => {
+            const idPregunta = visual.idPregunta
             const document = await getPregunta(idPregunta);
             xp += document.experiencia;
         });
 
-
         await Promise.all(promises);
-        const experiencia = xp
-        mysqlConnection.getLevelData(experiencia, (nivelDatos) => {
+        console.log(xp);
+        questionsBattles.forEach(element => {
+            if(element.experiencia)
+                xp += element.experiencia;
+        });
+        console.log("Experiencia: ", xp)
+        mysqlConnection.getLevelData(xp, (nivelDatos) => {
             console.log("User ID:", user.id)
             mysqlConnection.updateLevelData(user.id, nivelDatos.currentLevel.lvl, (successMessage) => {
-                const datos = { experiencia: experiencia, nivel: nivelDatos.currentLevel.lvl, vida: nivelDatos.currentLevel.health, experienciaRestante: nivelDatos.nextLevelRequiredXP }
+                const datos = { experiencia: xp, nivel: nivelDatos.currentLevel.lvl, vida: nivelDatos.currentLevel.health, experienciaRestante: nivelDatos.nextLevelRequiredXP }
                 res.json(datos);
             })
 
@@ -173,7 +175,7 @@ const upload = multer({ dest: 'avatars/' });
 
 app.post('/descargar', requireLogin, upload.single('file'), (req, res) => {
     if (!req.file) {
-        return res.status(400).json({error: 'Por favor, selecciona una imagen.'});
+        return res.status(400).json({ error: 'Por favor, selecciona una imagen.' });
     }
 
     const uploadedFile = req.file;
@@ -188,7 +190,7 @@ app.post('/descargar', requireLogin, upload.single('file'), (req, res) => {
     fs.rename(uploadedFile.path, uploadPath, (err) => {
         if (err) {
             console.error(err);
-            return res.status(500).json({error:'Error al subir el archivo.'});
+            return res.status(500).json({ error: 'Error al subir el archivo.' });
         }
 
         mysqlConnection.UpdateImage([uniqueFileName + '.jpg', req.session.user.id], (successMessage) => { console.log(successMessage); })
@@ -576,15 +578,15 @@ app.get('/getAulaById/:id', (req, res) => {
     console.log("Código de Acceso en Server: ", id)
     mysqlConnection.SelectClassroomId(id, (results) => {
         console.log("Resultados en Server: ", results)
-        if(!results){
+        if (!results) {
             res.json(null);
-        }else{
-        if (results.length > 0) {
-            res.json(results);
         } else {
-            res.json(null);
+            if (results.length > 0) {
+                res.json(results);
+            } else {
+                res.json(null);
+            }
         }
-    }
     });
 })
 
@@ -756,9 +758,9 @@ app.post('/historial', requireLogin, async (req, res) => {
         let idEjercicio = req.body.ejercicioid
         if (req.body.id != null) {
             result4 = await findRegisteredResults(req.body.id);
-        } else if(idEjercicio == null){
+        } else if (idEjercicio == null) {
             result4 = await findRegisteredResults(idUsuario);
-        }else {
+        } else {
             result4 = await findRegisteredResults(idUsuario, idEjercicio);
         }
         let batalla = result3
