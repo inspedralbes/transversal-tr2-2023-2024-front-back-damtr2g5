@@ -60,7 +60,8 @@ export default {
     },
     methods: {
         getImage(fileName) {
-            const image = `http://localhost:3001/imagenPregunta/${fileName}`
+            
+            const image = `http://math-thai.dam.inspedralbes.cat:3450/imagenPregunta/${fileName}`
             return image
         },
 
