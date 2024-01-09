@@ -225,7 +225,7 @@ function initializeSocket(server, cors) {
                             "equipo1": resultado1,
                             "equipo2": resultado2,
                             "matchsize": rooms.getRoom(room.id).players,
-                            "exp": 5 * rooms.getRoom(room.id).players,
+                            "experiencia": 5 * rooms.getRoom(room.id).players,
                             "time": rooms.getRoom(room.id).starttime,
                             "duration": calcularTiempoTranscurrido(rooms.getRoom(room.id).starttime, rooms.getRoom(room.id).endtime)
                         }

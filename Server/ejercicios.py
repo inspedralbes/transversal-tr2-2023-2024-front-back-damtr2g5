@@ -11,16 +11,20 @@ with open('./plantillas.json', 'r') as file:
 # Funciones
 def CrearFGraficoFunciones(question):
     cursor = data[2]
-    valor1 = str(random.randint(2, 11))
+    valor1 = str(random.randint(2, 10))
     opciones = ["+", "-"]
     valor2 = opciones[random.randint(0, 1)]
     valor3 = str(random.randint(0, 10))
+    if valor2 == "-":
+        menos = "-"+valor3
+    else:
+        menos = valor3
     question["id"] = 3
     question["pregunta"] = cursor["pregunta"].replace("$", valor1, 1).replace("$", valor2, 1).replace("$", valor3, 1)
     question["correcta"] = {}
     question["correcta"]["tipo"] = "lineal"
     question["correcta"]["m"] = int(valor1)
-    question["correcta"]["b"] = int(valor3)
+    question["correcta"]["b"] = int(menos)
     question["formato"] = cursor["formato"]
     question["idTema"] = cursor["idTema"]
     question["exp"] = 10
@@ -163,7 +167,7 @@ def CrearFSeleccionarNumOper(question):
     resultadoFalso1 = resultado + random.randint(1, 7)
     resultadoFalso2 = eval(operacion.replace("(", " ").replace(")", " "))
     resultadoFalso3 = resultado - random.randint(1, 7)
-    lista = [{"respuesta":resultado}, {"respuesta":resultadoFalso1}, {"respuesta":resultadoFalso2}, {"respuesta":resultadoFalso3}]
+    lista = [{"respuesta":resultado}, {"respuesta":resultadoFalso1}, {"respuesta":resultadoFalso2-1}, {"respuesta":resultadoFalso3}]
     random.shuffle(lista)
     question["respuestas"] = lista
     question["correcta"] = resultado
@@ -301,7 +305,5 @@ def CrearFUnirvaloresEstadistica(question):
     return json.dumps(question)
 
 
-'''funciones = [CrearFSeleccionarNumOper({}), CrearFSeleccionarEcuaciones({}), CrearFGraficoFunciones({}), CrearFUnirvaloresUnidades({}), CrearFRespuestaGeometria({}), CrearFUnirvaloresEstadistica({})]
-print(funciones[int(sys.argv[1])])'''
-
-print(CrearFSeleccionarNumOper({}))
+funciones = [CrearFSeleccionarNumOper({}), CrearFSeleccionarEcuaciones({}), CrearFGraficoFunciones({}), CrearFUnirvaloresUnidades({}), CrearFRespuestaGeometria({}), CrearFUnirvaloresEstadistica({})]
+print(funciones[int(sys.argv[1])])

@@ -3,7 +3,7 @@
     "_id": {
       "$oid": "65814ca1b31c3bac83414f5f"
     },
-    "pregunta": "¿Cuál es el resultado de &$?",
+    "pregunta": "¿Cual es el resultado de &$?",
     "idTema": 1,
     "formato": "Seleccionar"
   },
@@ -11,14 +11,14 @@
     "_id": {
       "$oid": "65817f73b31c3bac83414f79"
     },
-    "pregunta": "Resuelve la ecuación: $x # $ = $",
+    "pregunta": "Resuelve la ecuacion: $x # $ = $",
     "idTema": 2,
     "formato": "Seleccionar"
   },{
     "_id": {
       "$oid": "658148bbb31c3bac83414f5e"
     },
-    "pregunta": "Representa la función y = $x $ $ en un gráfico",
+    "pregunta": "Representa la funcion y = $x $ $ en un grafico",
     "formato": "Grafica",
     "idTema": 3
   },
@@ -26,7 +26,7 @@
     "_id": {
       "$oid": "6581ca45a8ee98869618c63c"
     },
-    "pregunta": "Empareja con el valor de conversión correcto",
+    "pregunta": "Empareja con el valor de conversion correcto",
     "idTema": 4,
     "formato": "Unir valores"
   },
