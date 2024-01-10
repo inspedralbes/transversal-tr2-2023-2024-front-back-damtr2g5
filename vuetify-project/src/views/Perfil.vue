@@ -73,6 +73,8 @@
                 </v-col>
             </v-row>
         </v-container>
+        <DoughnutChart/>
+        <Line/>
     </v-app>
 </template>
 
@@ -86,6 +88,8 @@ ul {
 import { useAppStore } from '@/store/app';
 import { historial, GetDatosPerfil, getAulaById } from '@/communicationsManager'
 import BackButton from '@/components/fab/BackButton.vue';
+import  DoughnutChart from '@/components/interior/grafico1.vue';
+import  Line from '@/components/interior/grafico2.vue';
 export default {
     name: 'Perfil',
     data() {
@@ -123,7 +127,7 @@ export default {
             return (this.exp.experiencia / (this.exp.experiencia + this.exp.experienciaRestante)) * 100;
         }
     },
-    components: { BackButton }
+    components: { BackButton, DoughnutChart, Line }
 };
 </script>
 

@@ -1,6 +1,6 @@
 const user = "a22osczapmar";
 const password = "Nitrome7.";
-module.exports = { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection, findRegisteredHistory, findRegisteredResults, getCategorias, getActivities,findRegisteredBattles, getPreguntaRandom };
+module.exports = { getDocument, getPreguntas, getPregunta, insertInCollection, findRegisteredResult, updateCollection, findRegisteredHistory, findRegisteredResults, getCategorias, getActivities, findRegisteredBattles, getPreguntaRandom };
 const { MongoClient } = require("mongodb");
 
 // Replace the following with your Atlas connection string                                                                                                                                        
@@ -207,8 +207,14 @@ async function getPreguntas(preguntas) {
         const db = client.db(dbName);
         const col = db.collection("question");
         // Find and return the document
-        const filter = { "id": { $in: preguntas } };
-        const document = await col.find(filter).toArray();
+        var document = null;
+        if (preguntas) {
+            const filter = { "id": { $in: preguntas } };
+            document = await col.find(filter).toArray();
+        } else { 
+            console.log("aqui");
+            document = await col.find().toArray();
+        }
         return document;
     } catch (err) {
         console.log(err.stack);
@@ -279,12 +285,12 @@ async function eliminar(id) {
         const miColeccion = db.collection('result');
 
         miColeccion.deleteMany({ idUsuario: id })
-          .then((result) => {
-            console.log(`${result.deletedCount} documentos eliminados`);
-          })
-          .catch((error) => {
-            console.error('Error al eliminar documentos:', error);
-          });
+            .then((result) => {
+                console.log(`${result.deletedCount} documentos eliminados`);
+            })
+            .catch((error) => {
+                console.error('Error al eliminar documentos:', error);
+            });
         return question;
     } catch (err) {
         console.log(err.stack)

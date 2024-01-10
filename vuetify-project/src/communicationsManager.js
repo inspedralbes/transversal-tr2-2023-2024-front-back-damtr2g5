@@ -1,4 +1,3 @@
-export const SERVER_URL = "http://math-thai.dam.inspedralbes.cat:3450" //"http://localhost:3450"
 
 export async function descargarImagen(formData) {
   const response = await fetch(`${SERVER_URL}/descargar`, {
@@ -86,6 +85,14 @@ export async function updateExperienciaUsuario() {
   const datos = await response.json();
   return datos;
 }
+
+export async function GetTotalesEjercicios() {
+  const response = await fetch(`${SERVER_URL}/getEjercicios`,
+  { method: 'GET', credentials: 'include', mode: 'cors' });
+  const datos = await response.json();
+  return datos;
+}
+
 export async function GetResueltas(dato) {
   const response = await fetch(`${SERVER_URL}/getResueltas`,
     {
@@ -139,6 +146,7 @@ export async function registrarUsuari(infoUsuario) {
     const messages = await response.text()
     return { success: true, message: messages };
   } else {
+    console.log('Registration failed.');
     const messages = await response.text()
     return { success: false, message: messages };
   }

@@ -121,8 +121,6 @@ app.get('/totalExperiencia', requireLogin, async (req, res) => {
         let questionsResults = await findRegisteredResults(parseInt(user.id))
         questionResults = questionsResults.filter(element => element.correcta === true);
         let questionsBattles = await findRegisteredBattles(user.email);
-        console.log("Resultados Battles: ", questionsBattles);
-        console.log("Resultados Results: ", questionsResults);
 
         const promises = questionsResults.map(async visual => {
             const idPregunta = visual.idPregunta
@@ -171,6 +169,7 @@ app.get("/imagen/:nombreArchivo", (req, res) => {
 });
 
 const multer = require('multer');
+const { to } = require('mathjs');
 const upload = multer({ dest: 'avatars/' });
 
 app.post('/descargar', requireLogin, upload.single('file'), (req, res) => {
@@ -492,7 +491,6 @@ app.post('/registrarUsuari', (req, res) => {
     let comprovacio = true;
 
     mysqlConnection.SelectEmails((emails) => {
-        console.log("Query completed. Data retrieved:", emails);
         emails.forEach(email => {
             if (email.email === usuariDades.email) {
                 console.log("Aquest mail ja està en ús");
@@ -503,8 +501,7 @@ app.post('/registrarUsuari', (req, res) => {
         if (comprovacio) {
             mysqlConnection.InsertUser([usuariDades.name, usuariDades.surname, usuariDades.email, usuariDades.contrasena], ((result) => { res.send(result) }));
         } else {
-            // Mail en uso
-            res.status(123).send("Mail en uso");
+            res.status(409).send("Mail en uso");
         }
     })
 });
@@ -757,11 +754,11 @@ app.post('/historial', requireLogin, async (req, res) => {
         let idUsuario = req.session.user.id
         let idEjercicio = req.body.ejercicioid
         if (req.body.id != null) {
-            result4 = await findRegisteredResults(req.body.id);
+            result4 = await findRegisteredHistory(req.body.id);
         } else if (idEjercicio == null) {
-            result4 = await findRegisteredResults(idUsuario);
+            result4 = await findRegisteredHistory(idUsuario);
         } else {
-            result4 = await findRegisteredResults(idUsuario, idEjercicio);
+            result4 = await findRegisteredHistory(idUsuario, idEjercicio);
         }
         let batalla = result3
 
@@ -851,7 +848,11 @@ app.post('/pregunta', async (req, res) => {
     res.json(pregunta);
 });
 
-
+app.get('/getEjercicios',(req,res)=>{
+    var totales = getPreguntas().then((preguntas)=>{        
+        res.json(preguntas);
+    });
+})
 
 
 
