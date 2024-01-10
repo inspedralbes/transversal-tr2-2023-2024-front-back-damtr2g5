@@ -67,9 +67,39 @@ function initializeSocket(server, cors) {
                 io.to(socket.request.session.id).emit("roomNotJoined", room);
             }
         });
+        socket.on('changeTeam', (room) => {
+            console.log("ROOM ID:",room.roomId)
+            const rom = rooms.getRoom(room.roomId);
+                console.log("Room: ",rom)
+            //Cambiar equipo
+            rom.users.forEach((user) => {
+                if (user.id === socket.request.session.id) {
+                    if(user.team===1){
+                        user.team=2
+                }
+                else if (user.team === 2) {
+                    user.team = 1
+                }
+            }})
+            //Actualizar vista de usuarios
+            const teams = {
+                team1: [],
+                team2: [],
+            }
+            rom.users.forEach((user) => {
+                if (user.team === 1) {
+                    teams.team1.push(user);
+                } else if (user.team === 2) {
+                    teams.team2.push(user);
+                }
+            })
+            io.to(room.roomId).emit("teamUsers", teams);
+        })
+        
         socket.on('joinTeam', (team) => {
             console.log("socket rooms", socket.rooms);
             const room = rooms.getRoom(team.roomId);
+            console.log("roomJoin:", room)
             room.users.forEach((user) => {
                 if (user.id === socket.request.session.id) {
                     console.log("Current team ", user)
