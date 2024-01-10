@@ -72,10 +72,12 @@ function initializeSocket(server, cors) {
             const room = rooms.getRoom(team.roomId);
             room.users.forEach((user) => {
                 if (user.id === socket.request.session.id) {
-                    if (user.team === 0) {
+                    console.log("Current team ", user)
+                    if (team.team === 0) {
+                        
                         const team1Count = room.users.filter((u) => u.team === 1).length;
                         const team2Count = room.users.filter((u) => u.team === 2).length;
-                        user.team = (team1Count <= team2Count) ? 1 : 2;
+                        team.team = (team1Count <= team2Count) ? 1 : 2;
                     }
                     user.team = team.team;
                     const teams = {
