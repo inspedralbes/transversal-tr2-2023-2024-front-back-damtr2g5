@@ -129,14 +129,14 @@ app.get('/totalExperiencia', requireLogin, async (req, res) => {
         });
 
         await Promise.all(promises);
-        console.log(xp);
+        //console.log(xp);
         questionsBattles.forEach(element => {
             if(element.experiencia)
                 xp += element.experiencia;
         });
-        console.log("Experiencia: ", xp)
+        //console.log("Experiencia: ", xp)
         mysqlConnection.getLevelData(xp, (nivelDatos) => {
-            console.log("User ID:", user.id)
+            //console.log("User ID:", user.id)
             mysqlConnection.updateLevelData(user.id, nivelDatos.currentLevel.lvl, (successMessage) => {
                 const datos = { experiencia: xp, nivel: nivelDatos.currentLevel.lvl, vida: nivelDatos.currentLevel.health, experienciaRestante: nivelDatos.nextLevelRequiredXP }
                 res.json(datos);
@@ -149,15 +149,15 @@ app.get('/totalExperiencia', requireLogin, async (req, res) => {
     }
 })
 app.get('/getCategorias', async (req, res) => {
-    categorias = await getCategorias();
+    let categorias = await getCategorias();
     res.json(categorias)
 })
 
 app.get('/getActivities/:tema', async (req, res) => {
     let tema = (req.params.tema).toString();
-    console.log(tema)
+    //console.log(tema)
     ejercicios = await getActivities(tema)
-    console.log(ejercicios)
+    //console.log(ejercicios)
     res.json(ejercicios);
 })
 
@@ -201,7 +201,7 @@ app.post('/descargar', requireLogin, upload.single('file'), (req, res) => {
 app.get("/imagenPregunta/:nombreArchivo", (req, res) => {
     const nombreArchivo = req.params.nombreArchivo;
     const rutaImagen = path.join(__dirname, "image_preguntas", nombreArchivo);
-    console.log(rutaImagen);
+    //console.log(rutaImagen);
     res.sendFile(rutaImagen);
 })
 
@@ -212,10 +212,10 @@ app.post('/getResueltas', requireLogin, async (req, res) => {
     let result;
     if (idEjercicio == null) {
         result = await findRegisteredResults(idUsuario);
-        console.log(idUsuario, " sin ejercicio");
+        //console.log(idUsuario, " sin ejercicio");
     } else {
         result = await findRegisteredResults(idUsuario, idEjercicio);
-        console.log(idUsuario, idEjercicio);
+        //console.log(idUsuario, idEjercicio);
     }
     res.json(result);
 })
@@ -258,15 +258,15 @@ app.get('/getbatalla', requireLogin, async (req, res) => {
 //Comprobar si pregunta respondida es correcta o no
 app.post('/comprobarPregunta/:id', requireLogin, async (req, res) => {
     try {
-        console.log(req.body);
-        console.log(req.session);
+        //console.log(req.body);
+        //console.log(req.session);
         let idUser = req.session.user.id;
         respuesta = req.body.respuesta;
         let correcto = false;
         let preguntaid = 0;
         let pregunta = await getPregunta(parseInt(req.params.id));
 
-        console.log("Formato recibido: ", pregunta.formato);
+        //console.log("Formato recibido: ", pregunta.formato);
         preguntaid = pregunta.id;
         correcto = checkQuestion(pregunta, respuesta);
 
@@ -323,7 +323,7 @@ app.get('/getLogin', (req, res) => {
 //LOGIN VUE
 app.post('/login', async (req, res) => {
     try {
-        console.log("Login:id-session", req.session.id);
+        //console.log("Login:id-session", req.session.id);
 
         req.session.user = {};
         const login = req.body;
@@ -334,8 +334,8 @@ app.post('/login', async (req, res) => {
             usuaris.forEach(usuari => {
                 if (usuari.email == login.email) {
                     if (usuari.contrasena != login.contrasena || login.contrasena == '') {
-                        console.log("Usuari o contrasenya incorrectes");
-                        console.log("Contraseña Incorrecta: ", login.contrasena)
+                        //console.log("Usuari o contrasenya incorrectes");
+                        //console.log("Contraseña Incorrecta: ", login.contrasena)
                         usuariIndividual = { email: "" };
                     } else {
                         usuariIndividual = {
@@ -353,7 +353,7 @@ app.post('/login', async (req, res) => {
                         };
                         req.session.user = usuariIndividual;
                         comprovacio = true;
-                        console.log("login", usuariIndividual);
+                        //console.log("login", usuariIndividual);
                         res.json(usuariIndividual);
                         return; // Exit the loop if user found
                     }
@@ -373,7 +373,7 @@ app.post('/login', async (req, res) => {
 
 app.post('/loginGoogle', async (req, res) => {
     try {
-        console.log("Login:id-session", req.session.id);
+        //console.log("Login:id-session", req.session.id);
 
         req.session.user = {};
         const login = req.body;
@@ -383,8 +383,8 @@ app.post('/loginGoogle', async (req, res) => {
             usuaris.forEach(usuari => {
                 if (usuari.email == login.email) {
                     if (usuari.contrasena != login.contrasena) {
-                        console.log("Usuari o contrasenya incorrectes");
-                        console.log("Contraseña Incorrecta: ", login.contrasena)
+                        //console.log("Usuari o contrasenya incorrectes");
+                        //console.log("Contraseña Incorrecta: ", login.contrasena)
                         usuariIndividual = { email: "" };
                     } else {
                         usuariIndividual = {
@@ -402,7 +402,7 @@ app.post('/loginGoogle', async (req, res) => {
                         };
                         req.session.user = usuariIndividual;
                         comprovacio = true;
-                        console.log("login", usuariIndividual);
+                        //console.log("login", usuariIndividual);
                         res.json(usuariIndividual);
                         return; // Exit the loop if user found
                     }
@@ -423,7 +423,7 @@ app.post('/loginGoogle', async (req, res) => {
 //LOGIN ANDROID
 app.post('/loginprofesor', async (req, res) => {
     try {
-        console.log("Login:id-session", req.session.id);
+        //console.log("Login:id-session", req.session.id);
 
         req.session.user = {};
         const login = req.body;
@@ -432,10 +432,10 @@ app.post('/loginprofesor', async (req, res) => {
 
         mysqlConnection.SelectProfessors((profesors) => {
             profesors.forEach(profesor => {
-                console.log(profesor.email);
-                console.log(login.email);
-                console.log(profesor.contrasena);
-                console.log(login.contrasena);
+                //console.log(profesor.email);
+                //console.log(login.email);
+                //console.log(profesor.contrasena);
+                //console.log(login.contrasena);
                 if (profesor.email == login.email) {
                     if (profesor.contrasena != login.contrasena) {
                         console.log("Usuari o contrasenya incorrectes");
@@ -476,7 +476,7 @@ app.get('/logout', (req, res) => {
             console.error('Error al cerrar la sesión:', err);
             res.status(500).json({ message: 'Error al cerrar la sesión' });
         } else {
-            console.log("Sesión cerrada");
+            //console.log("Sesión cerrada");
             getIo().in(sessionId).disconnectSockets();
 
             res.clearCookie('connect.sid'); // Elimina la cookie de sesión
@@ -493,7 +493,7 @@ app.post('/registrarUsuari', (req, res) => {
     mysqlConnection.SelectEmails((emails) => {
         emails.forEach(email => {
             if (email.email === usuariDades.email) {
-                console.log("Aquest mail ja està en ús");
+                //console.log("Aquest mail ja està en ús");
                 comprovacio = false;
             }
         });
@@ -511,11 +511,11 @@ app.post('/actualitzarUsuari', requireLogin, (req, res) => {
     dades = (req.body)
     comprovacio = true
     mysqlConnection.UpdateUser([dades.name, dades.surname, dades.email, dades.userId], (successMessage) => {
-        console.log("Operación completada:", successMessage);
+        //console.log("Operación completada:", successMessage);
         req.session.user.name = dades.name;
         req.session.user.surname = dades.surname;
         req.session.user.email = dades.email;
-        console.log("Usuario actualizado correctamente: ", result)
+        //console.log("Usuario actualizado correctamente: ", result)
         res.status(200).send("Registro exitoso");
     })
         .catch(error => {
@@ -540,7 +540,7 @@ app.post('/crearAula', requireLogin, (req, res) => {
         codes.forEach(code => {
             codesAulas.push(code)
         })
-        console.log(codesAulas)
+        //console.log(codesAulas)
     })
 
     if (codesAulas.includes(contrasena)) {
@@ -572,9 +572,9 @@ app.get('/getAulas', (req, res) => {
 
 app.get('/getAulaById/:id', (req, res) => {
     const id = parseInt(req.params.id)
-    console.log("Código de Acceso en Server: ", id)
+    //console.log("Código de Acceso en Server: ", id)
     mysqlConnection.SelectClassroomId(id, (results) => {
-        console.log("Resultados en Server: ", results)
+        //console.log("Resultados en Server: ", results)
         if (!results) {
             res.json(null);
         } else {
@@ -589,9 +589,9 @@ app.get('/getAulaById/:id', (req, res) => {
 
 app.get('/getAula/:classroom', (req, res) => {
     const classroomId = req.params.classroom.toUpperCase()
-    console.log("Código de Acceso en Server: ", classroomId)
+    //console.log("Código de Acceso en Server: ", classroomId)
     mysqlConnection.SelectClassroom(classroomId, (results) => {
-        console.log("Resultados en Server: ", results)
+        //console.log("Resultados en Server: ", results)
         if (results.length > 0) {
             res.json(results);
         } else {
@@ -602,14 +602,14 @@ app.get('/getAula/:classroom', (req, res) => {
 
 //JOIN AULA
 app.post('/joinAula', (req, res) => {
-    console.log("Body content: ", req.body)
+    //console.log("Body content: ", req.body)
     const aula = req.body;
     const id_classroom = aula.id;
-    console.log("ID CLASS: ", id_classroom)
+    //console.log("ID CLASS: ", id_classroom)
     const id = req.session.user.id;
-    console.log("Id del usuario: " + req.session.user.id);
+    //console.log("Id del usuario: " + req.session.user.id);
     mysqlConnection.UpdateUserClassroom([id_classroom, id], (successMessage) => {
-        console.log("Operación completada:", successMessage);
+        //console.log("Operación completada:", successMessage);
         req.session.user.id_classroom = id_classroom;
         req.session.user.classroom_code = aula.access_code;
         res.status(200).send("Registro exitoso");
@@ -714,7 +714,7 @@ app.post('/restablecerConstrasenya', requireLogin, async (req, res) => {
                 });
             });
             req.session.user.contrasena = req.body.contrasenyaNueva;
-            console.log("login contrasenya cambiada", req.session.user);
+            //console.log("login contrasenya cambiada", req.session.user);
             res.json(resposta); // Envía la respuesta si la comparación de contraseñas es correcta   funcio
 
         } else {
@@ -729,7 +729,7 @@ app.post('/restablecerConstrasenya', requireLogin, async (req, res) => {
 
 //Get Datos perfil
 app.post('/datosPerfil', (req, res) => {
-    console.log("Body content: ", req.body)
+    //console.log("Body content: ", req.body)
     const aula = req.body;
     const id_classroom = aula.idA;
     const id_prof = aula.idP;
@@ -813,7 +813,7 @@ app.post('/historial', requireLogin, async (req, res) => {
 app.post("/getpreguntarandom2", (req, res) => {
     const functionName = req.body.nums;
     const ran = Math.floor(Math.random() * functionName.length)
-    console.log(functionName[ran]);
+    //console.log(functionName[ran]);
     const pythonProcess = spawn('python', ['ejercicios.py', functionName[ran]]);
 
     let result = [];
