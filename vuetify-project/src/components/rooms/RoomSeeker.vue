@@ -60,7 +60,9 @@
                     </v-alert>
                 </v-dialog>
             </template>
-
+            <template v-slot:no-data>
+                No hi ha cap partida actualment, pots crear-ne una a "Crear Partida"!
+            </template>
         </v-data-table-server>
     </v-container>
 </template>
