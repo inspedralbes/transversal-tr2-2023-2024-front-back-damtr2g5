@@ -243,6 +243,7 @@
                     this.comprobado = false;
                     this.buttonText = 'Comprobar';
                     this.pidiendoPregunta = false;
+                    this.respuestaSelecionada = "";
                 })
             }
         },
