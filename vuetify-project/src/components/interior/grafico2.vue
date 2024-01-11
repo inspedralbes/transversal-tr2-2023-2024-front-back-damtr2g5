@@ -1,9 +1,6 @@
 <template>
-    <v-sheet>
-        <v-container class="fill-height">
-            <Line id="my-chart-id" :key="chartKey" :options="chartOptions" :data="chartData" />
-        </v-container>
-    </v-sheet>
+
+    <Line id="my-chart-id" :key="chartKey" :options="chartOptions" :data="chartData" />
 </template>
 <script>
 import {
@@ -54,15 +51,37 @@ export default {
             labels: [],
             datasets: [
                 {
-                    label: 'Actividades',
-                    backgroundColor: '#085412',
+                    label: 'Registres',
+                    backgroundColor: '#F87060',
                     data: [40, 39, 10, 40, 39, 80, 40]
                 }
             ]
         }
         const chartOptions = {
             responsive: true,
-            maintainAspectRatio: false
+            maintainAspectRatio: true,
+            scales: {
+                y: {
+                    ticks: {
+                        stepSize: 1
+                
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false,
+                },
+                title: {
+                    display: true,
+                    text: 'Registres per dia',
+                    font: {
+                        size: 20,
+                        family: 'Acme'
+                    }
+                },
+
+            }
         }
 
         return {

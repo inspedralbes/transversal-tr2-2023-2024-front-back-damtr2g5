@@ -15,24 +15,27 @@
                             </v-col>
                             <v-col cols="12" sm="12" md="12" lg="4">
                                 <div style="margin-left: 1em; text-align: left;" class="mt-4 pb-4 big-font">
-                                    
+
                                     <ul>
                                         <li>Nivell {{ exp.nivel }} </li>
                                         <li>
-                                            <v-progress-linear class="custom-border2" bg-opacity="1" color="success" height="35">
+                                            <v-progress-linear class="custom-border2" bg-opacity="1" color="success"
+                                                height="35">
                                                 <strong>{{ exp.vida }} vida </strong>
                                             </v-progress-linear>
                                         </li>
                                         <li>
-                                            <v-progress-linear class="custom-border2 mt-2"  v-model="expPercent" color="amber" height="35">
-                                                <strong>{{ exp.experiencia }} / {{ exp.experienciaRestante + exp.experiencia }} exp </strong>
+                                            <v-progress-linear class="custom-border2 mt-2" v-model="expPercent"
+                                                color="amber" height="35">
+                                                <strong>{{ exp.experiencia }} / {{ exp.experienciaRestante + exp.experiencia
+                                                }} exp </strong>
                                             </v-progress-linear>
                                         </li>
                                     </ul>
                                 </div>
                             </v-col>
                             <v-col class="centered big-font platinum-bg mt-3">
-                                {{ user.rank }}
+                                {{ user.rank.toUpperCase() }}
                             </v-col>
                         </v-row>
 
@@ -71,10 +74,27 @@
                         </v-card-text>
                     </v-card>
                 </v-col>
+                <v-col cols="12" sm="12" md="12" lg="6">
+                    <v-card class="round-border myfont">
+                        <v-card-title class="bigger-font violet-bg white pt-6 pb-6">Progrés</v-card-title>
+                        <v-card-text>
+                            <DoughnutChart />
+                        </v-card-text>
+                    </v-card>
+                    
+                </v-col>
+                <v-col cols="12" sm="12" md="12" lg="6">
+                    <v-card class="round-border myfont">
+                        <v-card-title class="bigger-font violet-bg white pt-6 pb-6">Historial d'activitat</v-card-title>
+                        <v-card-text>
+                            <Line />
+                        </v-card-text>
+                    </v-card>
+                    
+                </v-col>
             </v-row>
         </v-container>
-        <DoughnutChart/>
-        <Line/>
+
     </v-app>
 </template>
 
@@ -88,8 +108,8 @@ ul {
 import { useAppStore } from '@/store/app';
 import { historial, GetDatosPerfil, getAulaById } from '@/communicationsManager'
 import BackButton from '@/components/fab/BackButton.vue';
-import  DoughnutChart from '@/components/interior/grafico1.vue';
-import  Line from '@/components/interior/grafico2.vue';
+import DoughnutChart from '@/components/interior/grafico1.vue';
+import Line from '@/components/interior/grafico2.vue';
 export default {
     name: 'Perfil',
     data() {
