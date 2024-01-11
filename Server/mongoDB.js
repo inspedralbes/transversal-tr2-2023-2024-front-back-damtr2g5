@@ -212,7 +212,6 @@ async function getPreguntas(preguntas) {
             const filter = { "id": { $in: preguntas } };
             document = await col.find(filter).toArray();
         } else { 
-            console.log("aqui");
             document = await col.find().toArray();
         }
         return document;
