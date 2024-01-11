@@ -15,8 +15,8 @@
             <div class="big-font mb-2">
                 Et donem la benvinguda
             </div>
-            <div class="mb-2" hidden>
-                <GoogleLogin :callback="callback" prompt />
+            <div class="mb-2">
+                <GoogleLogin :callback="callback" />
                 <div class="g-signin2" data-onsuccess="onSignIn"></div>
             </div>
             <v-divider></v-divider>
