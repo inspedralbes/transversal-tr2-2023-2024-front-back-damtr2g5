@@ -12,7 +12,7 @@ function initializeSocket(server, cors) {
     io.engine.use(sessionMiddleware)
 
     io.on('connection', (socket) => {
-        console.log("a user connected", socket.request.session.id);
+        //console.log("a user connected", socket.request.session.id);
 
         socket.join(socket.request.session.id);
         socket.on('createRoom', (room) => {
@@ -27,7 +27,7 @@ function initializeSocket(server, cors) {
             });
             room.starttime = ''
             room.endtime = ''       
-            console.log("socket rooms", socket.rooms);
+            //console.log("socket rooms", socket.rooms);
             socket.join("GameRoom-" + socket.request.session.id);
             created = rooms.addRoom(room, socket.request.session.id);
             if (created) {
@@ -35,14 +35,14 @@ function initializeSocket(server, cors) {
             } else {
                 io.to(socket.request.session.id).emit("roomNotCreated", room);
             }
-            console.log("rooms", rooms.getRooms());
+            //console.log("rooms", rooms.getRooms());
         });
 
         socket.on('joinRoom', (room) => {
             roomsFilter = rooms.getRooms().filter((r) => r.id === room.id)[0];
             //check if room is private and if password is correct
             if (roomsFilter.private && room.password !== roomsFilter.password) {
-                console.log("wrong password");
+                //console.log("wrong password");
                 io.to(socket.request.session.id).emit("wrongPassword", room);
                 return;
             }
@@ -68,9 +68,9 @@ function initializeSocket(server, cors) {
             }
         });
         socket.on('changeTeam', (room) => {
-            console.log("ROOM ID:",room.roomId)
+            //console.log("ROOM ID:",room.roomId)
             const rom = rooms.getRoom(room.roomId);
-                console.log("Room: ",rom)
+                //console.log("Room: ",rom)
             //Cambiar equipo
             rom.users.forEach((user) => {
                 if (user.id === socket.request.session.id) {
@@ -97,9 +97,9 @@ function initializeSocket(server, cors) {
         })
         
         socket.on('joinTeam', (team) => {
-            console.log("socket rooms", socket.rooms);
+            //console.log("socket rooms", socket.rooms);
             const room = rooms.getRoom(team.roomId);
-            console.log("roomJoin:", room)
+            //console.log("roomJoin:", room)
             room.users.forEach((user) => {
                 if (user.id === socket.request.session.id) {
                     console.log("Current team ", user)
@@ -124,7 +124,7 @@ function initializeSocket(server, cors) {
                     io.to(team.roomId).emit("teamUsers", teams);
                 }
             });            
-            console.log("joinTeam", rooms.getRoom(team.roomId));
+            //console.log("joinTeam", rooms.getRoom(team.roomId));
         });
 
         socket.on('getTeamUsers', (room) => {
@@ -204,7 +204,7 @@ function initializeSocket(server, cors) {
                     io.to(room.id).emit("gameStarted", rooms.getRoom(room.id));
                     let inicio = obtenerFechaYHoraActual()
                     rooms.getRoom(room.id).starttime = inicio
-                    console.log("INICIO " + room.starttime);
+                    //console.log("INICIO " + room.starttime);
                 }, 5000);
             });
         });
@@ -214,7 +214,7 @@ function initializeSocket(server, cors) {
                 .then((pregunta) => {
                     answer = data.answer;
                     let room = data.room;
-                    console.log("to check", data.question, answer);
+                    //console.log("to check", data.question, answer);
                     correcto = checkQuestion(data.question, answer);
                     io.to(socket.request.session.id).emit("answerChecked", { "correct": correcto });
                     if (correcto) {
@@ -229,8 +229,8 @@ function initializeSocket(server, cors) {
                     }
                     rooms.getRoom(room.id).users.filter((u)=>u.id===socket.request.session.id)[0].preguntas.push({"pregunta":pregunta.id,"correcta":correcto})
 
-                    console.log("team1 hp ", rooms.getRoom(room.id).teams.team1[0].hp);
-                    console.log("team2 hp", rooms.getRoom(room.id).teams.team2[0].hp);
+                    //console.log("team1 hp ", rooms.getRoom(room.id).teams.team1[0].hp);
+                    //console.log("team2 hp", rooms.getRoom(room.id).teams.team2[0].hp);
                     if (rooms.getRoom(room.id).teams.team1[0].hp <= 0 || rooms.getRoom(room.id).teams.team2[0].hp <= 0) {
                         rooms.getRoom(room.id).winner = (rooms.getRoom(room.id).teams.team1[0].hp <= 0) ? 2 : 1;
                         io.to(room.id).emit("gameFinished", rooms.getRoom(room.id));
@@ -293,9 +293,9 @@ function filterRooms(search, sortBy, order) {
             roomsFilter.sort((a, b) => b.players - a.players);
         }
     } else if (sortBy === "owner") {
-        console.log("sort by owner");
+        //console.log("sort by owner");
         if (order === "asc") {
-            console.log("asc");
+            //console.log("asc");
             roomsFilter.sort((a, b) => a.owner.localeCompare(b.owner));
         } else {
             roomsFilter.sort((a, b) => b.owner.localeCompare(a.owner));

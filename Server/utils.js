@@ -42,8 +42,8 @@ function shuffleArray(array) {
 }
 function checkQuestion(question, respuesta) {
     let correcto = false;
-console.log(question.formato);
-console.log(question.correcta);
+//console.log(question.formato);
+//console.log(question.correcta);
     switch (question.formato) {
         case "Seleccionar":
         case "Imagen":
@@ -67,7 +67,7 @@ console.log(question.correcta);
                     correcto = true;
                 }
             } else {
-                console.log("no es una operacion");
+                //console.log("no es una operacion");
                 if (
                     JSON.stringify(respuesta) ===
                     JSON.stringify(question.correcta)
