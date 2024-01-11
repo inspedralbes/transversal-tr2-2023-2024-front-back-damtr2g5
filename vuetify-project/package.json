@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "main": "main.js",
-  "author": "Pol Prats Ferrer",
-  "description": "Es la aplicacion de Pol. ",
+  "author": "Samuel Garcia, Mario Ramirez, Joan Guerrero, Oscar Zapatero",
+  "description": "Aplicacion para aprender matematicas de forma divertida",
 
   "scripts": {
     "dev": "vite",
