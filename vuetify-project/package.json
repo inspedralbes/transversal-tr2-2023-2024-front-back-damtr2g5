@@ -3,12 +3,17 @@
   "version": "0.0.0",
   "private": true,
   "main": "main.js",
+  "author": "Pol Prats Ferrer",
+  "description": "Es la aplicacion de Pol. ",
+
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "start": "electron .",
+    "start": "electron-forge start",
     "preview": "vite preview",
-    "lint": "eslint . --fix --ignore-path .gitignore"
+    "lint": "eslint . --fix --ignore-path .gitignore",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "dependencies": {
     "@mdi/font": "^7.0.96",
@@ -17,6 +22,7 @@
     "axios": "^1.6.2",
     "chart.js": "^4.4.0",
     "core-js": "^3.29.0",
+    "electron-squirrel-startup": "^1.0.0",
     "install": "^0.13.0",
     "md5": "^2.3.0",
     "npm": "^10.2.5",
@@ -36,6 +42,12 @@
     "vuetify": "^3.0.0"
   },
   "devDependencies": {
+    "@electron-forge/cli": "^7.2.0",
+    "@electron-forge/maker-deb": "^7.2.0",
+    "@electron-forge/maker-rpm": "^7.2.0",
+    "@electron-forge/maker-squirrel": "^7.2.0",
+    "@electron-forge/maker-zip": "^7.2.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.2.0",
     "@vitejs/plugin-vue": "^4.0.0",
     "electron": "^28.1.1",
     "eslint": "^8.37.0",
