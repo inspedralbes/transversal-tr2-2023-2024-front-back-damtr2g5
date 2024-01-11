@@ -36,7 +36,7 @@
                 style="text-align: center;">
                 <v-card style="margin-bottom: 3em;" class="round-border">
                     <v-card-title style="margin-bottom: 1em;" class="mt-8">
-                        <h1>{{ room.name }}</h1>
+                        <h1>{{ room?.name }}</h1>
                     </v-card-title>
                     <v-card-text>
                         <h2>Numero de jugadors: {{ team1.length + team2.length }}</h2>
@@ -49,6 +49,7 @@
                         <span class="myfont big-font">{{ buttonText }}</span>
                     </span>
                 </button>
+                <v-btn style="margin-top: 10px" color="#102542" @click="changeTeam()">Cambiar equipo</v-btn>
             </v-col>
             <v-col style="padding-left: 0px;" cols="6" sm="6" md="4" lg="4" order-md="3" order-lg="3" order="2">
                 <v-card color="#F87060">
@@ -84,6 +85,9 @@ export default {
             next()
         }else if(this.leaveReason == 'gameStarted'){
             next()
+        } else if(this.leaveReason == 'refresh') {
+            socket.disconnect();
+            next()
         }
 
     },
@@ -105,7 +109,7 @@ export default {
     },
     computed: {
         startDisabled() {
-            if (this.room.owner == this.store.getLoginInfo.email) {
+            if (this.room?.owner == this.store.getLoginInfo.email) {
                 if (this.team1.length == 0 || this.team2.length == 0) {
                     return 'disabledTransparent';
                 }
@@ -123,6 +127,10 @@ export default {
                 roomId: this.room.id
             }
             socket.emit('joinTeam', team);
+        },
+        changeTeam() {
+            var room = {roomId: this.room.id};
+            socket.emit('changeTeam', room);
         },
         handleClick() {
             if (this.room.owner == this.store.getLoginInfo.email) {
@@ -143,17 +151,73 @@ export default {
             }, 1000);
         },
     },
-    mounted() {
+    created(){
         this.room = this.store.getRoom;
+        if (this.room == null) {
+            this.leaveReason = 'refresh';
+            this.$router.push({ name: 'Home' });
+        } else {
         console.log("current room", this.room);
         if (this.room.owner == this.store.getLoginInfo.email) {
             this.startDisabled = false;
         }
-        if (this.room == null) {
-            this.$router.push({ name: 'Home' });
-        } else {
             socket.emit('getTeamUsers', this.room);
+
+        socket.on('teamUsers', (teams) => {
+            console.log(teams);
+            this.team1 = teams.team1;
+            this.team2 = teams.team2;
+        });
+        socket.on('teamJoined', (user) => {
+            console.log("user joined", user);
+            if (user.team == 1) {
+                this.team1.push(user);
+            } else {
+                this.team2.push(user);
+            }
+        });
+        socket.on('userLeft', (user) => {
+            console.log("user left", user);
+            if (user.team == 1) {
+                this.team1 = this.team1.filter((item) => {
+                    return item.email != user.email;
+                });
+            } else if (user.team == 2) {
+                this.team2 = this.team2.filter((item) => {
+                    return item.email != user.email;
+                });
+            }
+        });
+        socket.on('roomDeleted', (room) => {
+            socket.disconnect();
+            console.log("Room have been deleted!");
+            this.leaveReason = 'roomDeleted';
+            this.$router.push({ name: 'Batalla' });
+        });
+        socket.on('startingGame', (room) => {
+            console.log("starting game", room);
+            if (this.dialog) {
+                socket.emit('joinTeam', { team: 0, roomId: room.id });
+                this.dialog = false;
+            }
+            this.startCountdown();
+        });
+        socket.on('gameStarted', (room) => {
+            this.leaveReason = 'gameStarted';
+            this.store.setRoom(room);
+            this.$router.push({ name: 'Game', params: { room: room.name } });
+        });
+    }
+        
+    },    
+    mounted() {
+        this.room = this.store.getRoom;
+        if (this.room != null) {
+        console.log("current room", this.room);
+        if (this.room.owner == this.store.getLoginInfo.email) {
+            this.startDisabled = false;
         }
+            socket.emit('getTeamUsers', this.room);
 
         socket.on('teamUsers', (teams) => {
             console.log(teams);
@@ -198,11 +262,11 @@ export default {
             this.store.setRoom(room);
             this.$router.push({ name: 'Game', params: { room: room.name } });
         });
-    },
-
+    }
+},
 }
 </script>
 
 <style scoped>
-/* Your component's CSS styles go here */
+
 </style>
