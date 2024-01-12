@@ -571,22 +571,28 @@ app.get('/getAulas', (req, res) => {
 
 });
 
+
 app.get('/getAulaById/:id', (req, res) => {
-    const id = parseInt(req.params.id)
-    //console.log("Código de Acceso en Server: ", id)
-    mysqlConnection.SelectClassroomId(id, (results) => {
-        //console.log("Resultados en Server: ", results)
-        if (!results) {
-            res.json(null);
-        } else {
-            if (results.length > 0) {
-                res.json(results);
-            } else {
+    if (req.params.id) {
+        const id = parseInt(req.params.id)
+        //console.log("Código de Acceso en Server: ", id)
+        mysqlConnection.SelectClassroomId(id, (results) => {
+            //console.log("Resultados en Server: ", results)
+            if (!results) {
                 res.json(null);
+            } else {
+                if (results.length > 0) {
+                    res.json(results);
+                } else {
+                    res.json(null);
+                }
             }
-        }
-    });
+        });
+    }else{
+        res.json(null);
+    }
 })
+
 
 app.get('/getAula/:classroom', (req, res) => {
     const classroomId = req.params.classroom.toUpperCase()
