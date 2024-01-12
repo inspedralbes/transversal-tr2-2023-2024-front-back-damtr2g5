@@ -573,7 +573,7 @@ app.get('/getAulas', (req, res) => {
 
 
 app.get('/getAulaById/:id', (req, res) => {
-    if (req.params.id) {
+    if (!isNaN(req.params.id)) {
         const id = parseInt(req.params.id)
         //console.log("Código de Acceso en Server: ", id)
         mysqlConnection.SelectClassroomId(id, (results) => {
