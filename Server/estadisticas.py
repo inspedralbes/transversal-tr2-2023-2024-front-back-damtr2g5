@@ -11,7 +11,7 @@ collection2 = db['question']
 
 # Obtener datos de la colección 'history'
 data = collection.find()
-datos = {"Usuario": [], "Pregunta": [], "Correcta": []}
+datos = {"Usuario" : [], "Pregunta": [], "Correcta": []}
 
 # Obtener datos relevantes de la colección 'history'
 for x in data:
